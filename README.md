@@ -9,6 +9,26 @@ Sistema de iluminação pública de Coruripe/AL. Dois PWAs, um backend, **um dep
 
 Backend: Google Apps Script sobre planilha Google Sheets (dois deploys — ver `public/shared/config.js`).
 
+## Produção
+
+| Ambiente | URL | Estado |
+|---|---|---|
+| Cidadão (no ar hoje) | https://iluminacoruripe.netlify.app | ativo — deploy antigo, separado |
+| Técnico (no ar hoje) | https://iluminacoruripe-tecnico.netlify.app | ativo — deploy antigo, separado |
+| HUB Central | https://hubcentralcrp.netlify.app | ativo — portal que aponta para os dois |
+| **Deploy unificado (este repo)** | _ainda não publicado_ | pendente |
+
+Atenção: o que está no ar agora **ainda são os dois sites antigos**, cada um com a URL
+do outro escrita na mão. O código deste repositório só passa a valer depois que o deploy
+unificado subir — enquanto isso, mudança aqui não muda o que o cidadão vê.
+
+Quando o deploy unificado subir, os dois viram rotas do mesmo domínio
+(`/` e `/tecnico/`) e este bloco deve ser atualizado com a URL final.
+
+Os QR já impressos e colados nos postes apontam para `iluminacoruripe.netlify.app`.
+Antes de desligar esse domínio, aponte-o para o deploy novo — senão todo QR na rua morre.
+
+
 ## Por que monorepo
 
 Antes eram dois sites Netlify separados com URL do outro escrita na mão dentro do código.
