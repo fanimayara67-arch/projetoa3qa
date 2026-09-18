@@ -1,0 +1,12 @@
+{
+  "name": "ilumina-coruripe",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Iluminacao publica de Coruripe/AL — app do cidadao + painel tecnico",
+  "scripts": {
+    "build": "node scripts/build-config.mjs",
+    "dev": "npm run build && npx --yes serve public -l 3000",
+    "start": "npm run dev"
+  },
+  "engines": { "node": ">=18" }
+}

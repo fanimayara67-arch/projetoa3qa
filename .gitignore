@@ -2,6 +2,14 @@ node_modules/
 .DS_Store
 Thumbs.db
 .netlify/
+.vercel/
 *.log
+
+# Segredos e config local — nunca versionar
 .env
 .env.*
+!.env.example
+
+# Gerado por scripts/build-config.mjs a partir do ambiente.
+# Clone novo: rode `npm run build` antes de servir.
+public/shared/config.js

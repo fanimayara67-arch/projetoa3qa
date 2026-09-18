@@ -54,18 +54,57 @@ netlify.toml            publish=public, redirects, headers de cache
 docs/ARQUITETURA.md     fluxo de dados e contrato da API
 ```
 
-## Trocar um endpoint do Apps Script
+## Variáveis de ambiente
 
-Edite **só** `public/shared/config.js`. Os dois apps leem de lá.
-`netlify.toml` já serve esse arquivo com `no-cache`, então a troca vale no próximo load.
+Os endpoints do Apps Script saíram do código e viraram variáveis:
+
+| Variável | Para que serve |
+|---|---|
+| `ILUMINA_ENDPOINT_CIDADAO` | deploy do Apps Script que recebe os reportes |
+| `ILUMINA_ENDPOINT_TECNICO` | deploy do painel técnico (login, chamados, almoxarifado) |
+| `ILUMINA_HUB_URL` | portal do botão "voltar ao HUB" (opcional) |
+
+O site é estático, sem servidor — então não existe leitura de `process.env` em runtime.
+`scripts/build-config.mjs` roda no **build** e gera `public/shared/config.js` com os
+valores materializados dentro. Esse arquivo é gerado, não versionado.
+
+Se faltar variável obrigatória, o build **falha** em vez de publicar um site que
+só quebra quando o cidadão aperta enviar.
+
+**Isto não torna os endpoints secretos.** Eles vão para o JavaScript que roda no
+navegador e qualquer pessoa lê no "ver código-fonte". A variável de ambiente só
+mantém o valor fora do repositório. Proteção de verdade tem que estar no lado do
+Apps Script: validação de PIN, limite de tentativas e checagem de origem.
+
+### Local
+
+```bash
+cp .env.example .env      # preencha os valores
+npm run dev               # gera o config e sobe em http://localhost:3000
+```
+
+### Produção
+
+Cadastre as mesmas chaves no painel do host e refaça o deploy:
+
+- **Vercel** — Settings › Environment Variables
+- **Netlify** — Site configuration › Environment variables
+
+O build command (`node scripts/build-config.mjs`) já está no `vercel.json` e no
+`netlify.toml`. Não precisa de `npm install`: o script usa só a biblioteca padrão do Node.
 
 ## Rodar local
 
 Precisa de servidor HTTP — `file://` quebra service worker, câmera e geolocalização.
 
 ```bash
-npx serve public          # http://localhost:3000
-# ou
+npm run dev               # build do config + servidor na porta 3000
+```
+
+Sem npm, gere o config e sirva à mão:
+
+```bash
+node scripts/build-config.mjs
 python -m http.server 8080 -d public
 ```
 
