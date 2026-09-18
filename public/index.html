@@ -1,0 +1,1650 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#FFFFFF">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Ilumina Coruripe">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="./manifest.json">
+<script src="./shared/config.js"></script>
+<link rel="icon" type="image/png" href="./icon-192.png">
+<link rel="apple-touch-icon" href="./icon-192.png">
+<title>Ilumina Coruripe — Reporte de defeitos na iluminação pública</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  :root {
+    --bg: #FAFAFC;
+    --surface: #FFFFFF;
+    --surface-2: #F4F5F8;
+    --ink: #0F1420;
+    --ink-2: #3E4759;
+    --ink-3: #8591A6;
+    --line: #E8EBF0;
+    --line-2: #D4D9E3;
+
+    --brand-red:    #E85D3F;
+    --brand-orange: #F39427;
+    --brand-yellow: #F5C83D;
+    --brand-green:  #3EBD5F;
+    --brand-teal:   #3EB5D9;
+    --brand-blue:   #2D7EC4;
+    --brand-purple: #7B4FC0;
+    --brand-pink:   #D94F95;
+
+    --success: #0F9D58;
+    --success-soft: #E3F3EB;
+    --warn: #E8871E;
+    --warn-soft: #FEF1E0;
+    --danger: #D93025;
+    --danger-soft: #FCE8E7;
+
+    --gradient-brand: linear-gradient(95deg,
+      var(--brand-red) 0%, var(--brand-orange) 16%, var(--brand-yellow) 32%,
+      var(--brand-green) 48%, var(--brand-teal) 64%, var(--brand-blue) 80%,
+      var(--brand-purple) 100%);
+
+    --radius: 16px;
+    --radius-sm: 10px;
+    --radius-lg: 24px;
+
+    --shadow-sm: 0 1px 2px rgba(15,20,32,0.05), 0 1px 1px rgba(15,20,32,0.04);
+    --shadow: 0 4px 14px rgba(15,20,32,0.07), 0 1px 3px rgba(15,20,32,0.05);
+    --shadow-lg: 0 20px 48px rgba(15,20,32,0.14), 0 8px 20px rgba(15,20,32,0.08);
+
+    --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "SF Pro Text", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+  }
+  html, body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font);
+    font-size: 16px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    min-height: 100vh;
+    min-height: 100dvh;
+    overscroll-behavior-y: none;
+  }
+  body { padding: env(safe-area-inset-top) env(safe-area-inset-right) 0 env(safe-area-inset-left); }
+  button { font: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+  input, textarea { font: inherit; color: inherit; }
+  input:focus, textarea:focus, button:focus-visible { outline: 2px solid var(--brand-blue); outline-offset: 2px; }
+  img { max-width: 100%; display: block; }
+
+  /* ================================================================
+     SCREENS ROUTING
+     ================================================================ */
+  .screen { display: none; min-height: 100vh; min-height: 100dvh; }
+  .screen.active { display: flex; flex-direction: column; }
+
+  /* ================================================================
+     SPLASH SCREEN
+     ================================================================ */
+  #screen-splash { background: var(--bg); }
+  #screen-splash.active {
+    align-items: center; justify-content: center;
+    padding: 32px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  #screen-splash::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+    background: var(--gradient-brand);
+    z-index: 2;
+  }
+  #screen-splash::after {
+    content: ''; position: absolute; top: -20%; left: 50%;
+    width: 140%; max-width: 900px; aspect-ratio: 1;
+    transform: translateX(-50%);
+    background: radial-gradient(circle at center,
+      rgba(232,93,63,0.08) 0%,
+      rgba(62,181,217,0.06) 40%,
+      rgba(123,79,192,0.05) 70%,
+      transparent 100%);
+    pointer-events: none;
+    filter: blur(40px);
+  }
+  .splash {
+    position: relative;
+    width: 100%; max-width: 480px;
+    text-align: center;
+  }
+  @media (min-width: 720px) { .splash { max-width: 560px; } }
+
+  .splash-logo {
+    width: 128px; height: 128px;
+    margin: 0 auto 24px;
+    border-radius: 28px;
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--line);
+    animation: splashLogo 0.6s cubic-bezier(0.2, 0.9, 0.3, 1.4) both;
+  }
+  @media (min-width: 720px) {
+    .splash-logo { width: 152px; height: 152px; border-radius: 32px; }
+  }
+  .splash-logo img { width: 100%; height: 100%; object-fit: cover; }
+  @keyframes splashLogo {
+    0% { transform: scale(0.5); opacity: 0; }
+    70% { transform: scale(1.08); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .splash-title {
+    font-family: var(--font-display);
+    font-size: 32px; font-weight: 800;
+    letter-spacing: -0.03em; line-height: 1.05;
+    margin-bottom: 10px;
+    animation: fadeUp 0.6s 0.15s ease both;
+  }
+  @media (min-width: 720px) { .splash-title { font-size: 40px; } }
+  .splash-title em {
+    font-style: normal;
+    background: var(--gradient-brand);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+
+  .splash-tagline {
+    font-size: 15px; color: var(--ink-2);
+    line-height: 1.55;
+    margin-bottom: 28px;
+    animation: fadeUp 0.6s 0.25s ease both;
+    max-width: 440px; margin-left: auto; margin-right: auto;
+    margin-bottom: 28px;
+  }
+  @media (min-width: 720px) { .splash-tagline { font-size: 16px; margin-bottom: 32px; } }
+
+  .splash-steps {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 6px 18px;
+    box-shadow: var(--shadow-sm);
+    text-align: left;
+    margin-bottom: 20px;
+    animation: fadeUp 0.6s 0.35s ease both;
+  }
+  .splash-step {
+    display: flex; gap: 14px; padding: 14px 0;
+    border-bottom: 1px solid var(--line);
+    align-items: center;
+  }
+  .splash-step:last-child { border-bottom: none; }
+  .splash-step-num {
+    flex-shrink: 0;
+    width: 34px; height: 34px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-weight: 700; font-size: 15px;
+  }
+  .splash-step:nth-child(1) .splash-step-num { background: linear-gradient(135deg, var(--brand-red), var(--brand-orange)); }
+  .splash-step:nth-child(2) .splash-step-num { background: linear-gradient(135deg, var(--brand-teal), var(--brand-blue)); }
+  .splash-step:nth-child(3) .splash-step-num { background: linear-gradient(135deg, var(--brand-green), var(--brand-teal)); }
+  .splash-step-body { flex: 1; min-width: 0; }
+  .splash-step-title { font-weight: 600; font-size: 14px; margin-bottom: 2px; }
+  .splash-step-desc { font-size: 12.5px; color: var(--ink-2); line-height: 1.45; }
+
+  .splash-offline {
+    display: flex; gap: 10px; align-items: flex-start;
+    padding: 12px 14px;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    font-size: 12.5px; color: var(--ink-2); line-height: 1.45;
+    text-align: left;
+    margin-bottom: 28px;
+    animation: fadeUp 0.6s 0.45s ease both;
+  }
+  .splash-offline strong { color: var(--ink); }
+
+  .splash-btn {
+    position: relative;
+    width: 100%; padding: 16px;
+    background: var(--gradient-brand);
+    color: #fff;
+    border-radius: var(--radius);
+    font-size: 15px; font-weight: 700; letter-spacing: -0.005em;
+    box-shadow: 0 12px 28px rgba(45,126,196,0.28), 0 2px 6px rgba(232,93,63,0.18);
+    transition: filter 0.2s, transform 0.08s;
+    overflow: hidden;
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    animation: fadeUp 0.6s 0.55s ease both;
+  }
+  .splash-btn::before {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(255,255,255,0.15), transparent 50%);
+    pointer-events: none;
+  }
+  .splash-btn:hover { filter: brightness(1.05) saturate(1.1); }
+  .splash-btn:active { transform: translateY(1px); }
+  .splash-btn span { position: relative; z-index: 1; }
+  .splash-btn svg { width: 16px; height: 16px; position: relative; z-index: 1; }
+
+  .splash-progress {
+    width: 100%; max-width: 240px;
+    height: 3px;
+    background: var(--line);
+    border-radius: 2px;
+    overflow: hidden;
+    margin: 28px auto 14px;
+    animation: fadeUp 0.6s 0.65s ease both;
+  }
+  .splash-progress-bar {
+    height: 100%;
+    width: 0;
+    background: var(--gradient-brand);
+    border-radius: 2px;
+    transition: width 5s linear;
+  }
+  .splash-progress-bar.running { width: 100%; }
+
+  .splash-footer {
+    font-size: 12px; color: var(--ink-3);
+    animation: fadeUp 0.6s 0.7s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ================================================================
+     APP HEADER — shown on report + success screens
+     ================================================================ */
+  .header {
+    position: sticky; top: 0; z-index: 10;
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+    padding: 14px 18px 14px;
+  }
+  /* Safe-area-inset só quando rodando como PWA instalado (notch iPhone, etc).
+     No browser normal isso adiciona um espaço inútil. */
+  @media (display-mode: standalone) {
+    .header { padding-top: calc(14px + env(safe-area-inset-top)); }
+  }
+  .header::before {
+    content: ''; position: absolute; left: 0; right: 0; top: 0; height: 3px;
+    background: var(--gradient-brand);
+  }
+  .header-inner {
+    max-width: 640px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  .brand-logo {
+    width: 36px; height: 36px; border-radius: 10px;
+    overflow: hidden; flex-shrink: 0;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--line);
+  }
+  .brand-logo img { width: 100%; height: 100%; object-fit: cover; }
+  .brand-text { line-height: 1.1; min-width: 0; }
+  .brand-title { font-size: 15px; font-weight: 700; letter-spacing: -0.01em; }
+  .brand-sub {
+    font-size: 11px; font-weight: 500; color: var(--ink-3);
+    letter-spacing: 0.04em; text-transform: uppercase;
+  }
+
+  .status-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 11px; border-radius: 999px;
+    font-size: 12px; font-weight: 600;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    color: var(--ink-2);
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+  .status-pill[data-state="online"] { background: var(--success-soft); border-color: rgba(15,157,88,0.3); color: #0A6E3E; }
+  .status-pill[data-state="offline"] { background: var(--danger-soft); border-color: rgba(217,48,37,0.3); color: #9B241B; }
+  .status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--ink-3); }
+  .status-pill[data-state="online"] .status-dot { background: var(--success); box-shadow: 0 0 0 3px rgba(15,157,88,0.18); animation: pulse 2.4s ease-in-out infinite; }
+  .status-pill[data-state="offline"] .status-dot { background: var(--danger); }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+  .pending-banner {
+    display: none;
+    max-width: 640px; margin: 12px auto 0;
+    padding: 10px 14px;
+    background: var(--warn-soft);
+    border: 1px solid rgba(232,135,30,0.3);
+    color: #7A4C10;
+    border-radius: var(--radius-sm);
+    font-size: 13px; line-height: 1.45;
+    align-items: center; gap: 10px;
+  }
+  .pending-banner.show { display: flex; }
+  .pending-count {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 22px; height: 22px; padding: 0 7px;
+    background: var(--warn); color: #fff;
+    border-radius: 11px; font-weight: 700; font-size: 12px;
+  }
+
+  /* ================================================================
+     MAIN FORM
+     ================================================================ */
+  main {
+    width: 100%;
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 20px 18px;
+    padding-bottom: calc(108px + env(safe-area-inset-bottom));
+    flex: 1;
+  }
+  @media (min-width: 720px) {
+    main { padding: 32px 24px; padding-bottom: calc(108px + env(safe-area-inset-bottom)); }
+  }
+
+  .section { margin-bottom: 24px; }
+  @media (min-width: 720px) { .section { margin-bottom: 28px; } }
+
+  .section-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--ink-3);
+    margin-bottom: 10px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .section-label-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--ink-3); }
+  .section[data-color="red"]    .section-label-dot { background: var(--brand-red); }
+  .section[data-color="orange"] .section-label-dot { background: var(--brand-orange); }
+  .section[data-color="teal"]   .section-label-dot { background: var(--brand-teal); }
+  .section[data-color="blue"]   .section-label-dot { background: var(--brand-blue); }
+  .section[data-color="purple"] .section-label-dot { background: var(--brand-purple); }
+  .required { color: var(--brand-red); margin-left: 4px; font-weight: 700; }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 18px;
+    box-shadow: var(--shadow-sm);
+  }
+
+  /* ================================================================
+     GPS CARD
+     ================================================================ */
+  .gps-card { padding: 20px; }
+  .gps-empty { text-align: center; padding: 4px 0 4px; }
+  .gps-empty-icon {
+    width: 64px; height: 64px; margin: 0 auto 14px;
+    background: linear-gradient(135deg, var(--brand-red), var(--brand-orange));
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff;
+    box-shadow: 0 8px 20px rgba(232,93,63,0.35);
+  }
+  .gps-empty-icon svg { width: 28px; height: 28px; }
+  .gps-empty-text {
+    color: var(--ink-2); font-size: 14px; margin-bottom: 16px;
+    max-width: 360px; margin-left: auto; margin-right: auto;
+  }
+  .gps-btn {
+    width: 100%; padding: 16px;
+    background: var(--ink); color: #fff;
+    border-radius: var(--radius-sm);
+    font-size: 15px; font-weight: 600; letter-spacing: -0.005em;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    transition: transform 0.08s, background 0.2s;
+  }
+  .gps-btn:hover { background: #1A2332; }
+  .gps-btn:active { transform: scale(0.985); background: #050812; }
+  .gps-btn[disabled] { opacity: 0.6; pointer-events: none; }
+  .gps-btn svg { width: 18px; height: 18px; }
+
+  .gps-capturing .gps-empty-icon {
+    background: linear-gradient(135deg, var(--brand-blue), var(--brand-teal));
+    box-shadow: 0 8px 20px rgba(45,126,196,0.35);
+  }
+  .gps-capturing .gps-empty-icon svg { animation: spin 1.2s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .gps-result { display: none; }
+  .gps-result.show { display: block; }
+  .gps-accuracy-bar {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px; border-radius: var(--radius-sm);
+    margin-bottom: 12px;
+  }
+  .gps-accuracy-bar[data-quality="excellent"] { background: var(--success-soft); }
+  .gps-accuracy-bar[data-quality="good"]      { background: var(--warn-soft); }
+  .gps-accuracy-bar[data-quality="poor"]      { background: var(--danger-soft); }
+  .gps-accuracy-icon {
+    width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 18px; font-weight: 700;
+  }
+  .gps-accuracy-bar[data-quality="excellent"] .gps-accuracy-icon { background: var(--success); }
+  .gps-accuracy-bar[data-quality="good"]      .gps-accuracy-icon { background: var(--warn); }
+  .gps-accuracy-bar[data-quality="poor"]      .gps-accuracy-icon { background: var(--danger); }
+  .gps-accuracy-text { flex: 1; min-width: 0; }
+  .gps-accuracy-label { font-size: 14px; font-weight: 700; letter-spacing: -0.005em; }
+  .gps-accuracy-bar[data-quality="excellent"] .gps-accuracy-label { color: #0A6E3E; }
+  .gps-accuracy-bar[data-quality="good"]      .gps-accuracy-label { color: #7A4C10; }
+  .gps-accuracy-bar[data-quality="poor"]      .gps-accuracy-label { color: #9B241B; }
+  .gps-accuracy-value { font-size: 12px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+  .gps-coords {
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 11px; color: var(--ink-3);
+    padding: 10px 12px; background: var(--surface-2); border-radius: 8px;
+    margin-bottom: 12px;
+    letter-spacing: -0.01em;
+  }
+  .gps-actions { display: flex; gap: 8px; }
+  .gps-action-btn {
+    flex: 1; padding: 12px; font-size: 13px; font-weight: 600;
+    border: 1px solid var(--line-2); border-radius: var(--radius-sm);
+    background: var(--surface); color: var(--ink-2);
+    transition: all 0.15s;
+  }
+  .gps-action-btn:hover { background: var(--surface-2); border-color: var(--ink-3); color: var(--ink); }
+  .gps-action-btn:active { transform: scale(0.98); }
+
+  .gps-refining {
+    margin-top: 10px; padding: 10px 12px;
+    background: rgba(45,126,196,0.08);
+    border-radius: 8px;
+    font-size: 12px; color: var(--brand-blue);
+    display: none;
+    align-items: center; gap: 8px;
+  }
+  .gps-refining.show { display: flex; }
+  .gps-refining::before {
+    content: ''; width: 10px; height: 10px; border-radius: 50%;
+    background: var(--brand-blue); animation: pulse 1.6s ease-in-out infinite;
+  }
+
+  /* ================================================================
+     TYPE CHIPS — grid for consistent widths
+     ================================================================ */
+  .chips {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+  @media (min-width: 520px) {
+    .chips { grid-template-columns: repeat(3, 1fr); }
+  }
+  .chip {
+    padding: 12px 14px; font-size: 14px; font-weight: 600;
+    background: var(--surface); color: var(--ink-2);
+    border: 1.5px solid var(--line);
+    border-radius: 999px;
+    transition: all 0.15s;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .chip:hover { border-color: var(--ink-3); color: var(--ink); }
+  .chip:active { transform: scale(0.96); }
+  .chip[aria-pressed="true"] {
+    background: var(--ink); color: #fff; border-color: var(--ink);
+  }
+  .chip-icon { font-size: 16px; line-height: 1; width: 18px; text-align: center; flex-shrink: 0; }
+
+  /* ================================================================
+     PHOTO — button + preview
+     ================================================================ */
+  .photo-input { display: none; }
+  .photo-btn {
+    width: 100%; padding: 16px;
+    background: linear-gradient(135deg, var(--brand-teal), var(--brand-blue));
+    color: #fff;
+    border-radius: var(--radius-sm);
+    font-size: 15px; font-weight: 600; letter-spacing: -0.005em;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    transition: transform 0.08s, filter 0.2s;
+    box-shadow: 0 8px 20px rgba(45,126,196,0.28);
+    position: relative;
+    overflow: hidden;
+  }
+  .photo-btn::before {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(255,255,255,0.15), transparent 50%);
+    pointer-events: none;
+  }
+  .photo-btn:hover { filter: brightness(1.05); }
+  .photo-btn:active { transform: scale(0.985); }
+  .photo-btn svg { width: 18px; height: 18px; position: relative; z-index: 1; }
+  .photo-btn span { position: relative; z-index: 1; }
+
+  .photo-preview-wrap {
+    display: none;
+    position: relative;
+    margin-top: 10px;
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--surface-2);
+    box-shadow: var(--shadow);
+    animation: fadeUp 0.3s ease;
+  }
+  .photo-preview-wrap.show { display: block; }
+  .photo-preview {
+    width: 100%; height: auto; display: block;
+    max-height: 420px; object-fit: cover;
+  }
+  .photo-remove {
+    position: absolute; top: 10px; right: 10px;
+    width: 36px; height: 36px; border-radius: 50%;
+    background: rgba(15,20,32,0.85);
+    color: #fff;
+    display: flex;
+    align-items: center; justify-content: center;
+    font-size: 20px; font-weight: 600;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+  .photo-size-hint {
+    font-size: 11px; color: var(--ink-3); margin-top: 8px;
+    text-align: center;
+  }
+
+  /* ================================================================
+     FIELDS
+     ================================================================ */
+  .field { margin-bottom: 14px; }
+  .field:last-child { margin-bottom: 0; }
+  .field-label {
+    display: block; font-size: 12px; font-weight: 600;
+    color: var(--ink-2); margin-bottom: 6px;
+    letter-spacing: 0.01em;
+  }
+  .input, .textarea {
+    width: 100%; padding: 13px 14px;
+    background: var(--surface);
+    border: 1.5px solid var(--line);
+    border-radius: var(--radius-sm);
+    font-size: 15px; color: var(--ink);
+    transition: border-color 0.15s;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  .input:focus, .textarea:focus { border-color: var(--brand-blue); outline: none; }
+  .textarea { resize: none; min-height: 88px; font-family: inherit; line-height: 1.5; }
+  .input::placeholder, .textarea::placeholder { color: var(--ink-3); }
+
+  /* ================================================================
+     SUBMIT BAR — fixed on all screen sizes
+     ================================================================ */
+  .submit-bar {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 20;
+    padding: 14px 18px;
+    padding-bottom: calc(14px + env(safe-area-inset-bottom));
+    background: linear-gradient(to top, var(--bg) 55%, rgba(250,250,252,0));
+    pointer-events: none;
+  }
+  .submit-bar-inner { max-width: 640px; margin: 0 auto; pointer-events: auto; }
+
+  .submit-btn {
+    position: relative;
+    width: 100%; padding: 18px;
+    background: var(--gradient-brand);
+    color: #fff;
+    border-radius: var(--radius);
+    font-size: 16px; font-weight: 700; letter-spacing: -0.005em;
+    box-shadow: 0 12px 28px rgba(45,126,196,0.3), 0 2px 6px rgba(232,93,63,0.2);
+    transition: transform 0.08s, box-shadow 0.2s, filter 0.2s;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    overflow: hidden;
+  }
+  .submit-btn::before {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(255,255,255,0.15), transparent 50%);
+    pointer-events: none;
+  }
+  .submit-btn:hover:not([disabled]) { filter: brightness(1.05) saturate(1.1); }
+  .submit-btn:active:not([disabled]) { transform: translateY(1px); box-shadow: 0 6px 16px rgba(45,126,196,0.3); }
+  .submit-btn[disabled] {
+    background: var(--line-2); color: var(--surface);
+    box-shadow: none; cursor: not-allowed;
+  }
+  .submit-btn[disabled]::before { display: none; }
+  .submit-btn svg { width: 18px; height: 18px; position: relative; z-index: 1; }
+  .submit-btn span { position: relative; z-index: 1; }
+
+  /* ================================================================
+     TOAST
+     ================================================================ */
+  .toast {
+    position: fixed; top: 20px; left: 20px; right: 20px; z-index: 50;
+    max-width: 520px; margin: 0 auto;
+    padding: 14px 16px;
+    background: var(--ink); color: #fff;
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-lg);
+    font-size: 14px; font-weight: 500; line-height: 1.45;
+    display: flex; align-items: flex-start; gap: 10px;
+    transform: translateY(-120%); opacity: 0;
+    transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.3, 1.2), opacity 0.2s;
+    pointer-events: none;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; pointer-events: auto; }
+  .toast[data-type="success"] { background: var(--success); }
+  .toast[data-type="error"] { background: var(--danger); }
+  .toast[data-type="info"] { background: var(--brand-blue); }
+  .toast-icon { flex-shrink: 0; font-size: 18px; }
+
+  /* ================================================================
+     SUCCESS SCREEN
+     ================================================================ */
+  #screen-success.active {
+    align-items: center; justify-content: center;
+    padding: 48px 24px;
+  }
+  .success {
+    text-align: center;
+    max-width: 480px; width: 100%;
+    animation: fadeUp 0.4s ease;
+  }
+  .success-icon {
+    width: 96px; height: 96px; margin: 0 auto 24px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    animation: popIn 0.5s cubic-bezier(0.2, 0.9, 0.3, 1.4);
+    color: #fff;
+  }
+  .success-icon.sent { background: linear-gradient(135deg, var(--brand-green), var(--brand-teal)); box-shadow: 0 16px 32px rgba(62,189,95,0.35); }
+  .success-icon.queued { background: linear-gradient(135deg, var(--brand-orange), var(--brand-yellow)); box-shadow: 0 16px 32px rgba(243,148,39,0.35); }
+  .success-icon svg { width: 44px; height: 44px; }
+  @keyframes popIn { 0% { transform: scale(0); } 70% { transform: scale(1.12); } 100% { transform: scale(1); } }
+  .success-title {
+    font-family: var(--font-display);
+    font-size: 28px; font-weight: 800; letter-spacing: -0.025em;
+    margin-bottom: 12px;
+  }
+  .success-text {
+    font-size: 15px; color: var(--ink-2); line-height: 1.55;
+    margin-bottom: 22px;
+  }
+  .success-protocol {
+    display: inline-block;
+    padding: 10px 16px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 13px; font-weight: 600;
+    letter-spacing: 0.02em;
+    margin-bottom: 32px;
+    box-shadow: var(--shadow-sm);
+  }
+  .success-iphone-alert {
+    display: none;
+    margin-bottom: 24px; padding: 14px 16px;
+    background: var(--warn-soft);
+    border: 1px solid rgba(232,135,30,0.3);
+    border-radius: var(--radius-sm);
+    text-align: left;
+    font-size: 13px; line-height: 1.5; color: var(--ink-2);
+  }
+  .success-iphone-alert.show { display: block; }
+  .success-iphone-alert strong { color: #7A4C10; }
+  .new-report-btn {
+    width: 100%; padding: 16px;
+    background: var(--ink); color: #fff;
+    border-radius: var(--radius-sm);
+    font-size: 15px; font-weight: 600;
+    transition: background 0.2s;
+  }
+  .new-report-btn:hover { background: #1A2332; }
+  .new-report-btn:active { background: #050812; }
+</style>
+</head>
+<body>
+
+<!-- ========== SPLASH SCREEN ========== -->
+<div id="screen-splash" class="screen">
+  <div class="splash">
+    <div class="splash-logo">
+      <img src="./logo.png" alt="Ilumina Coruripe" loading="eager">
+    </div>
+    <h1 class="splash-title">Ilumina <em>Coruripe</em></h1>
+    <p class="splash-tagline">Reporte rapidamente os postes de iluminação pública que estão com defeito na sua rua ou no seu povoado.</p>
+
+    <div class="splash-steps">
+      <div class="splash-step">
+        <div class="splash-step-num">1</div>
+        <div class="splash-step-body">
+          <div class="splash-step-title">Capture a localização</div>
+          <div class="splash-step-desc">O GPS do celular identifica o poste com precisão de poucos metros.</div>
+        </div>
+      </div>
+      <div class="splash-step">
+        <div class="splash-step-num">2</div>
+        <div class="splash-step-body">
+          <div class="splash-step-title">Tire uma foto</div>
+          <div class="splash-step-desc">Uma imagem do poste ajuda a equipe técnica a resolver mais rápido.</div>
+        </div>
+      </div>
+      <div class="splash-step">
+        <div class="splash-step-num">3</div>
+        <div class="splash-step-body">
+          <div class="splash-step-title">Envie o reporte</div>
+          <div class="splash-step-desc">Pronto. A Secretaria recebe e agenda o atendimento.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="splash-offline">
+      <span style="font-size:18px;flex-shrink:0">📡</span>
+      <span><strong>Funciona sem sinal.</strong> Reportes feitos offline ficam salvos e são enviados automaticamente assim que a internet voltar.</span>
+    </div>
+
+    <button class="splash-btn" onclick="finishSplash()">
+      <span>Continuar</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+      </svg>
+    </button>
+
+    <div class="splash-progress">
+      <div class="splash-progress-bar" id="splash-progress-bar"></div>
+    </div>
+    <div class="splash-footer">Prefeitura Municipal de Coruripe — AL</div>
+  </div>
+</div>
+
+<!-- ========== REPORT SCREEN ========== -->
+<div id="screen-report" class="screen">
+
+  <header class="header">
+    <div class="header-inner">
+      <div class="brand">
+        <div class="brand-logo"><img src="./logo.png" alt="Ilumina Coruripe"></div>
+        <div class="brand-text">
+          <div class="brand-title">Ilumina Coruripe</div>
+          <div class="brand-sub">Reporte de defeitos</div>
+        </div>
+      </div>
+      <div id="status-pill" class="status-pill" data-state="online">
+        <span class="status-dot"></span>
+        <span id="status-text">Online</span>
+      </div>
+    </div>
+    <div id="pending-banner" class="pending-banner">
+      <span>📡</span>
+      <span id="pending-text"><span class="pending-count">0</span> reporte pendente</span>
+    </div>
+  </header>
+
+  <main>
+    <!-- LOCATION -->
+    <div class="section" data-color="red">
+      <div class="section-label">
+        <span class="section-label-dot"></span>
+        <span>Localização <span class="required">*</span></span>
+      </div>
+      <div id="gps-card" class="card gps-card">
+        <div id="gps-empty-state">
+          <div class="gps-empty">
+            <div class="gps-empty-icon" id="gps-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2v3"/><path d="M12 19v3"/><path d="M4.22 4.22l2.12 2.12"/><path d="M17.66 17.66l2.12 2.12"/>
+                <path d="M2 12h3"/><path d="M19 12h3"/><path d="M4.22 19.78l2.12-2.12"/><path d="M17.66 6.34l2.12-2.12"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+            </div>
+            <div class="gps-empty-text" id="gps-empty-text">Toque abaixo para capturar a localização do poste com o GPS do seu aparelho.</div>
+            <button class="gps-btn" id="gps-btn" onclick="startGps()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/>
+                <path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>
+              </svg>
+              <span id="gps-btn-text">Capturar localização</span>
+            </button>
+          </div>
+        </div>
+        <div id="gps-result" class="gps-result">
+          <div class="gps-accuracy-bar" id="gps-accuracy-bar">
+            <div class="gps-accuracy-icon" id="gps-accuracy-icon">✓</div>
+            <div class="gps-accuracy-text">
+              <div class="gps-accuracy-label" id="gps-accuracy-label">Excelente</div>
+              <div class="gps-accuracy-value" id="gps-accuracy-value">±6 m</div>
+            </div>
+          </div>
+          <div class="gps-coords" id="gps-coords">—</div>
+          <div class="gps-actions">
+            <button class="gps-action-btn" onclick="startGps()">Recapturar</button>
+            <button class="gps-action-btn" onclick="useGpsAnyway()" id="use-anyway-btn" style="display:none">Usar mesmo assim</button>
+          </div>
+          <div class="gps-refining" id="gps-refining">Refinando a precisão…</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TYPE -->
+    <div class="section" data-color="orange">
+      <div class="section-label">
+        <span class="section-label-dot"></span>
+        <span>Tipo de defeito <span class="required">*</span></span>
+      </div>
+      <div class="chips" id="type-chips">
+        <button class="chip" aria-pressed="false" data-value="apagado"><span class="chip-icon">🌑</span>Apagado</button>
+        <button class="chip" aria-pressed="false" data-value="queimada"><span class="chip-icon">💡</span>Queimada</button>
+        <button class="chip" aria-pressed="false" data-value="piscando"><span class="chip-icon">✨</span>Piscando</button>
+        <button class="chip" aria-pressed="false" data-value="aceso_dia"><span class="chip-icon">☀️</span>Aceso de dia</button>
+        <button class="chip" aria-pressed="false" data-value="quebrado"><span class="chip-icon">⚠️</span>Poste quebrado</button>
+        <button class="chip" aria-pressed="false" data-value="outro"><span class="chip-icon">❓</span>Outro</button>
+      </div>
+    </div>
+
+    <!-- PHOTO — button + preview -->
+    <div class="section" data-color="teal">
+      <div class="section-label">
+        <span class="section-label-dot"></span>
+        <span>Foto do poste <span class="required">*</span></span>
+      </div>
+      <input type="file" id="photo-input" class="photo-input" accept="image/*" capture="environment">
+      <label for="photo-input" class="photo-btn" id="photo-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+          <circle cx="12" cy="13" r="4"/>
+        </svg>
+        <span id="photo-btn-text">Tirar foto</span>
+      </label>
+      <div class="photo-preview-wrap" id="photo-preview-wrap">
+        <img id="photo-preview" class="photo-preview" alt="Foto capturada do poste">
+        <button type="button" class="photo-remove" onclick="removePhoto(event)" aria-label="Remover foto">×</button>
+      </div>
+      <div class="photo-size-hint" id="photo-size-hint"></div>
+    </div>
+
+    <!-- DESCRIPTION -->
+    <div class="section" data-color="blue">
+      <div class="section-label">
+        <span class="section-label-dot"></span>
+        <span>Descrição (opcional)</span>
+      </div>
+      <textarea class="textarea" id="descricao" placeholder="Ex: Poste em frente ao número 120, piscando há 3 dias" maxlength="500"></textarea>
+    </div>
+
+    <!-- CONTACT -->
+    <div class="section" data-color="purple">
+      <div class="section-label">
+        <span class="section-label-dot"></span>
+        <span>Seus dados (opcional)</span>
+      </div>
+      <div class="card">
+        <div class="field">
+          <label class="field-label" for="nome">Nome</label>
+          <input type="text" id="nome" class="input" placeholder="Seu nome" autocomplete="name" maxlength="80">
+        </div>
+        <div class="field">
+          <label class="field-label" for="tel">Telefone / WhatsApp</label>
+          <input type="tel" id="tel" class="input" placeholder="(82) 9 9999-9999" autocomplete="tel" inputmode="tel" maxlength="20">
+        </div>
+        <div class="field">
+          <label class="field-label" for="endereco">Endereço ou referência</label>
+          <input type="text" id="endereco" class="input" placeholder="Rua, bairro, povoado…" autocomplete="street-address" maxlength="120">
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div class="submit-bar">
+    <div class="submit-bar-inner">
+      <button class="submit-btn" id="submit-btn" disabled onclick="submitReport()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+        </svg>
+        <span id="submit-btn-text">Enviar reporte</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== SUCCESS SCREEN ========== -->
+<div id="screen-success" class="screen">
+  <div class="success">
+    <div class="success-icon" id="success-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+      </svg>
+    </div>
+    <h2 class="success-title" id="success-title">Reporte enviado</h2>
+    <p class="success-text" id="success-text">A equipe técnica da Prefeitura recebeu seu reporte e vai verificar o local.</p>
+    <div class="success-protocol" id="success-protocol">Protocolo: —</div>
+    <div class="success-iphone-alert" id="iphone-alert">
+      <strong>⚠️ Importante:</strong> no iPhone, para garantir que seus reportes offline sejam enviados, <strong>reabra este app</strong> quando chegar em uma área com sinal de internet ou Wi-Fi.
+    </div>
+    <button class="new-report-btn" onclick="resetForm()">Fazer novo reporte</button>
+  </div>
+</div>
+
+<!-- ========== POSTE INFO (vindo do QR) ========== -->
+<div id="screen-poste-info" class="screen">
+  <div class="success" style="padding:24px 20px">
+    <div id="poste-info-content">
+      <div style="text-align:center;padding:40px 0;color:#666">Verificando poste…</div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== TOAST ========== -->
+<div id="toast" class="toast" role="status" aria-live="polite">
+  <span class="toast-icon" id="toast-icon">ℹ️</span>
+  <span id="toast-text"></span>
+</div>
+
+<script>
+// ==============================================================
+// ILUMINA CORURIPE v2.2 — splash + button photo
+// Backend/data layer IDENTICAL to v2.
+// ==============================================================
+
+const ENDPOINT = window.ILUMINA.ENDPOINT_CIDADAO;
+const ENDPOINT_TECNICO = window.ILUMINA.ENDPOINT_TECNICO;
+const DB_NAME = 'ilumina_v2';
+const DB_VERSION = 1;
+const STORE = 'reports';
+const SPLASH_DURATION_MS = 5000;
+
+const state = {
+  gps: null, gpsStartedAt: 0, watchId: null,
+  tipo: null, foto: null, fotoSize: 0,
+  submitting: false,
+  poste_id: '',          // QR: ID do poste lido (?poste=P-0001)
+  poste_info: null       // dados do poste vindos do check_poste
+};
+const $ = (id) => document.getElementById(id);
+const screens = {
+  splash: $('screen-splash'),
+  report: $('screen-report'),
+  success: $('screen-success'),
+  posteInfo: $('screen-poste-info')
+};
+let splashTimer = null;
+
+// ==============================================================
+// SCREEN ROUTING
+// ==============================================================
+function showScreen(name) {
+  Object.values(screens).forEach(s => s.classList.remove('active'));
+  screens[name].classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+// ==============================================================
+// SPLASH
+// ==============================================================
+function startSplash() {
+  showScreen('splash');
+  // Kick off the progress bar animation on next frame to ensure transition runs
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      const bar = $('splash-progress-bar');
+      if (bar) bar.classList.add('running');
+    });
+  });
+  splashTimer = setTimeout(() => { finishSplash(); }, SPLASH_DURATION_MS);
+}
+
+function finishSplash() {
+  if (splashTimer) { clearTimeout(splashTimer); splashTimer = null; }
+  // Se veio com ?poste=P-XXXX no link (QR), tenta verificar o poste antes
+  if (state.poste_id) {
+    verificarPosteQR();
+  } else {
+    showScreen('report');
+  }
+}
+
+/* ── QR DO POSTE: anti-duplicata + pré-preenchimento ── */
+function lerPosteDaURL() {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    let p = (params.get('poste') || '').trim().toUpperCase();
+    if (!p) return '';
+    // Normaliza P0001 → P-0001
+    if (/^P\d+$/i.test(p)) p = p.replace(/^P/i, 'P-');
+    if (!/^P-\d+$/.test(p)) return '';
+    return p;
+  } catch (e) { return ''; }
+}
+
+async function verificarPosteQR() {
+  showScreen('posteInfo');
+  const box = $('poste-info-content');
+  box.innerHTML = '<div style="text-align:center;padding:50px 0"><div style="font-size:36px;margin-bottom:14px">📡</div><div style="font-size:15px;color:#666;font-weight:600">Verificando poste ' + state.poste_id + '…</div></div>';
+
+  if (!navigator.onLine) {
+    return mostrarPosteInfoOffline();
+  }
+
+  try {
+    const ctrl = new AbortController();
+    const to = setTimeout(() => ctrl.abort(), 25000);
+    const body = new URLSearchParams();
+    body.append('payload', JSON.stringify({ action: 'check_poste', poste_id: state.poste_id }));
+    const resp = await fetch(ENDPOINT_TECNICO, { method: 'POST', body: body, signal: ctrl.signal });
+    clearTimeout(to);
+    const data = await resp.json();
+    if (!data || !data.success) throw new Error('resp');
+    if (!data.existe) {
+      // Poste não encontrado na base — segue fluxo normal sem pré-preencher
+      state.poste_id = '';
+      state.poste_info = null;
+      showScreen('report');
+      showToast('info', 'Poste ainda não cadastrado. Continue normalmente.');
+      return;
+    }
+    state.poste_info = data.poste;
+    if (data.chamado_aberto) {
+      mostrarChamadoJaAberto(data.chamado_aberto, data.poste);
+    } else {
+      mostrarPosteOkPreenchido(data.poste);
+    }
+  } catch (e) {
+    mostrarPosteInfoOffline();
+  }
+}
+
+function mostrarChamadoJaAberto(aberto, poste) {
+  const box = $('poste-info-content');
+  box.innerHTML = `
+    <div style="text-align:center">
+      <div style="width:96px;height:96px;margin:0 auto 18px;background:linear-gradient(135deg,#3EBD5F,#0A6E3E);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:48px">✓</div>
+      <h2 style="font-size:22px;font-weight:800;margin:0 0 8px 0;color:#0A6E3E;line-height:1.2">Já temos um chamado<br>aberto para este poste</h2>
+      <p style="font-size:14px;color:#444;line-height:1.55;margin:0 0 18px 0">
+        Obrigado pela sua colaboração! A equipe técnica já foi avisada<br>e vai atender o local em breve.
+      </p>
+      <div style="background:#F4F5F8;border-radius:10px;padding:14px 16px;text-align:left;font-size:13px;line-height:1.6;margin-bottom:18px">
+        <div style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:0.06em;font-weight:700;margin-bottom:4px">Chamado em aberto</div>
+        <div><b>Protocolo:</b> <span style="font-family:monospace">${esc(aberto.protocolo)}</span></div>
+        <div><b>Tipo:</b> ${esc(aberto.tipo || '—')}</div>
+        <div><b>Aberto em:</b> ${esc(aberto.data || '—')}</div>
+        ${aberto.descricao ? `<div style="margin-top:6px;color:#555">"${esc(aberto.descricao)}"</div>` : ''}
+      </div>
+      <div style="background:#FFF8EC;border-left:3px solid #F39427;border-radius:6px;padding:10px 14px;font-size:12.5px;color:#7a4a0a;text-align:left;margin-bottom:18px;line-height:1.5">
+        <b>Poste ${esc(poste.id)}</b>${poste.codigo ? ' — ' + esc(poste.codigo) : ''}<br>
+        ${poste.rua ? '📍 ' + esc(poste.rua) : ''}${poste.bairro ? ' · ' + esc(poste.bairro) : ''}
+      </div>
+      <button onclick="reportarMesmoAssim()" style="background:transparent;border:1.5px solid #ddd;color:#666;padding:11px 18px;border-radius:99px;font-size:13px;font-weight:600;cursor:pointer;margin-bottom:8px">
+        Reportar outro problema mesmo assim
+      </button>
+    </div>`;
+}
+
+function mostrarPosteOkPreenchido(poste) {
+  const box = $('poste-info-content');
+  const localTxt = [poste.rua, poste.bairro].filter(Boolean).join(' · ');
+  box.innerHTML = `
+    <div style="text-align:center">
+      <div style="width:88px;height:88px;margin:0 auto 16px;background:linear-gradient(135deg,#2D7EC4,#7B4FC0);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:42px">📍</div>
+      <h2 style="font-size:22px;font-weight:800;margin:0 0 6px 0;color:#0F1420;line-height:1.2">Reportar defeito</h2>
+      <div style="font-family:ui-monospace,monospace;font-size:15px;font-weight:700;color:#2D7EC4;margin-bottom:14px">${esc(poste.id)}${poste.codigo ? ' · ' + esc(poste.codigo) : ''}</div>
+      <div style="background:#F4F5F8;border-radius:10px;padding:14px 16px;text-align:left;font-size:13px;line-height:1.6;margin-bottom:18px">
+        ${localTxt ? '<div>📍 ' + esc(localTxt) + '</div>' : ''}
+        ${poste.referencia ? '<div style="color:#555;font-style:italic;margin-top:4px">"' + esc(poste.referencia) + '"</div>' : ''}
+        <div style="font-size:11.5px;color:#666;margin-top:8px">Este poste já foi atendido ${poste.qtd} vez${poste.qtd > 1 ? 'es' : ''} pela equipe.</div>
+      </div>
+      <p style="font-size:13.5px;color:#444;line-height:1.55;margin:0 0 20px 0">
+        Você não precisa informar endereço nem GPS — já identificamos o poste pelo QR code. Continue para escolher o tipo de defeito e enviar uma foto.
+      </p>
+      <button onclick="continuarReporteComPoste()" style="background:linear-gradient(95deg,#2D7EC4,#7B4FC0);color:#fff;border:none;padding:14px 26px;border-radius:99px;font-size:14px;font-weight:700;cursor:pointer;width:100%;max-width:280px">
+        Continuar reporte
+      </button>
+    </div>`;
+}
+
+function mostrarPosteInfoOffline() {
+  const box = $('poste-info-content');
+  box.innerHTML = `
+    <div style="text-align:center">
+      <div style="width:88px;height:88px;margin:0 auto 16px;background:linear-gradient(135deg,#2D7EC4,#7B4FC0);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:42px">📍</div>
+      <h2 style="font-size:22px;font-weight:800;margin:0 0 8px 0;color:#0F1420;line-height:1.2">Poste ${esc(state.poste_id)}<br>identificado</h2>
+      <p style="font-size:13.5px;color:#444;line-height:1.55;margin:0 0 18px 0">
+        Pode reportar normalmente.<br>
+        Sem internet agora, seu reporte fica salvo no aparelho e é enviado automaticamente assim que o sinal voltar.
+      </p>
+      <button onclick="continuarReporteComPoste()" style="background:linear-gradient(95deg,#2D7EC4,#7B4FC0);color:#fff;border:none;padding:14px 26px;border-radius:99px;font-size:14px;font-weight:700;cursor:pointer;width:100%;max-width:280px">
+        Continuar reporte
+      </button>
+    </div>`;
+}
+
+function continuarReporteComPoste() {
+  showScreen('report');
+  // Pré-preenche endereço se temos a info do poste
+  if (state.poste_info) {
+    const partes = [state.poste_info.rua, state.poste_info.referencia, state.poste_info.bairro].filter(Boolean);
+    if (partes.length) $('endereco').value = partes.join(' — ');
+  }
+
+  // QR identificou o poste → SEMPRE esconde a seção de GPS (o cidadão está no poste)
+  const gpsCard = $('gps-card');
+  const gpsSection = gpsCard ? gpsCard.closest('.section') : null;
+  if (gpsSection) gpsSection.style.display = 'none';
+
+  // GPS: prefere coords salvas do poste; senão tenta GPS do aparelho em background
+  const posteLat = state.poste_info ? parseFloat(state.poste_info.lat) : NaN;
+  const posteLng = state.poste_info ? parseFloat(state.poste_info.lng) : NaN;
+  if (isFinite(posteLat) && isFinite(posteLng) && (posteLat !== 0 || posteLng !== 0)) {
+    state.gps = { lat: posteLat, lng: posteLng, acc: 10 };
+  } else {
+    // Sem coords no banco — placeholder pra liberar envio + GPS silencioso opcional
+    state.gps = { lat: null, lng: null, acc: null };
+    if (navigator.geolocation && navigator.geolocation.getCurrentPosition) {
+      try {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            if (state.poste_id && pos && pos.coords) {
+              state.gps = {
+                lat: pos.coords.latitude,
+                lng: pos.coords.longitude,
+                acc: pos.coords.accuracy || 30
+              };
+            }
+          },
+          () => { /* sem permissão ou timeout — segue sem GPS real */ },
+          { enableHighAccuracy: false, timeout: 8000, maximumAge: 60000 }
+        );
+      } catch (e) {}
+    }
+  }
+  if (typeof validateForm === 'function') validateForm();
+
+  // Banner indicando que estamos no fluxo do QR
+  let banner = $('qr-banner');
+  if (!banner) {
+    banner = document.createElement('div');
+    banner.id = 'qr-banner';
+    banner.style.cssText = 'background:linear-gradient(95deg,#2D7EC4,#7B4FC0);color:#fff;padding:12px 14px;border-radius:10px;margin-bottom:14px;font-size:13px;line-height:1.4;display:flex;align-items:center;gap:10px';
+    const screen = $('screen-report');
+    const main = screen.querySelector('main, .container, form, .form, section') || screen;
+    main.insertBefore(banner, main.firstChild);
+  }
+  const codigo = state.poste_info && state.poste_info.codigo ? ' · ' + state.poste_info.codigo : '';
+  banner.innerHTML = `<span style="font-size:18px">📍</span><div style="flex:1"><b>Poste identificado:</b> ${esc(state.poste_id)}${codigo}<br><span style="font-size:11.5px;opacity:0.9">📍 Localização e endereço já preenchidos</span></div>`;
+}
+
+function reportarMesmoAssim() {
+  continuarReporteComPoste();
+}
+
+function esc(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+// ==============================================================
+// CONNECTIVITY
+// ==============================================================
+function updateOnlineStatus() {
+  const online = navigator.onLine;
+  const pill = $('status-pill');
+  const txt = $('status-text');
+  if (pill) {
+    pill.dataset.state = online ? 'online' : 'offline';
+    txt.textContent = online ? 'Online' : 'Sem sinal';
+  }
+  if (online) flushQueue();
+}
+window.addEventListener('online', updateOnlineStatus);
+window.addEventListener('offline', updateOnlineStatus);
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden && navigator.onLine) flushQueue();
+});
+
+// ==============================================================
+// INDEXEDDB — offline queue
+// ==============================================================
+function openDb() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(DB_NAME, DB_VERSION);
+    req.onupgradeneeded = (e) => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains(STORE)) db.createObjectStore(STORE, { keyPath: 'id', autoIncrement: true });
+    };
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+async function dbAdd(payload) {
+  const db = await openDb();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE, 'readwrite');
+    const req = tx.objectStore(STORE).add({ payload, createdAt: Date.now(), attempts: 0 });
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+async function dbGetAll() {
+  const db = await openDb();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE, 'readonly');
+    const req = tx.objectStore(STORE).getAll();
+    req.onsuccess = () => resolve(req.result || []);
+    req.onerror = () => reject(req.error);
+  });
+}
+async function dbDelete(id) {
+  const db = await openDb();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE, 'readwrite');
+    const req = tx.objectStore(STORE).delete(id);
+    req.onsuccess = () => resolve();
+    req.onerror = () => reject(req.error);
+  });
+}
+async function dbUpdateAttempts(id, attempts, lastError) {
+  const db = await openDb();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE, 'readwrite');
+    const store = tx.objectStore(STORE);
+    const g = store.get(id);
+    g.onsuccess = () => {
+      const r = g.result;
+      if (!r) return resolve();
+      r.attempts = attempts; r.lastError = lastError;
+      store.put(r);
+    };
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
+}
+async function updatePendingBanner() {
+  try {
+    const all = await dbGetAll();
+    const banner = $('pending-banner');
+    const txt = $('pending-text');
+    if (!banner) return;
+    if (all.length > 0) {
+      txt.innerHTML = `<span class="pending-count">${all.length}</span> ${all.length === 1 ? 'reporte pendente' : 'reportes pendentes'} — ser${all.length === 1 ? 'á' : 'ão'} enviado${all.length === 1 ? '' : 's'} quando houver sinal`;
+      banner.classList.add('show');
+    } else banner.classList.remove('show');
+  } catch(e) { console.error('updatePendingBanner', e); }
+}
+async function flushQueue() {
+  if (!navigator.onLine) return;
+  if (ENDPOINT.startsWith('__')) return;
+  let all;
+  try { all = await dbGetAll(); } catch(e) { return; }
+  if (all.length === 0) return;
+  const MAX_ATTEMPTS = 5;
+  for (const rec of all) {
+    // Descarta items que já falharam muitas vezes (item-zumbi)
+    if ((rec.attempts || 0) >= MAX_ATTEMPTS) {
+      console.warn('flushQueue: descartando item após', rec.attempts, 'tentativas', rec.payload && rec.payload.protocolo);
+      try { await dbDelete(rec.id); } catch(_) {}
+      continue;
+    }
+    try {
+      const resp = await postReport(rec.payload);
+      if (resp && resp.ok) {
+        await dbDelete(rec.id);
+      } else {
+        // Servidor respondeu mas rejeitou — incrementa e segue pro próximo
+        await dbUpdateAttempts(rec.id, (rec.attempts || 0) + 1, (resp && resp.error) || 'server error');
+        continue;
+      }
+    } catch (err) {
+      // Erro de rede/timeout — incrementa e segue pro próximo (não para o loop)
+      try { await dbUpdateAttempts(rec.id, (rec.attempts || 0) + 1, err && err.message || 'network error'); } catch(_) {}
+      continue;
+    }
+  }
+  updatePendingBanner();
+}
+
+// ==============================================================
+// GPS
+// ==============================================================
+function qualityOf(acc) {
+  if (acc <= 10) return 'excellent';
+  if (acc <= 25) return 'good';
+  return 'poor';
+}
+const qualityLabel = (q) => ({ excellent: 'Excelente', good: 'Boa', poor: 'Imprecisa' }[q]);
+const qualityIcon  = (q) => ({ excellent: '✓', good: '~', poor: '!' }[q]);
+
+function startGps() {
+  if (!navigator.geolocation) { showToast('error', 'Seu navegador não suporta GPS'); return; }
+  if (state.watchId !== null) { navigator.geolocation.clearWatch(state.watchId); state.watchId = null; }
+  state.gpsStartedAt = Date.now();
+  state.gps = null;
+
+  $('gps-empty-state').style.display = 'block';
+  $('gps-result').classList.remove('show');
+  $('gps-btn').disabled = true;
+  $('gps-btn-text').textContent = 'Capturando…';
+  $('gps-icon-wrap').parentElement.parentElement.classList.add('gps-capturing');
+  $('gps-empty-text').textContent = 'Aguarde, obtendo sinal do satélite…';
+
+  setTimeout(() => {
+    if (state.gps && state.gps.acc > 15) $('use-anyway-btn').style.display = 'block';
+  }, 15000);
+
+  const timeout = setTimeout(() => {
+    if (!state.gps) {
+      stopGps();
+      $('gps-btn').disabled = false;
+      $('gps-btn-text').textContent = 'Tentar de novo';
+      $('gps-empty-text').textContent = 'Não foi possível obter o sinal do GPS. Vá para uma área aberta e tente novamente.';
+      $('gps-icon-wrap').parentElement.parentElement.classList.remove('gps-capturing');
+      showToast('error', 'Sem sinal de GPS. Tente em área aberta.');
+    }
+  }, 45000);
+
+  state.watchId = navigator.geolocation.watchPosition(
+    (pos) => {
+      clearTimeout(timeout);
+      const { latitude, longitude, accuracy } = pos.coords;
+      if (!state.gps || accuracy < state.gps.acc) state.gps = { lat: latitude, lng: longitude, acc: accuracy };
+      renderGpsResult();
+      if (state.gps.acc <= 10) { stopGps(); $('gps-refining').classList.remove('show'); }
+      else $('gps-refining').classList.add('show');
+      if (Date.now() - state.gpsStartedAt > 30000) { stopGps(); $('gps-refining').classList.remove('show'); }
+    },
+    (err) => {
+      clearTimeout(timeout);
+      stopGps();
+      $('gps-btn').disabled = false;
+      $('gps-icon-wrap').parentElement.parentElement.classList.remove('gps-capturing');
+      let msg = 'Erro no GPS';
+      if (err.code === 1) msg = 'Permissão de localização negada. Ative nas configurações do navegador.';
+      else if (err.code === 2) msg = 'GPS indisponível. Verifique se a localização está ativada no celular.';
+      else if (err.code === 3) msg = 'Tempo esgotado. Tente em área aberta.';
+      $('gps-empty-text').textContent = msg;
+      $('gps-btn-text').textContent = 'Tentar de novo';
+      showToast('error', msg);
+    },
+    { enableHighAccuracy: true, maximumAge: 0, timeout: 30000 }
+  );
+}
+function stopGps() {
+  if (state.watchId !== null) { navigator.geolocation.clearWatch(state.watchId); state.watchId = null; }
+}
+function renderGpsResult() {
+  if (!state.gps) return;
+  const q = qualityOf(state.gps.acc);
+  $('gps-empty-state').style.display = 'none';
+  $('gps-result').classList.add('show');
+  const bar = $('gps-accuracy-bar');
+  bar.dataset.quality = q;
+  $('gps-accuracy-icon').textContent = qualityIcon(q);
+  $('gps-accuracy-label').textContent = qualityLabel(q);
+  $('gps-accuracy-value').textContent = `±${Math.round(state.gps.acc)} m`;
+  $('gps-coords').textContent = `${state.gps.lat.toFixed(6)}, ${state.gps.lng.toFixed(6)}`;
+  $('use-anyway-btn').style.display = q === 'poor' ? 'block' : 'none';
+  validateForm();
+}
+function useGpsAnyway() {
+  stopGps();
+  $('gps-refining').classList.remove('show');
+  showToast('info', 'Usando localização atual mesmo com baixa precisão');
+}
+
+// ==============================================================
+// TYPE CHIPS
+// ==============================================================
+document.querySelectorAll('#type-chips .chip').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('#type-chips .chip').forEach(c => c.setAttribute('aria-pressed', 'false'));
+    btn.setAttribute('aria-pressed', 'true');
+    state.tipo = btn.dataset.value;
+    validateForm();
+  });
+});
+
+// ==============================================================
+// PHOTO — button + preview
+// ==============================================================
+$('photo-input').addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  try {
+    showToast('info', 'Processando foto…');
+    const dataUrl = await resizeImage(file, 1280, 0.75);
+    state.foto = dataUrl;
+    state.fotoSize = Math.round(dataUrl.length * 0.75 / 1024);
+    $('photo-preview').src = dataUrl;
+    $('photo-preview-wrap').classList.add('show');
+    $('photo-btn-text').textContent = 'Trocar foto';
+    $('photo-size-hint').textContent = `Foto pronta (~${state.fotoSize} KB)`;
+    validateForm();
+  } catch (err) { console.error(err); showToast('error', 'Erro ao processar a foto'); }
+});
+function removePhoto(ev) {
+  ev.preventDefault(); ev.stopPropagation();
+  state.foto = null; state.fotoSize = 0;
+  $('photo-input').value = '';
+  $('photo-preview').src = '';
+  $('photo-preview-wrap').classList.remove('show');
+  $('photo-btn-text').textContent = 'Tirar foto';
+  $('photo-size-hint').textContent = '';
+  validateForm();
+}
+function resizeImage(file, maxDim, quality) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        let { width, height } = img;
+        if (width > height && width > maxDim) { height = Math.round(height * maxDim / width); width = maxDim; }
+        else if (height > maxDim) { width = Math.round(width * maxDim / height); height = maxDim; }
+        const canvas = document.createElement('canvas');
+        canvas.width = width; canvas.height = height;
+        canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.onerror = reject;
+      img.src = reader.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+// ==============================================================
+// VALIDATE + SUBMIT
+// ==============================================================
+function validateForm() {
+  const ok = state.gps && state.tipo && state.foto;
+  $('submit-btn').disabled = !ok || state.submitting;
+}
+function generateProtocol() {
+  const d = new Date();
+  const ymd = `${d.getFullYear().toString().slice(-2)}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}`;
+  const rnd = Math.random().toString(36).slice(2, 7).toUpperCase();
+  return `IC-${ymd}-${rnd}`;
+}
+function buildPayload() {
+  return {
+    protocolo: generateProtocol(),
+    timestamp: new Date().toISOString(),
+    tipo: state.tipo,
+    lat: state.gps.lat, lng: state.gps.lng, acc: Math.round(state.gps.acc),
+    descricao: $('descricao').value.trim(),
+    nome: $('nome').value.trim(),
+    tel: $('tel').value.trim(),
+    endereco: $('endereco').value.trim(),
+    foto_base64: state.foto,
+    poste_id: state.poste_id || '',
+    user_agent: navigator.userAgent.slice(0, 180)
+  };
+}
+async function postReport(payload) {
+  const ctrl = new AbortController();
+  const to = setTimeout(() => ctrl.abort(), 60000); // 60s
+  try {
+    // Envia como form-urlencoded pra evitar preflight CORS em Apps Script.
+    // O servidor lê via e.postData.contents igual ao text/plain.
+    const formBody = new URLSearchParams();
+    formBody.append('payload', JSON.stringify(payload));
+    const resp = await fetch(ENDPOINT, {
+      method: 'POST',
+      mode: 'cors',
+      redirect: 'follow',
+      body: formBody,
+      signal: ctrl.signal
+    });
+    const text = await resp.text();
+    try { return JSON.parse(text); } catch { return { ok: false, error: 'resposta inválida do servidor' }; }
+  } finally {
+    clearTimeout(to);
+  }
+}
+async function submitReport() {
+  if (state.submitting) return;
+  state.submitting = true;
+  $('submit-btn').disabled = true;
+  $('submit-btn-text').textContent = 'Enviando…';
+
+  const payload = buildPayload();
+
+  if (navigator.onLine && !ENDPOINT.startsWith('__')) {
+    try {
+      const resp = await postReport(payload);
+      if (resp.ok) { onSubmitSuccess(payload, 'sent'); return; }
+      throw new Error(resp.error || 'server error');
+    } catch (err) {
+      console.warn('Submit online falhou, enfileirando:', err);
+      try { await dbAdd(payload); onSubmitSuccess(payload, 'queued'); }
+      catch (e2) {
+        state.submitting = false;
+        $('submit-btn').disabled = false;
+        $('submit-btn-text').textContent = 'Enviar reporte';
+        showToast('error', 'Erro ao salvar o reporte. Tente de novo.');
+      }
+      return;
+    }
+  }
+  try { await dbAdd(payload); onSubmitSuccess(payload, 'queued'); }
+  catch (e) {
+    state.submitting = false;
+    $('submit-btn').disabled = false;
+    $('submit-btn-text').textContent = 'Enviar reporte';
+    showToast('error', 'Erro ao salvar. Tente de novo.');
+  }
+}
+function onSubmitSuccess(payload, mode) {
+  state.submitting = false;
+  $('submit-btn-text').textContent = 'Enviar reporte';
+
+  // Se veio do QR e o envio foi online, vincula o Poste ID na planilha
+  if (mode === 'sent' && state.poste_id && payload && payload.protocolo) {
+    try {
+      const body = new URLSearchParams();
+      body.append('payload', JSON.stringify({
+        action: 'link_poste',
+        protocolo: payload.protocolo,
+        poste_id: state.poste_id
+      }));
+      // fire-and-forget — não bloqueia a UX se falhar
+      fetch(ENDPOINT_TECNICO, { method: 'POST', body: body, keepalive: true }).catch(() => {});
+    } catch (e) { /* silencioso */ }
+  }
+
+  const icon = $('success-icon');
+  const title = $('success-title');
+  const text = $('success-text');
+  const alertBox = $('iphone-alert');
+  icon.classList.remove('sent', 'queued');
+  if (mode === 'sent') {
+    icon.classList.add('sent');
+    icon.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>';
+    title.textContent = 'Reporte enviado';
+    text.textContent = 'A equipe técnica da Prefeitura recebeu seu reporte e vai verificar o local.';
+    alertBox.classList.remove('show');
+  } else {
+    icon.classList.add('queued');
+    icon.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>';
+    title.textContent = 'Salvo sem sinal';
+    text.textContent = 'Seu reporte foi salvo no aparelho e será enviado automaticamente quando houver internet.';
+    const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    alertBox.classList.toggle('show', isIos);
+  }
+  $('success-protocol').textContent = 'Protocolo: ' + payload.protocolo;
+  updatePendingBanner();
+  showScreen('success');
+}
+function resetForm() {
+  state.gps = null; state.tipo = null; state.foto = null; state.fotoSize = 0;
+  state.submitting = false;
+  state.poste_id = ''; state.poste_info = null;
+  const qrBanner = document.getElementById('qr-banner');
+  if (qrBanner && qrBanner.parentNode) qrBanner.parentNode.removeChild(qrBanner);
+  const gpsCard = document.getElementById('gps-card');
+  const gpsSection = gpsCard ? gpsCard.closest('.section') : null;
+  if (gpsSection) gpsSection.style.display = '';
+  stopGps();
+  $('gps-empty-state').style.display = 'block';
+  $('gps-result').classList.remove('show');
+  $('gps-btn').disabled = false;
+  $('gps-btn-text').textContent = 'Capturar localização';
+  $('gps-empty-text').textContent = 'Toque abaixo para capturar a localização do poste com o GPS do seu aparelho.';
+  $('gps-icon-wrap').parentElement.parentElement.classList.remove('gps-capturing');
+  $('use-anyway-btn').style.display = 'none';
+  $('gps-refining').classList.remove('show');
+  document.querySelectorAll('#type-chips .chip').forEach(c => c.setAttribute('aria-pressed', 'false'));
+  $('photo-input').value = '';
+  $('photo-preview').src = '';
+  $('photo-preview-wrap').classList.remove('show');
+  $('photo-btn-text').textContent = 'Tirar foto';
+  $('photo-size-hint').textContent = '';
+  $('descricao').value = '';
+  validateForm();
+  showScreen('report');
+  window.scrollTo(0, 0);
+}
+
+// ==============================================================
+// TOAST
+// ==============================================================
+let toastTimer = null;
+function showToast(type, msg, duration = 3000) {
+  const toast = $('toast');
+  $('toast-icon').textContent = { success: '✓', error: '✕', info: 'ℹ', warn: '⚠' }[type] || 'ℹ';
+  $('toast-text').textContent = msg;
+  toast.dataset.type = type;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), duration);
+}
+
+// ==============================================================
+// SERVICE WORKER
+// ==============================================================
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(err => console.warn('SW registration failed:', err));
+  });
+}
+
+// ==============================================================
+// INIT
+// ==============================================================
+(function init() {
+  state.poste_id = lerPosteDaURL();
+  updateOnlineStatus();
+  updatePendingBanner();
+  startSplash();
+  setInterval(() => { if (navigator.onLine) flushQueue(); }, 60000);
+})();
+
+window.startGps = startGps;
+window.useGpsAnyway = useGpsAnyway;
+window.removePhoto = removePhoto;
+window.submitReport = submitReport;
+window.resetForm = resetForm;
+window.finishSplash = finishSplash;
+window.continuarReporteComPoste = continuarReporteComPoste;
+window.reportarMesmoAssim = reportarMesmoAssim;
+</script>
+</body>
+</html>
