@@ -1,10 +1,12 @@
 // ILUMINA CORURIPE TÉCNICO — Service Worker
-const CACHE_NAME = 'ilumina-tec-v16-camadas-2026-11-04';
+const CACHE_NAME = 'ilumina-tec-v19-modal-2026-11-05';
 const APP_SHELL = [
   './',
   './index.html',
   './manifest.json',
   '../shared/config.js',
+  '../shared/design-tokens.css',
+  '../tecnico.css',
   '../shared/infrastructure/config.js',
   '../shared/infrastructure/idb.js',
   '../shared/infrastructure/ApiClient.js',
