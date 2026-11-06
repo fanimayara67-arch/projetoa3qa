@@ -6,7 +6,6 @@
 <title>Ilumina Coruripe — Técnico</title>
 <link rel="stylesheet" href="./leaflet.css"/>
 <script src="./leaflet.js" defer></script>
-<script src="./jsQR.js" defer></script>
 <link rel="manifest" href="./manifest.json"/>
 <script src="../shared/config.js"></script>
 <link rel="icon" type="image/png" href="./icon-192.png"/>
@@ -893,8 +892,8 @@ textarea.input { resize: vertical; min-height: 84px; line-height: 1.5; font-fami
   <div class="body">
 
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:8px">
-      <button onclick="abrirLeitorQR()" style="background:transparent;border:1px solid var(--line);color:var(--ink-2);font-size:11.5px;font-weight:600;padding:6px 11px;border-radius:99px;cursor:pointer;display:inline-flex;align-items:center;gap:5px">
-        📷 Ler QR
+      <button onclick="abrirBuscaPoste()" style="background:transparent;border:1px solid var(--line);color:var(--ink-2);font-size:11.5px;font-weight:600;padding:6px 11px;border-radius:99px;cursor:pointer;display:inline-flex;align-items:center;gap:5px">
+        🔎 Buscar poste
       </button>
       <button onclick="abrirAlmox()" style="background:transparent;border:1px solid var(--line);color:var(--ink-2);font-size:11.5px;font-weight:600;padding:6px 11px;border-radius:99px;cursor:pointer;display:inline-flex;align-items:center;gap:5px">
         🧰 Gestão de Material
@@ -1151,7 +1150,7 @@ textarea.input { resize: vertical; min-height: 84px; line-height: 1.5; font-fami
         <div class="card-ico" style="background:linear-gradient(135deg,#3EBD5F,#0A6E3E);color:#fff">📍</div>
         <div>
           <div class="card-title">Relatório de postes</div>
-          <div class="card-sub">Postes cadastrados + foto + QR code</div>
+          <div class="card-sub">Postes cadastrados + foto</div>
         </div>
       </div>
       <div style="display:flex;gap:8px;margin-top:12px">
@@ -1160,38 +1159,8 @@ textarea.input { resize: vertical; min-height: 84px; line-height: 1.5; font-fami
           <input class="input" type="text" id="postes-bairro" placeholder="Ex.: Centro" style="margin-top:3px"/>
         </div>
       </div>
-      <div style="font-size:11px;color:var(--ink-3);margin-top:6px;line-height:1.4">Cada poste recebe um QR code com link pra abertura de chamado.</div>
       <button class="btn" style="margin-top:12px;background:linear-gradient(95deg,#3EBD5F,#0A6E3E);color:#fff" onclick="gerarRelatorioPostes()">
         <span>📍 Gerar relatório</span>
-      </button>
-    </div>
-
-    <!-- Folha de QR codes pra impressão -->
-    <div class="card" style="background:linear-gradient(135deg,#F5F0FF,#FFFFFF)">
-      <div class="card-head">
-        <div class="card-ico" style="background:linear-gradient(135deg,#7B4FC0,#2D7EC4);color:#fff">📇</div>
-        <div>
-          <div class="card-title">Folha de QR codes</div>
-          <div class="card-sub">Pra imprimir e colar nas plaquetas dos postes</div>
-        </div>
-      </div>
-      <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
-        <div style="flex:1;min-width:140px">
-          <label style="font-size:11px;color:var(--ink-3);font-weight:600">Bairro (opcional)</label>
-          <input class="input" type="text" id="qr-sheet-bairro" placeholder="Ex.: Centro" style="margin-top:3px"/>
-        </div>
-        <div style="flex:1;min-width:140px">
-          <label style="font-size:11px;color:var(--ink-3);font-weight:600">Tamanho</label>
-          <select class="input" id="qr-sheet-size" style="margin-top:3px">
-            <option value="grande">Grande (6 por página · 7cm)</option>
-            <option value="medio" selected>Médio (12 por página · 5cm)</option>
-            <option value="pequeno">Pequeno (24 por página · 3,5cm)</option>
-          </select>
-        </div>
-      </div>
-      <div style="font-size:11px;color:var(--ink-3);margin-top:6px;line-height:1.4">Imprima em adesivo ou papel cartão e plastifique antes de colar.</div>
-      <button class="btn" style="margin-top:12px;background:linear-gradient(95deg,#7B4FC0,#2D7EC4);color:#fff" onclick="gerarFolhaQR()">
-        <span>📇 Gerar folha</span>
       </button>
     </div>
 
@@ -1547,24 +1516,6 @@ textarea.input { resize: vertical; min-height: 84px; line-height: 1.5; font-fami
     <button class="back-btn" onclick="goHome()">← Voltar</button>
     <div id="poste-content">
       <div style="text-align:center;padding:40px 0;color:var(--ink-3)">Carregando…</div>
-    </div>
-  </div>
-</div>
-
-<!-- Modal Scanner QR -->
-<div id="qr-modal" style="display:none;position:fixed;inset:0;z-index:2200;background:#000;align-items:center;justify-content:center">
-  <div style="position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column">
-    <video id="qr-video" autoplay playsinline muted style="width:100%;max-width:480px;max-height:70vh;object-fit:cover;border-radius:0"></video>
-    <canvas id="qr-canvas" style="display:none"></canvas>
-    <div style="position:absolute;top:0;left:0;right:0;padding:14px 16px;padding-top:calc(14px + env(safe-area-inset-top));background:linear-gradient(180deg,rgba(0,0,0,0.85),transparent);color:#fff;display:flex;justify-content:space-between;align-items:center;gap:12px">
-      <div style="font-weight:700;font-size:15px;flex:1;min-width:0">📷 Ler QR do poste</div>
-      <button onclick="fecharLeitorQR()" style="background:rgba(255,255,255,0.2);border:none;color:#fff;width:38px;height:38px;border-radius:50%;font-size:20px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;line-height:1">×</button>
-    </div>
-    <div style="position:absolute;left:0;right:0;bottom:0;padding:18px 22px;padding-bottom:calc(18px + env(safe-area-inset-bottom));background:linear-gradient(0deg,rgba(0,0,0,0.85),transparent);color:#fff;text-align:center">
-      <div id="qr-status" style="font-size:13px;margin-bottom:10px;opacity:0.9">Aponte a câmera para o QR code da plaqueta</div>
-      <button onclick="abrirInputManualQR()" style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);color:#fff;padding:10px 16px;border-radius:99px;font-size:13px;font-weight:600;cursor:pointer">
-        ⌨️ Digitar ID manualmente
-      </button>
     </div>
   </div>
 </div>
@@ -1984,102 +1935,14 @@ document.addEventListener('fullscreenchange', _syncFsIcon);
 document.addEventListener('webkitfullscreenchange', _syncFsIcon);
 function abrirGestor() { showScreen('gestor'); }
 
-/* ══ LEITOR DE QR (Etapa 3) ══════════════════════════════ */
-let qrStream = null;
-let qrLoopId = null;
-
-async function abrirLeitorQR() {
+/* ══ BUSCA DE POSTE (histórico) ══════════════════════════ */
+function abrirBuscaPoste() {
   if (!sessionToken) return showToast('Faça login antes.', 'err');
-  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-    return abrirInputManualQR();
-  }
-  document.getElementById('qr-modal').style.display = 'flex';
-  document.getElementById('qr-status').textContent = 'Aponte a câmera para o QR code da plaqueta';
-  try {
-    qrStream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: 'environment' }
-    });
-    const v = document.getElementById('qr-video');
-    v.srcObject = qrStream;
-    await v.play();
-    iniciarLoopQR();
-  } catch (e) {
-    document.getElementById('qr-status').textContent = 'Sem permissão de câmera. Use a opção manual abaixo.';
-  }
-}
-
-function iniciarLoopQR() {
-  const video = document.getElementById('qr-video');
-  const canvas = document.getElementById('qr-canvas');
-  const ctx = canvas.getContext('2d', { willReadFrequently: true });
-  const hasNative = ('BarcodeDetector' in window);
-  const hasJsQR = (typeof window.jsQR === 'function');
-  let detector = null;
-  if (hasNative) {
-    try { detector = new window.BarcodeDetector({ formats: ['qr_code'] }); }
-    catch (e) { detector = null; }
-  }
-  if (!detector && !hasJsQR) {
-    document.getElementById('qr-status').innerHTML = 'Leitor de QR indisponível neste navegador.<br>Use a opção manual abaixo.';
-    return;
-  }
-
-  const tick = async () => {
-    if (!qrStream) return;
-    if (video.readyState >= 2) {
-      // Tenta nativo primeiro (mais rápido)
-      if (detector) {
-        try {
-          const codes = await detector.detect(video);
-          if (codes && codes.length > 0) { processarQR(codes[0].rawValue); return; }
-        } catch (e) { detector = null; }
-      }
-      // Fallback jsQR via canvas
-      if (!detector && hasJsQR) {
-        try {
-          const w = video.videoWidth, h = video.videoHeight;
-          if (w > 0 && h > 0) {
-            canvas.width = w; canvas.height = h;
-            ctx.drawImage(video, 0, 0, w, h);
-            const img = ctx.getImageData(0, 0, w, h);
-            const code = window.jsQR(img.data, w, h, { inversionAttempts: 'dontInvert' });
-            if (code && code.data) { processarQR(code.data); return; }
-          }
-        } catch (e) {}
-      }
-    }
-    qrLoopId = requestAnimationFrame(tick);
-  };
-  qrLoopId = requestAnimationFrame(tick);
-}
-
-function fecharLeitorQR() {
-  if (qrLoopId) cancelAnimationFrame(qrLoopId);
-  qrLoopId = null;
-  if (qrStream) {
-    qrStream.getTracks().forEach(t => t.stop());
-    qrStream = null;
-  }
-  document.getElementById('qr-modal').style.display = 'none';
-}
-
-function abrirInputManualQR() {
-  fecharLeitorQR();
-  const id = prompt('Digite o ID do poste (ex: P-0001):');
-  if (id) processarQR(id.trim());
-}
-
-function processarQR(raw) {
-  fecharLeitorQR();
-  const s = String(raw || '').trim();
-  // Aceita URL completa (?poste=P-0001) ou direto o ID (P-0001)
-  let id = '';
-  const m = /[?&]poste=([A-Za-z0-9-]+)/.exec(s);
-  if (m) id = m[1].toUpperCase();
-  else if (/^P-?\d+$/i.test(s)) id = s.toUpperCase().replace('P', 'P-').replace('P--', 'P-');
-  else id = s.toUpperCase();
-  if (!id || !/^P-\d+$/.test(id)) {
-    return showToast('QR não reconhecido como poste (esperado P-0001).', 'err');
+  const digitado = prompt('Digite o ID do poste (ex: P-0001):');
+  if (!digitado) return;
+  const id = digitado.trim().toUpperCase().replace(/^P-?(\d+)$/, 'P-$1');
+  if (!/^P-\d+$/.test(id)) {
+    return showToast('ID de poste inválido (esperado P-0001).', 'err');
   }
   abrirHistoricoPoste(id);
 }
@@ -3364,12 +3227,6 @@ async function gerarRelatorioTentativas() {
 }
 
 /* ══ RELATÓRIO DE POSTES ═════════════════════════════════ */
-const CIDADAO_URL = window.ILUMINA.APP_CIDADAO.replace(/\/$/, '');
-function _qrUrl(text, size) {
-  const sz = size || 180;
-  return 'https://api.qrserver.com/v1/create-qr-code/?size=' + sz + 'x' + sz +
-         '&margin=4&data=' + encodeURIComponent(text);
-}
 function _norm(s) {
   return String(s || '').toLowerCase()
     .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
@@ -3412,8 +3269,6 @@ async function gerarRelatorioPostes() {
   const geradoEm = new Date().toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 
   const cards = postes.map(p => {
-    const qrData = CIDADAO_URL + '/?poste=' + encodeURIComponent(p.id);
-    const qrImg = _qrUrl(qrData, 180);
     const fotoEl = p.foto_ref
       ? `<img src="${escapeAttr(p.foto_ref)}" style="width:100%;max-width:140px;height:140px;object-fit:cover;border:1px solid #ddd;border-radius:6px" onerror="this.style.visibility='hidden'"/>`
       : `<div style="width:140px;height:140px;border:1px solid #ddd;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#aaa;font-size:34px;background:#F8F8F8">📍</div>`;
@@ -3433,10 +3288,6 @@ async function gerarRelatorioPostes() {
           ${p.data_ult ? ` · último: ${escapeHtml(p.data_ult)}` : ''}
         </div>
         ${(function(){ const la=normCoord(p.lat,'lat'), ln=normCoord(p.lng,'lng'); if(isFinite(la)&&isFinite(ln)&&Math.abs(la)<=90&&Math.abs(ln)<=180&&(la!==0||ln!==0)){ return `<div style="font-size:11px;font-family:monospace;margin-top:3px"><a href="https://www.google.com/maps?q=${la},${ln}" target="_blank" style="color:#2D7EC4;text-decoration:none">📍 ${la.toFixed(6)}, ${ln.toFixed(6)}</a></div>`; } return ''; })()}
-      </div>
-      <div style="text-align:center">
-        <img src="${escapeAttr(qrImg)}" style="width:140px;height:140px;border:1px solid #eee;border-radius:6px;background:#fff" alt="QR ${escapeAttr(p.id)}" onerror="this.style.visibility='hidden'"/>
-        <div style="font-size:9.5px;color:#888;margin-top:3px;font-family:monospace">${escapeHtml(p.id)}</div>
       </div>
     </div>`;
   }).join('');
@@ -3476,7 +3327,7 @@ async function gerarRelatorioPostes() {
   <h2>Postes cadastrados</h2>
   ${cards}
 
-  <div class="footer">Ilumina Coruripe — Painel do Técnico · Prefeitura Municipal de Coruripe / AL<br>QR codes apontam para: ${CIDADAO_URL}/?poste=ID</div>
+  <div class="footer">Ilumina Coruripe — Painel do Técnico · Prefeitura Municipal de Coruripe / AL</div>
 <script>
   // Utilidades de saída do relatório (funciona em PC e celular)
   var __ehMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
@@ -3531,173 +3382,6 @@ async function gerarRelatorioPostes() {
   const win = abrirRelatorio(html);
   if (!win) return;
   showToast('Relatório aberto. Use "Imprimir" pra salvar PDF.', 'ok');
-}
-
-/* ══ FOLHA DE QR CODES PRA IMPRESSÃO ═════════════════════ */
-const QR_SHEET_PRESETS = {
-  grande:  { cols: 2, rows: 3, perPage: 6,  qrPx: 600, qrCss: '70mm', cellH: '92mm', fontId: 13, fontCod: 17 },
-  medio:   { cols: 3, rows: 4, perPage: 12, qrPx: 500, qrCss: '50mm', cellH: '67mm', fontId: 11, fontCod: 14 },
-  pequeno: { cols: 4, rows: 6, perPage: 24, qrPx: 400, qrCss: '35mm', cellH: '47mm', fontId: 9,  fontCod: 11 }
-};
-
-async function gerarFolhaQR() {
-  if (!sessionToken) return showToast('Sessão expirada. Faça login.', 'err');
-  showToast('Gerando folha de QR codes…', 'info');
-
-  let postes;
-  try {
-    const data = await apiFetchTO({ action: 'list_postes', token: sessionToken }, 40000);
-    if (!data || !data.success) return showToast('Não foi possível carregar.', 'err');
-    postes = data.postes || [];
-  } catch (e) {
-    return showToast('Sem conexão.', 'err');
-  }
-  if (postes.length === 0) return showToast('Nenhum poste cadastrado ainda.', 'err');
-
-  const filtro = _norm(document.getElementById('qr-sheet-bairro').value);
-  if (filtro) {
-    postes = postes.filter(p => _norm(p.bairro).indexOf(filtro) >= 0);
-    if (postes.length === 0) return showToast('Nenhum poste para esse filtro.', 'err');
-  }
-  postes.sort((a, b) => a.id.localeCompare(b.id, undefined, { numeric: true }));
-
-  const tamanho = document.getElementById('qr-sheet-size').value || 'medio';
-  const preset = QR_SHEET_PRESETS[tamanho] || QR_SHEET_PRESETS.medio;
-  const geradoEm = new Date().toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-
-  const cellsHtml = postes.map(p => {
-    const qrData = CIDADAO_URL + '/?poste=' + encodeURIComponent(p.id);
-    const qrImg = _qrUrl(qrData, preset.qrPx);
-    const codigo = p.codigo || '—';
-    return `<div class="cell">
-      <div class="codigo">${escapeHtml(codigo)}</div>
-      <img src="${escapeAttr(qrImg)}" class="qr" alt="${escapeAttr(p.id)}"/>
-      <div class="id">${escapeHtml(p.id)}</div>
-    </div>`;
-  }).join('');
-
-  const html = `<!DOCTYPE html>
-<html lang="pt-BR"><head><meta charset="UTF-8"><title>QR codes — ${escapeHtml(filtro || 'todos os postes')}</title>
-<style>
-  @page { size: A4; margin: 10mm; }
-  * { box-sizing: border-box; }
-  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; color:#111; margin:0; padding:0; }
-  .top { text-align:center; margin-bottom:6mm; }
-  .top h1 { margin:0 0 2mm 0; font-size:14px; }
-  .top .sub { font-size:10px; color:#666; }
-  .actions { text-align:center; margin-bottom:8mm; }
-  .actions button { padding:9px 18px; background:#0F1420; color:#fff; border:none; border-radius:6px; font-size:13px; font-weight:700; cursor:pointer; }
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(${preset.cols}, 1fr);
-    gap: 4mm;
-  }
-  .cell {
-    border: 1px dashed #bbb;
-    border-radius: 3mm;
-    padding: 3mm;
-    text-align: center;
-    page-break-inside: avoid;
-    height: ${preset.cellH};
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background: #fff;
-  }
-  .cell .codigo {
-    font-size: ${preset.fontCod}px;
-    font-weight: 800;
-    color: #0A6E3E;
-    line-height: 1.1;
-    margin-bottom: 2mm;
-    min-height: 1.1em;
-  }
-  .cell .qr {
-    width: ${preset.qrCss};
-    height: ${preset.qrCss};
-    image-rendering: pixelated;
-    image-rendering: -moz-crisp-edges;
-    image-rendering: crisp-edges;
-    background:#fff;
-  }
-  .cell .id {
-    font-family: ui-monospace, Menlo, Consolas, monospace;
-    font-size: ${preset.fontId}px;
-    font-weight: 700;
-    color: #111;
-    margin-top: 2mm;
-  }
-  @media print {
-    .actions, .top { display: none; }
-    .cell { border: 1px dashed #999; }
-    body { margin:0; padding:0; }
-  }
-</style></head>
-<body>
-  <div class="top">
-    <h1>📇 Folha de QR codes — Ilumina Coruripe</h1>
-    <div class="sub">${postes.length} poste(s)${filtro ? ' · bairro: <b>' + escapeHtml(filtro) + '</b>' : ''} · ${preset.perPage} por página · Gerado em ${geradoEm}</div>
-  </div>
-  <div class="actions">
-    <button onclick="__imprimir()">🖨️ Imprimir / Salvar PDF</button>
-    <button id="__btn-share" style="display:none;background:#0A6E3E;color:#fff;padding:9px 16px;margin-right:6px;border-radius:6px;border:none;font-size:12px;font-weight:700;cursor:pointer" onclick="__compartilhar()">📤 Salvar / Enviar PDF</button>
-  </div>
-  <div class="grid">${cellsHtml}</div>
-<script>
-  // Utilidades de saída do relatório (funciona em PC e celular)
-  var __ehMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-  var __nomeArq = (document.title || 'relatorio').replace(/[^\w\s-]/g,'').trim().replace(/\s+/g,'-') + '.html';
-  function __imprimir(){
-    try { window.print(); }
-    catch(e){ alert('Use o menu do navegador (Compartilhar) e escolha Imprimir.'); }
-    if (__ehMobile) {
-      setTimeout(function(){
-        var a = document.getElementById('__dica-mobile');
-        if (a) a.style.display = 'block';
-      }, 900);
-    }
-  }
-  function __blobArquivo(){
-    var html = '<!DOCTYPE html>' + document.documentElement.outerHTML;
-    return new Blob([html], { type: 'text/html;charset=utf-8' });
-  }
-  function __baixar(){
-    try{
-      var url = URL.createObjectURL(__blobArquivo());
-      var a = document.createElement('a');
-      a.href = url; a.download = __nomeArq;
-      document.body.appendChild(a); a.click(); document.body.removeChild(a);
-      setTimeout(function(){ URL.revokeObjectURL(url); }, 30000);
-    } catch(e){ alert('Nao foi possivel baixar. Use Compartilhar.'); }
-  }
-  async function __compartilhar(){
-    // No celular o caminho que gera PDF de verdade e a tela de impressao do sistema.
-    try { window.print(); return; } catch(e){}
-    try{
-      if (navigator.share) { await navigator.share({ title: document.title, text: document.title }); return; }
-    } catch(e){ /* usuario cancelou */ }
-    alert('Use o menu do navegador (icone de compartilhar) e escolha Imprimir para salvar em PDF.');
-  }
-  (function(){
-    var b = document.getElementById('__btn-share');
-    if (b && (navigator.share || navigator.canShare)) b.style.display = '';
-    if (__ehMobile) {
-      var d = document.createElement('div');
-      d.id = '__dica-mobile';
-      d.style.cssText = 'display:none;background:#FFF8EC;border:1px solid #F5D5A1;color:#7a4a0a;padding:10px 12px;border-radius:8px;font-size:12px;line-height:1.5;margin:10px 0';
-      d.innerHTML = '<b>Para salvar em PDF no celular:</b> toque no icone de <b>compartilhar</b> do navegador (quadrado com seta) e escolha <b>Imprimir</b>. Na tela de impressao, abra dois dedos sobre a previa para virar PDF e depois compartilhe ou salve em Arquivos.';
-      d.style.display = 'block';
-      var act = document.querySelector('.actions');
-      if (act && act.parentNode) act.parentNode.insertBefore(d, act.nextSibling);
-    }
-  })();
-<\/script>
-</body></html>`;
-
-  const win = abrirRelatorio(html);
-  if (!win) return;
-  showToast(`${postes.length} QR codes gerados. Use "Imprimir".`, 'ok');
 }
 
 /* ══ REINCIDÊNCIA (Etapa 2) ══════════════════════════════ */
@@ -3773,7 +3457,7 @@ function escolherPosteNovo() {
 
 async function abrirFechamento(call) {
   // Guarda: chamado já fechado não pode ser reaberto pelo fluxo normal.
-  // Vale para qualquer caminho (busca, lista, roteiro, leitura de QR).
+  // Vale para qualquer caminho (busca, lista, roteiro).
   if (call && call.status && call.status !== 'Aguardando atendimento') {
     const adm = call.administrativo ? ' (fechamento administrativo)' : '';
     showToast('Chamado já fechado como "' + call.status + '"' + adm + '. Não pode ser fechado de novo.', 'err');
@@ -4860,7 +4544,6 @@ async function gerarRelatorioMaterial() {
 window.gerarRelatorio = gerarRelatorio;
 window.gerarRelatorioTentativas = gerarRelatorioTentativas;
 window.gerarRelatorioPostes = gerarRelatorioPostes;
-window.gerarFolhaQR = gerarFolhaQR;
 window.abrirFechamentoAdm = abrirFechamentoAdm;
 window.fecharFechamentoAdm = fecharFechamentoAdm;
 window.enviarFechamentoAdm = enviarFechamentoAdm;
@@ -4882,9 +4565,7 @@ window.toggleMateriais = toggleMateriais;
 window.matQtd = matQtd;
 window.maskData = maskData;
 window.toggleFullscreen = toggleFullscreen;
-window.abrirLeitorQR = abrirLeitorQR;
-window.fecharLeitorQR = fecharLeitorQR;
-window.abrirInputManualQR = abrirInputManualQR;
+window.abrirBuscaPoste = abrirBuscaPoste;
 window.abrirHistoricoPoste = abrirHistoricoPoste;
 window.abrirNaoExecutado = abrirNaoExecutado;
 window.fecharNaoExecutado = fecharNaoExecutado;

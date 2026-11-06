@@ -10,34 +10,6 @@ async function buscarPorId(posteId, tx = pool) {
   return rows[0] || null;
 }
 
-async function garantirExistencia(tx = pool, posteId, dadosIniciais = {}) {
-  const { rows } = await tx.query(
-    `INSERT INTO postes (id, endereco, latitude, longitude, atualizado_em)
-     VALUES ($1, $2, $3, $4, now())
-     ON CONFLICT (id) DO UPDATE SET atualizado_em = postes.atualizado_em
-     RETURNING *`,
-    [
-      posteId,
-      dadosIniciais.endereco || null,
-      dadosIniciais.latitude ?? null,
-      dadosIniciais.longitude ?? null
-    ]
-  );
-  return rows[0];
-}
-
-async function buscarChamadoAbertoNoPoste(posteId, tx = pool) {
-  const { rows } = await tx.query(
-    `SELECT protocolo, tipo, descricao, criado_em
-     FROM chamados
-     WHERE poste_id = $1 AND status IN ('aberto', 'em_atendimento')
-     ORDER BY criado_em DESC
-     LIMIT 1`,
-    [posteId]
-  );
-  return rows[0] || null;
-}
-
 async function listarHistoricoDoPoste(posteId, tx = pool) {
   const { rows } = await tx.query(
     `SELECT
@@ -121,8 +93,6 @@ async function listarTodos(filtroBairro = '', tx = pool) {
 
 module.exports = {
   buscarPorId,
-  garantirExistencia,
-  buscarChamadoAbertoNoPoste,
   listarHistoricoDoPoste,
   atualizarConfiguracao,
   listarTodos

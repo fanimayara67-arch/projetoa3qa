@@ -1,27 +1,23 @@
 /**
  * CAMADA DE APLICAÇÃO — ChamadoService
  * Orquestra os casos de uso de abertura de reporte pelo cidadão, consulta de chamados,
- * vínculo transacional de QR Code de poste e registro de tentativas.
+ * e registro de tentativas.
  */
 
 const { emTransacao: defaultEmTransacao } = require('../../infrastructure/database/transacao');
 const ChamadoRepoDefault = require('../../infrastructure/repositories/ChamadoRepository');
-const PosteRepoDefault = require('../../infrastructure/repositories/PosteRepository');
 const TentativaRepoDefault = require('../../infrastructure/repositories/TentativaRepository');
 const FotoStorageDefault = require('../../infrastructure/storage/FotoStorage');
 const Chamado = require('../../domain/Chamado');
-const Poste = require('../../domain/Poste');
 const Tentativa = require('../../domain/Tentativa');
 const { DadoInvalido, NaoEncontrado, Conflito } = require('../errors');
 
 /**
- * Cria um chamado de forma idempotente e vincula o poste na mesma transação ACID
- * (elimina o antigo `link_poste` fire-and-forget que perdia vínculos em conexões instáveis).
+ * Cria um chamado de forma idempotente (reenvio da fila offline não duplica).
  */
 async function criarChamado(dados, deps = {}) {
   const emTransacao = deps.emTransacao || defaultEmTransacao;
   const ChamadoRepo = deps.ChamadoRepo || ChamadoRepoDefault;
-  const PosteRepo = deps.PosteRepo || PosteRepoDefault;
   const FotoStorage = deps.FotoStorage || FotoStorageDefault;
 
   const validacao = Chamado.validarNovoChamado(dados);
@@ -29,28 +25,12 @@ async function criarChamado(dados, deps = {}) {
     throw new DadoInvalido(validacao.erros.join(' '), validacao.erros);
   }
 
-  const posteIdNormalizado = Poste.normalizarPosteId(dados.poste_id || dados.posteId);
   const fotoUrl = await FotoStorage.salvar(dados.foto_base64 || dados.fotoUrl);
 
   return emTransacao(async (tx) => {
-    let latitude = dados.lat ?? dados.latitude ?? null;
-    let longitude = dados.lng ?? dados.longitude ?? null;
-    let endereco = dados.endereco || null;
-
-    if (posteIdNormalizado) {
-      const poste = await PosteRepo.garantirExistencia(tx, posteIdNormalizado, {
-        endereco,
-        latitude,
-        longitude
-      });
-      if ((latitude == null || longitude == null) && poste) {
-        latitude = poste.latitude;
-        longitude = poste.longitude;
-      }
-      if (!endereco && poste && poste.endereco) {
-        endereco = poste.endereco;
-      }
-    }
+    const latitude = dados.lat ?? dados.latitude;
+    const longitude = dados.lng ?? dados.longitude;
+    const endereco = dados.endereco || null;
 
     const chamado = await ChamadoRepo.criarOuRetornarExistente(tx, {
       id: dados.id,
@@ -64,7 +44,6 @@ async function criarChamado(dados, deps = {}) {
       telefone: dados.tel || dados.telefone,
       endereco,
       fotoUrl,
-      posteId: posteIdNormalizado || null,
       userAgent: dados.user_agent || dados.userAgent,
       criadoEm: dados.timestamp || dados.criadoEm
     });

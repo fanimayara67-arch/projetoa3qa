@@ -13,7 +13,7 @@
   to = "/tecnico/"
   status = 301
 
-# Atalho curto para QR impresso: /p/P-0001 → /?poste=P-0001
+# Plaquetas antigas ja instaladas: /p/P-0001 → /?poste=P-0001 (o app ignora o parametro e abre o formulario)
 [[redirects]]
   from = "/p/:id"
   to = "/?poste=:id"

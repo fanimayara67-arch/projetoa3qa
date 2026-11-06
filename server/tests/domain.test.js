@@ -22,7 +22,7 @@ test('Domínio Chamado: permite fechar apenas chamados abertos ou em_atendimento
   assert.equal(Chamado.podeFechar(null), false);
 });
 
-test('Domínio Chamado: rejeita coordenada (0,0) e exige GPS válido ou poste_id do QR', () => {
+test('Domínio Chamado: rejeita coordenada (0,0) e exige GPS válido, mesmo com poste_id', () => {
   assert.equal(Chamado.coordenadasValidas(0, 0), false);
   assert.equal(Chamado.coordenadasValidas(-10.1254, -36.1759), true);
 
@@ -35,19 +35,19 @@ test('Domínio Chamado: rejeita coordenada (0,0) e exige GPS válido ou poste_id
   });
   assert.equal(semLocalizacao.valido, false);
 
-  const comQrSemGps = Chamado.validarNovoChamado({
+  const comPosteSemGps = Chamado.validarNovoChamado({
     id: '6f1c2b0e-8d6a-4a57-9e0b-3c1f8a2d7e44',
     protocolo: 'IC-261104-ABCDE',
     tipo: 'apagado',
     poste_id: 'P-0001'
   });
-  assert.equal(comQrSemGps.valido, true);
+  assert.equal(comPosteSemGps.valido, false);
 });
 
-test('Domínio Poste: normaliza códigos de QR Code mantendo compatibilidade com placas físicas', () => {
+test('Domínio Poste: normaliza códigos digitados de poste', () => {
   assert.equal(Poste.normalizarPosteId('p0001'), 'P-0001');
   assert.equal(Poste.normalizarPosteId('P-0042'), 'P-0042');
-  assert.equal(Poste.normalizarPosteId('https://iluminacoruripe.netlify.app/?poste=P-0105'), 'P-0105');
+  assert.equal(Poste.normalizarPosteId('https://iluminacoruripe.netlify.app/?poste=P-0105'), '');
   assert.equal(Poste.normalizarPosteId('invalido'), '');
 });
 

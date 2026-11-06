@@ -32,14 +32,6 @@ export function gerarProtocolo(dataRef = new Date()) {
   return `IC-${ymd}-${rnd}`;
 }
 
-export function normalizarPosteId(raw) {
-  if (!raw) return '';
-  let p = String(raw).trim().toUpperCase();
-  if (/^P\d+$/i.test(p)) p = p.replace(/^P/i, 'P-');
-  if (!/^P-\d+$/.test(p)) return '';
-  return p;
-}
-
 /**
  * Cria um objeto Report imutável na origem com `id` estável (UUID) para envio idempotente.
  */
@@ -50,7 +42,6 @@ export function criarReport({
   tipo,
   gps,
   foto,
-  posteId = '',
   descricao = '',
   nome = '',
   tel = '',
@@ -66,7 +57,6 @@ export function criarReport({
     lng: gps && gps.lng != null ? Number(gps.lng) : null,
     acc: gps && gps.acc != null ? Math.round(Number(gps.acc)) : null,
     foto_base64: foto || null,
-    poste_id: normalizarPosteId(posteId),
     descricao: String(descricao || '').trim(),
     nome: String(nome || '').trim(),
     tel: String(tel || '').trim(),
@@ -93,7 +83,6 @@ export function validarReport(report) {
   if (!report.tipo) {
     erros.push('Escolha o tipo de defeito no poste.');
   }
-  const temPosteQr = Boolean(report.poste_id);
   const temCoordenadas =
     report.lat !== null &&
     report.lng !== null &&
@@ -101,7 +90,7 @@ export function validarReport(report) {
     Number.isFinite(report.lng) &&
     !(Math.abs(report.lat) < 0.0001 && Math.abs(report.lng) < 0.0001);
 
-  if (!temPosteQr && !temCoordenadas) {
+  if (!temCoordenadas) {
     erros.push('Localização GPS não registrada. Capture o GPS antes de enviar.');
   }
   if (!report.foto_base64) {

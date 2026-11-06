@@ -49,7 +49,7 @@ próprio com banco SQL.
 
 | Nível | Responsabilidade | Onde roda |
 |---|---|---|
-| 1. Cliente | Telas, captura de GPS/foto/QR, fila offline, mapa Leaflet | Navegador do celular |
+| 1. Cliente | Telas, captura de GPS/foto, fila offline, mapa Leaflet | Navegador do celular |
 | 2. Aplicação | Autenticação, validação, regras, transações, API REST | Servidor Node.js |
 | 3. Dados | Persistência e integridade (chaves, `CHECK`, `UNIQUE`) | Servidor de banco SQL + armazenamento de fotos |
 
@@ -88,7 +88,7 @@ sem passar pelo app.
 | Dados offline | fila de reportes | fila de fechamentos (máx. 10), cache de lista e fotos |
 
 Os dois clientes continuam no mesmo deploy estático (mesma origem), como o
-`README.md` já define; o QR do poste continua gerado a partir de `location.origin`.
+`README.md` já define.
 
 ## 4. O servidor
 

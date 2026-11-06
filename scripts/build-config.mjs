@@ -75,11 +75,7 @@ const saida = `/* ════════════════════�
     ENDPOINT_TECNICO: ENDPOINT_TECNICO,
     APP_CIDADAO: APP_CIDADAO,
     APP_TECNICO: APP_TECNICO,
-    HUB_URL: ${JSON.stringify(cfg.HUB_URL)},
-
-    qrPoste: function (posteId) {
-      return APP_CIDADAO + '?poste=' + encodeURIComponent(String(posteId || '').toUpperCase());
-    }
+    HUB_URL: ${JSON.stringify(cfg.HUB_URL)}
   };
 })(typeof window !== 'undefined' ? window : globalThis);
 `;

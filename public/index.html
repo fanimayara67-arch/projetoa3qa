@@ -923,15 +923,6 @@
   </div>
 </div>
 
-<!-- ========== POSTE INFO (vindo do QR) ========== -->
-<div id="screen-poste-info" class="screen">
-  <div class="success" style="padding:24px 20px">
-    <div id="poste-info-content">
-      <div style="text-align:center;padding:40px 0;color:#666">Verificando poste…</div>
-    </div>
-  </div>
-</div>
-
 <!-- ========== TOAST ========== -->
 <div id="toast" class="toast" role="status" aria-live="polite">
   <span class="toast-icon" id="toast-icon">ℹ️</span>
@@ -945,7 +936,6 @@
 // ==============================================================
 
 const ENDPOINT = window.ILUMINA.ENDPOINT_CIDADAO;
-const ENDPOINT_TECNICO = window.ILUMINA.ENDPOINT_TECNICO;
 const DB_NAME = 'ilumina_v2';
 const DB_VERSION = 1;
 const STORE = 'reports';
@@ -954,16 +944,13 @@ const SPLASH_DURATION_MS = 5000;
 const state = {
   gps: null, gpsStartedAt: 0, watchId: null,
   tipo: null, foto: null, fotoSize: 0,
-  submitting: false,
-  poste_id: '',          // QR: ID do poste lido (?poste=P-0001)
-  poste_info: null       // dados do poste vindos do check_poste
+  submitting: false
 };
 const $ = (id) => document.getElementById(id);
 const screens = {
   splash: $('screen-splash'),
   report: $('screen-report'),
-  success: $('screen-success'),
-  posteInfo: $('screen-poste-info')
+  success: $('screen-success')
 };
 let splashTimer = null;
 
@@ -993,191 +980,7 @@ function startSplash() {
 
 function finishSplash() {
   if (splashTimer) { clearTimeout(splashTimer); splashTimer = null; }
-  // Se veio com ?poste=P-XXXX no link (QR), tenta verificar o poste antes
-  if (state.poste_id) {
-    verificarPosteQR();
-  } else {
-    showScreen('report');
-  }
-}
-
-/* ── QR DO POSTE: anti-duplicata + pré-preenchimento ── */
-function lerPosteDaURL() {
-  try {
-    const params = new URLSearchParams(window.location.search);
-    let p = (params.get('poste') || '').trim().toUpperCase();
-    if (!p) return '';
-    // Normaliza P0001 → P-0001
-    if (/^P\d+$/i.test(p)) p = p.replace(/^P/i, 'P-');
-    if (!/^P-\d+$/.test(p)) return '';
-    return p;
-  } catch (e) { return ''; }
-}
-
-async function verificarPosteQR() {
-  showScreen('posteInfo');
-  const box = $('poste-info-content');
-  box.innerHTML = '<div style="text-align:center;padding:50px 0"><div style="font-size:36px;margin-bottom:14px">📡</div><div style="font-size:15px;color:#666;font-weight:600">Verificando poste ' + state.poste_id + '…</div></div>';
-
-  if (!navigator.onLine) {
-    return mostrarPosteInfoOffline();
-  }
-
-  try {
-    const ctrl = new AbortController();
-    const to = setTimeout(() => ctrl.abort(), 25000);
-    const body = new URLSearchParams();
-    body.append('payload', JSON.stringify({ action: 'check_poste', poste_id: state.poste_id }));
-    const resp = await fetch(ENDPOINT_TECNICO, { method: 'POST', body: body, signal: ctrl.signal });
-    clearTimeout(to);
-    const data = await resp.json();
-    if (!data || !data.success) throw new Error('resp');
-    if (!data.existe) {
-      // Poste não encontrado na base — segue fluxo normal sem pré-preencher
-      state.poste_id = '';
-      state.poste_info = null;
-      showScreen('report');
-      showToast('info', 'Poste ainda não cadastrado. Continue normalmente.');
-      return;
-    }
-    state.poste_info = data.poste;
-    if (data.chamado_aberto) {
-      mostrarChamadoJaAberto(data.chamado_aberto, data.poste);
-    } else {
-      mostrarPosteOkPreenchido(data.poste);
-    }
-  } catch (e) {
-    mostrarPosteInfoOffline();
-  }
-}
-
-function mostrarChamadoJaAberto(aberto, poste) {
-  const box = $('poste-info-content');
-  box.innerHTML = `
-    <div style="text-align:center">
-      <div style="width:96px;height:96px;margin:0 auto 18px;background:linear-gradient(135deg,#3EBD5F,#0A6E3E);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:48px">✓</div>
-      <h2 style="font-size:22px;font-weight:800;margin:0 0 8px 0;color:#0A6E3E;line-height:1.2">Já temos um chamado<br>aberto para este poste</h2>
-      <p style="font-size:14px;color:#444;line-height:1.55;margin:0 0 18px 0">
-        Obrigado pela sua colaboração! A equipe técnica já foi avisada<br>e vai atender o local em breve.
-      </p>
-      <div style="background:#F4F5F8;border-radius:10px;padding:14px 16px;text-align:left;font-size:13px;line-height:1.6;margin-bottom:18px">
-        <div style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:0.06em;font-weight:700;margin-bottom:4px">Chamado em aberto</div>
-        <div><b>Protocolo:</b> <span style="font-family:monospace">${esc(aberto.protocolo)}</span></div>
-        <div><b>Tipo:</b> ${esc(aberto.tipo || '—')}</div>
-        <div><b>Aberto em:</b> ${esc(aberto.data || '—')}</div>
-        ${aberto.descricao ? `<div style="margin-top:6px;color:#555">"${esc(aberto.descricao)}"</div>` : ''}
-      </div>
-      <div style="background:#FFF8EC;border-left:3px solid #F39427;border-radius:6px;padding:10px 14px;font-size:12.5px;color:#7a4a0a;text-align:left;margin-bottom:18px;line-height:1.5">
-        <b>Poste ${esc(poste.id)}</b>${poste.codigo ? ' — ' + esc(poste.codigo) : ''}<br>
-        ${poste.rua ? '📍 ' + esc(poste.rua) : ''}${poste.bairro ? ' · ' + esc(poste.bairro) : ''}
-      </div>
-      <button onclick="reportarMesmoAssim()" style="background:transparent;border:1.5px solid #ddd;color:#666;padding:11px 18px;border-radius:99px;font-size:13px;font-weight:600;cursor:pointer;margin-bottom:8px">
-        Reportar outro problema mesmo assim
-      </button>
-    </div>`;
-}
-
-function mostrarPosteOkPreenchido(poste) {
-  const box = $('poste-info-content');
-  const localTxt = [poste.rua, poste.bairro].filter(Boolean).join(' · ');
-  box.innerHTML = `
-    <div style="text-align:center">
-      <div style="width:88px;height:88px;margin:0 auto 16px;background:linear-gradient(135deg,#2D7EC4,#7B4FC0);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:42px">📍</div>
-      <h2 style="font-size:22px;font-weight:800;margin:0 0 6px 0;color:#0F1420;line-height:1.2">Reportar defeito</h2>
-      <div style="font-family:ui-monospace,monospace;font-size:15px;font-weight:700;color:#2D7EC4;margin-bottom:14px">${esc(poste.id)}${poste.codigo ? ' · ' + esc(poste.codigo) : ''}</div>
-      <div style="background:#F4F5F8;border-radius:10px;padding:14px 16px;text-align:left;font-size:13px;line-height:1.6;margin-bottom:18px">
-        ${localTxt ? '<div>📍 ' + esc(localTxt) + '</div>' : ''}
-        ${poste.referencia ? '<div style="color:#555;font-style:italic;margin-top:4px">"' + esc(poste.referencia) + '"</div>' : ''}
-        <div style="font-size:11.5px;color:#666;margin-top:8px">Este poste já foi atendido ${poste.qtd} vez${poste.qtd > 1 ? 'es' : ''} pela equipe.</div>
-      </div>
-      <p style="font-size:13.5px;color:#444;line-height:1.55;margin:0 0 20px 0">
-        Você não precisa informar endereço nem GPS — já identificamos o poste pelo QR code. Continue para escolher o tipo de defeito e enviar uma foto.
-      </p>
-      <button onclick="continuarReporteComPoste()" style="background:linear-gradient(95deg,#2D7EC4,#7B4FC0);color:#fff;border:none;padding:14px 26px;border-radius:99px;font-size:14px;font-weight:700;cursor:pointer;width:100%;max-width:280px">
-        Continuar reporte
-      </button>
-    </div>`;
-}
-
-function mostrarPosteInfoOffline() {
-  const box = $('poste-info-content');
-  box.innerHTML = `
-    <div style="text-align:center">
-      <div style="width:88px;height:88px;margin:0 auto 16px;background:linear-gradient(135deg,#2D7EC4,#7B4FC0);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:42px">📍</div>
-      <h2 style="font-size:22px;font-weight:800;margin:0 0 8px 0;color:#0F1420;line-height:1.2">Poste ${esc(state.poste_id)}<br>identificado</h2>
-      <p style="font-size:13.5px;color:#444;line-height:1.55;margin:0 0 18px 0">
-        Pode reportar normalmente.<br>
-        Sem internet agora, seu reporte fica salvo no aparelho e é enviado automaticamente assim que o sinal voltar.
-      </p>
-      <button onclick="continuarReporteComPoste()" style="background:linear-gradient(95deg,#2D7EC4,#7B4FC0);color:#fff;border:none;padding:14px 26px;border-radius:99px;font-size:14px;font-weight:700;cursor:pointer;width:100%;max-width:280px">
-        Continuar reporte
-      </button>
-    </div>`;
-}
-
-function continuarReporteComPoste() {
   showScreen('report');
-  // Pré-preenche endereço se temos a info do poste
-  if (state.poste_info) {
-    const partes = [state.poste_info.rua, state.poste_info.referencia, state.poste_info.bairro].filter(Boolean);
-    if (partes.length) $('endereco').value = partes.join(' — ');
-  }
-
-  // QR identificou o poste → SEMPRE esconde a seção de GPS (o cidadão está no poste)
-  const gpsCard = $('gps-card');
-  const gpsSection = gpsCard ? gpsCard.closest('.section') : null;
-  if (gpsSection) gpsSection.style.display = 'none';
-
-  // GPS: prefere coords salvas do poste; senão tenta GPS do aparelho em background
-  const posteLat = state.poste_info ? parseFloat(state.poste_info.lat) : NaN;
-  const posteLng = state.poste_info ? parseFloat(state.poste_info.lng) : NaN;
-  if (isFinite(posteLat) && isFinite(posteLng) && (posteLat !== 0 || posteLng !== 0)) {
-    state.gps = { lat: posteLat, lng: posteLng, acc: 10 };
-  } else {
-    // Sem coords no banco — placeholder pra liberar envio + GPS silencioso opcional
-    state.gps = { lat: null, lng: null, acc: null };
-    if (navigator.geolocation && navigator.geolocation.getCurrentPosition) {
-      try {
-        navigator.geolocation.getCurrentPosition(
-          (pos) => {
-            if (state.poste_id && pos && pos.coords) {
-              state.gps = {
-                lat: pos.coords.latitude,
-                lng: pos.coords.longitude,
-                acc: pos.coords.accuracy || 30
-              };
-            }
-          },
-          () => { /* sem permissão ou timeout — segue sem GPS real */ },
-          { enableHighAccuracy: false, timeout: 8000, maximumAge: 60000 }
-        );
-      } catch (e) {}
-    }
-  }
-  if (typeof validateForm === 'function') validateForm();
-
-  // Banner indicando que estamos no fluxo do QR
-  let banner = $('qr-banner');
-  if (!banner) {
-    banner = document.createElement('div');
-    banner.id = 'qr-banner';
-    banner.style.cssText = 'background:linear-gradient(95deg,#2D7EC4,#7B4FC0);color:#fff;padding:12px 14px;border-radius:10px;margin-bottom:14px;font-size:13px;line-height:1.4;display:flex;align-items:center;gap:10px';
-    const screen = $('screen-report');
-    const main = screen.querySelector('main, .container, form, .form, section') || screen;
-    main.insertBefore(banner, main.firstChild);
-  }
-  const codigo = state.poste_info && state.poste_info.codigo ? ' · ' + state.poste_info.codigo : '';
-  banner.innerHTML = `<span style="font-size:18px">📍</span><div style="flex:1"><b>Poste identificado:</b> ${esc(state.poste_id)}${codigo}<br><span style="font-size:11.5px;opacity:0.9">📍 Localização e endereço já preenchidos</span></div>`;
-}
-
-function reportarMesmoAssim() {
-  continuarReporteComPoste();
-}
-
-function esc(s) {
-  return String(s == null ? '' : s)
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
 
 // ==============================================================
@@ -1474,7 +1277,6 @@ function buildPayload() {
     tel: $('tel').value.trim(),
     endereco: $('endereco').value.trim(),
     foto_base64: state.foto,
-    poste_id: state.poste_id || '',
     user_agent: navigator.userAgent.slice(0, 180)
   };
 }
@@ -1536,20 +1338,6 @@ function onSubmitSuccess(payload, mode) {
   state.submitting = false;
   $('submit-btn-text').textContent = 'Enviar reporte';
 
-  // Se veio do QR e o envio foi online, vincula o Poste ID na planilha
-  if (mode === 'sent' && state.poste_id && payload && payload.protocolo) {
-    try {
-      const body = new URLSearchParams();
-      body.append('payload', JSON.stringify({
-        action: 'link_poste',
-        protocolo: payload.protocolo,
-        poste_id: state.poste_id
-      }));
-      // fire-and-forget — não bloqueia a UX se falhar
-      fetch(ENDPOINT_TECNICO, { method: 'POST', body: body, keepalive: true }).catch(() => {});
-    } catch (e) { /* silencioso */ }
-  }
-
   const icon = $('success-icon');
   const title = $('success-title');
   const text = $('success-text');
@@ -1576,12 +1364,6 @@ function onSubmitSuccess(payload, mode) {
 function resetForm() {
   state.gps = null; state.tipo = null; state.foto = null; state.fotoSize = 0;
   state.submitting = false;
-  state.poste_id = ''; state.poste_info = null;
-  const qrBanner = document.getElementById('qr-banner');
-  if (qrBanner && qrBanner.parentNode) qrBanner.parentNode.removeChild(qrBanner);
-  const gpsCard = document.getElementById('gps-card');
-  const gpsSection = gpsCard ? gpsCard.closest('.section') : null;
-  if (gpsSection) gpsSection.style.display = '';
   stopGps();
   $('gps-empty-state').style.display = 'block';
   $('gps-result').classList.remove('show');
@@ -1630,7 +1412,6 @@ if ('serviceWorker' in navigator) {
 // INIT
 // ==============================================================
 (function init() {
-  state.poste_id = lerPosteDaURL();
   updateOnlineStatus();
   updatePendingBanner();
   startSplash();
@@ -1643,8 +1424,6 @@ window.removePhoto = removePhoto;
 window.submitReport = submitReport;
 window.resetForm = resetForm;
 window.finishSplash = finishSplash;
-window.continuarReporteComPoste = continuarReporteComPoste;
-window.reportarMesmoAssim = reportarMesmoAssim;
 </script>
 <script type="module" src="./js/cidadao/main.js"></script>
 </body>

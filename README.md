@@ -25,18 +25,17 @@ unificado subir — enquanto isso, mudança aqui não muda o que o cidadão vê.
 Quando o deploy unificado subir, os dois viram rotas do mesmo domínio
 (`/` e `/tecnico/`) e este bloco deve ser atualizado com a URL final.
 
-Os QR já impressos e colados nos postes apontam para `iluminacoruripe.netlify.app`.
-Antes de desligar esse domínio, aponte-o para o deploy novo — senão todo QR na rua morre.
+A leitura de QR Code foi removida do sistema. As plaquetas já instaladas apontam para
+`iluminacoruripe.netlify.app` e passam a abrir o formulário comum. Antes de desligar esse
+domínio, aponte-o para o deploy novo, ou esses links deixam de abrir.
 
 
 ## Por que monorepo
 
 Antes eram dois sites Netlify separados com URL do outro escrita na mão dentro do código.
-Isso quebrava sempre que um domínio mudava: o QR impresso no poste apontava pro lugar errado
-e não tinha como descobrir sem o cidadão reclamar.
+Isso quebrava sempre que um domínio mudava.
 
-Agora os dois compartilham origem. O QR do poste é montado em runtime a partir de
-`location.origin` — trocar o domínio do site não exige reimprimir QR nem editar código.
+Agora os dois compartilham origem, e trocar o domínio do site não exige editar código.
 
 ## Estrutura
 
@@ -49,7 +48,6 @@ public/
     index.html          app técnico/gestor/almoxarifado
     manifest.json sw.js PWA do técnico (escopo "/tecnico/")
     leaflet.js/.css     mapa (vendorizado, sem CDN)
-    jsQR.js             leitor de QR pela câmera
 netlify.toml            publish=public, redirects, headers de cache
 docs/ARQUITETURA.md     fluxo de dados e contrato da API
 ```

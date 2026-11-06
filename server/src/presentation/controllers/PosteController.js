@@ -5,15 +5,6 @@
 const PosteService = require('../../application/services/PosteService');
 const { ok } = require('../views/resposta');
 
-async function situacao(req, res, next) {
-  try {
-    const dados = await PosteService.verificarSituacao(req.params.id);
-    return ok(res, dados);
-  } catch (err) {
-    next(err);
-  }
-}
-
 async function historico(req, res, next) {
   try {
     const dados = await PosteService.obterHistorico(req.params.id);
@@ -34,7 +25,6 @@ async function listar(req, res, next) {
 }
 
 module.exports = {
-  situacao,
   historico,
   listar
 };

@@ -1,22 +1,17 @@
 /**
  * CAMADA DE DOMÍNIO — Poste
- * Regras puras para identificação de postes (QR Code), normalização de ID e configuração física.
+ * Regras puras para identificação de postes, normalização de ID e configuração física.
  */
 
 const PADRAO_POSTE_ID = /^P-\d{1,6}$/;
 
 /**
- * Normaliza códigos lidos de QR Code ou digitados (ex.: "p0001" -> "P-0001").
+ * Normaliza códigos digitados (ex.: "p0001" -> "P-0001").
  * Retorna string vazia se não for um código de poste válido.
  */
 function normalizarPosteId(raw) {
   if (!raw) return '';
   let limpo = String(raw).trim().toUpperCase();
-
-  const matchUrl = /[?&]POSTE=([A-Z0-9-]+)/i.exec(limpo);
-  if (matchUrl) {
-    limpo = matchUrl[1].toUpperCase();
-  }
 
   if (/^P\d+$/.test(limpo)) {
     limpo = limpo.replace(/^P/, 'P-');

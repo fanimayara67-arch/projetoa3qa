@@ -45,7 +45,7 @@ function coordenadasValidas(lat, lng) {
 
 /**
  * Valida os dados de entrada de um novo chamado do cidadão.
- * Se vier de um QR Code de poste (`poste_id`), as coordenadas podem vir do cadastro do poste.
+ * Todo chamado precisa de coordenadas GPS válidas (CA01).
  */
 function validarNovoChamado(dados = {}) {
   const erros = [];
@@ -60,11 +60,10 @@ function validarNovoChamado(dados = {}) {
     erros.push('Tipo de defeito é obrigatório.');
   }
 
-  const temPosteId = Boolean(dados.poste_id && String(dados.poste_id).trim());
   const temGps = coordenadasValidas(dados.lat ?? dados.latitude, dados.lng ?? dados.longitude);
 
-  if (!temPosteId && !temGps) {
-    erros.push('Localização GPS válida ou identificação do poste (QR) é obrigatória.');
+  if (!temGps) {
+    erros.push('Localização GPS válida é obrigatória.');
   }
 
   return {

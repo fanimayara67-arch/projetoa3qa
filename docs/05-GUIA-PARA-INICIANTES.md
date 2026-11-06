@@ -13,7 +13,7 @@
 
 Imagine que um poste da sua rua apagou à noite. Antes, você precisava descobrir um telefone da prefeitura ou ir até lá pessoalmente. Com o **Ilumina Coruripe**, tudo acontece pelo celular em dois aplicativos web (chamados de **PWAs** — sites que funcionam como aplicativos de celular, inclusive quando a internet cai):
 
-1. **App do Cidadão (`/`):** Qualquer morador aponta a câmera para o adesivo com **QR Code** colado no poste (ou usa o GPS do celular), tira uma foto do problema e aperta **"Enviar reporte"**.
+1. **App do Cidadão (`/`):** Qualquer morador captura a localização com o GPS do celular, tira uma foto do problema e aperta **"Enviar reporte"**.
 2. **App da Equipe Técnica (`/tecnico/`):** O eletricista em campo vê a lista de postes com defeito no mapa, conserta a luminária, tira uma foto do serviço pronto, informa quais peças gastou (ex.: 1 lâmpada LED e 1 reator) e dá baixa no chamado. Lá também ficam as telas do **Gestor** (que planeja rotas e emite relatórios) e do **Almoxarife** (que controla o estoque de peças).
 
 ---
@@ -104,7 +104,7 @@ Para entender de verdade, vamos seguir o caminho de duas ações importantes do 
 2. **Validação no Domínio:** O [`ReportController.js`](../public/js/cidadao/presentation/ReportController.js) chama [`EnviarReporte.js`](../public/js/cidadao/application/EnviarReporte.js), que usa [`Report.js`](../public/js/cidadao/domain/Report.js) para criar um pacote com:
    - Um **`id` único (UUID)** gerado no celular (ex.: `6f1c2b0e-...`).
    - Um **protocolo legível** para a Maria anotar (ex.: `IC-261104-AB12C`).
-   - Ele confere: *"Tem foto? Tem GPS ou QR do poste?"* Se não tiver GPS, ele **nunca inventa coordenada zero** — pede para capturar de novo.
+   - Ele confere: *"Tem foto? Tem GPS?"* Se não tiver GPS, ele **nunca inventa coordenada zero** — pede para capturar de novo.
 3. **Salva primeiro no celular (Offline-First):** Antes mesmo de tentar usar a internet, [`IndexedDbReportRepository.js`](../public/js/cidadao/infrastructure/IndexedDbReportRepository.js) grava o chamado no banco interno do celular (`IndexedDB`) com o estado `pending` (pendente). Assim, se a bateria acabar ou o 4G cair na rua, o chamado da Maria **já está salvo**.
 4. **Sincronização Inteligente ([`SincronizarFila.js`](../public/js/cidadao/application/SincronizarFila.js)):**
    - Se tiver internet, envia `POST /api/chamados` para o servidor Node.js.

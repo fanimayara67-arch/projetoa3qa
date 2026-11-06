@@ -214,3 +214,16 @@ test('PWA Cidadão (Camada de Aplicação): SincronizarFila aplica backoff expon
   // 2^1 * 30_000 = 60_000 ms de espera
   assert.equal(estadoMock[0].sync.nextRetryAt, agora + 60_000);
 });
+
+test('PWA Cidadão (Domínio): reporte sem GPS é rejeitado, mesmo com poste_id antigo na fila', async () => {
+  const { validarReport } = await import('../../public/js/cidadao/domain/Report.js');
+  const erros = validarReport({
+    tipo: 'apagado',
+    lat: null,
+    lng: null,
+    foto_base64: 'data:image/jpeg;base64,AAA',
+    poste_id: 'P-0001'
+  });
+  assert.equal(erros.length, 1);
+  assert.match(erros[0], /GPS/);
+});

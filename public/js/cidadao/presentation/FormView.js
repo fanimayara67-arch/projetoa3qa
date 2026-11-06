@@ -18,7 +18,6 @@ export class FormView {
       tipo: estadoExtra.tipo || null,
       gps: estadoExtra.gps || null,
       foto: estadoExtra.foto || null,
-      posteId: estadoExtra.poste_id || '',
       descricao: (this.$('descricao') && this.$('descricao').value) || '',
       nome: (this.$('nome') && this.$('nome').value) || '',
       tel: (this.$('tel') && this.$('tel').value) || '',
