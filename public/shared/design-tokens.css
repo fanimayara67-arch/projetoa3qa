@@ -1,0 +1,43 @@
+/* Tokens compartilhados pelo app do cidadão e pelo do técnico. */
+:root {
+  --bg: #FAFAFC;
+  --surface: #FFFFFF;
+  --surface-2: #F4F5F8;
+  --ink: #0F1420;
+  --ink-2: #3E4759;
+  --ink-3: #8591A6;
+  --line: #E8EBF0;
+  --line-2: #D4D9E3;
+
+  --brand-red:    #E85D3F;
+  --brand-orange: #F39427;
+  --brand-yellow: #F5C83D;
+  --brand-green:  #3EBD5F;
+  --brand-teal:   #3EB5D9;
+  --brand-blue:   #2D7EC4;
+  --brand-purple: #7B4FC0;
+  --brand-pink:   #D94F95;
+
+  --success: #0F9D58;
+  --success-soft: #E3F3EB;
+  --warn: #E8871E;
+  --warn-soft: #FEF1E0;
+  --danger: #D93025;
+  --danger-soft: #FCE8E7;
+
+  --gradient-brand: linear-gradient(95deg,
+    var(--brand-red) 0%, var(--brand-orange) 16%, var(--brand-yellow) 32%,
+    var(--brand-green) 48%, var(--brand-teal) 64%, var(--brand-blue) 80%,
+    var(--brand-purple) 100%);
+
+  --radius: 16px;
+  --radius-sm: 10px;
+  --radius-lg: 24px;
+
+  --shadow-sm: 0 1px 2px rgba(15,20,32,0.05), 0 1px 1px rgba(15,20,32,0.04);
+  --shadow: 0 4px 14px rgba(15,20,32,0.07), 0 1px 3px rgba(15,20,32,0.05);
+  --shadow-lg: 0 20px 48px rgba(15,20,32,0.14), 0 8px 20px rgba(15,20,32,0.08);
+
+  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "SF Pro Text", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+}

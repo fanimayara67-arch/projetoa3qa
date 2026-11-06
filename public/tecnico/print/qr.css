@@ -1,0 +1,58 @@
+/* Janela de impressão: QR codes. */
+@page { size: A4; margin: 10mm; }
+* { box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; color:#111; margin:0; padding:0; }
+.top { text-align:center; margin-bottom:6mm; }
+.top h1 { margin:0 0 2mm 0; font-size:14px; }
+.top .sub { font-size:10px; color:#666; }
+.actions { text-align:center; margin-bottom:8mm; }
+.actions button { padding:9px 18px; background:#0F1420; color:#fff; border:none; border-radius:6px; font-size:13px; font-weight:700; cursor:pointer; }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(var(--cols), 1fr);
+  gap: 4mm;
+}
+.cell {
+  border: 1px dashed #bbb;
+  border-radius: 3mm;
+  padding: 3mm;
+  text-align: center;
+  page-break-inside: avoid;
+  height: var(--cell-h);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+}
+.cell .codigo {
+  font-size: var(--font-cod);
+  font-weight: 800;
+  color: #0A6E3E;
+  line-height: 1.1;
+  margin-bottom: 2mm;
+  min-height: 1.1em;
+}
+.cell .qr {
+  width: var(--qr);
+  height: var(--qr);
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+  background:#fff;
+}
+.cell .id {
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+  font-size: var(--font-id);
+  font-weight: 700;
+  color: #111;
+  margin-top: 2mm;
+}
+@media print {
+  .actions, .top { display: none; }
+  .cell { border: 1px dashed #999; }
+  body { margin:0; padding:0; }
+}
+body.qr-grande  { --cols: 2; --cell-h: 92mm; --qr: 70mm; --font-id: 13px; --font-cod: 17px; }
+body.qr-medio   { --cols: 3; --cell-h: 67mm; --qr: 50mm; --font-id: 11px; --font-cod: 14px; }
+body.qr-pequeno { --cols: 4; --cell-h: 47mm; --qr: 35mm; --font-id: 9px;  --font-cod: 11px; }
