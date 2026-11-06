@@ -67,6 +67,11 @@ function validarNovoChamado(dados = {}) {
     erros.push('Localização GPS válida ou identificação do poste (QR) é obrigatória.');
   }
 
+  const foto = dados.foto_base64 || dados.fotoUrl;
+  if (!foto || typeof foto !== 'string' || !foto.trim()) {
+    erros.push('Foto do poste é obrigatória.');
+  }
+
   return {
     valido: erros.length === 0,
     erros
