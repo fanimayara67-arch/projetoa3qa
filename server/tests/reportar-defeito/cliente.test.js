@@ -72,3 +72,10 @@ test('RP-16 [caixa-preta | valor-limite] classificação da precisão do GPS: 10
     assert.equal(classificarPrecisao(metros), esperado, `${metros} m`);
   }
 });
+
+test('RP-16 [suposição de erro] precisão desconhecida ou negativa não é exibida como "Excelente" (passo 2, A3)', async () => {
+  const { classificarPrecisao } = await importar('infrastructure/GeolocationService.js');
+  for (const valor of [null, undefined, NaN, -1, 'abc']) {
+    assert.equal(classificarPrecisao(valor), 'poor', `precisão ${String(valor)}`);
+  }
+});

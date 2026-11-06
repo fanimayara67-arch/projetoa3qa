@@ -54,3 +54,28 @@ test('RP-10 [caixa-branca | ramo de erro] falha ao salvar a foto não cria chama
   assert.equal(banco.chamados.size, 0);
   assert.equal(banco.eventos.includes('INSERT'), false, 'nenhuma gravação pode acontecer');
 });
+
+test('RP-15 [baseada em risco | chamado sem localização] QR de poste sem coordenadas e sem GPS é recusado (CA01)', async () => {
+  const banco = criarBancoSimulado();
+  const semGps = reporteValido({ lat: null, lng: null, poste_id: 'P-0099' });
+  const deps = {
+    ...montarDependencias(banco),
+    PosteRepo: { garantirExistencia: async () => ({ id: 'P-0099', latitude: null, longitude: null }) }
+  };
+
+  await assert.rejects(criarChamado(semGps, deps), { status: 400 });
+  assert.equal(banco.chamados.size, 0, 'nenhum chamado pode ficar sem localização');
+});
+
+test('RP-15 [caixa-preta | partição válida] QR de poste cadastrado dispensa o GPS e usa as coordenadas do poste', async () => {
+  const banco = criarBancoSimulado();
+  const deps = {
+    ...montarDependencias(banco),
+    PosteRepo: { garantirExistencia: async () => ({ id: 'P-0001', latitude: -10.1301, longitude: -36.1702, endereco: 'Rua A' }) }
+  };
+
+  const chamado = await criarChamado(reporteValido({ lat: null, lng: null, poste_id: 'P-0001' }), deps);
+  assert.equal(chamado.latitude, -10.1301);
+  assert.equal(chamado.longitude, -36.1702);
+  assert.equal(chamado.poste_id, 'P-0001');
+});

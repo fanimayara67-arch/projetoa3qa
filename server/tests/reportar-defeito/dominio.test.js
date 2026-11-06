@@ -7,7 +7,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const Chamado = require('../../src/domain/Chamado');
-const { reporteValido, TIPOS_DO_UC01 } = require('./fixture');
+const { reporteValido, fotoComBytes, TIPOS_DO_UC01, UM_MEGABYTE } = require('./fixture');
 
 const valida = alterar => Chamado.validarNovoChamado(reporteValido(alterar)).valido;
 
@@ -41,4 +41,36 @@ test('RP-05 [caixa-preta | valor-limite] limites de latitude e longitude e o pon
 test('RP-08 [caixa-preta | partição válida] nome, telefone, endereço e descrição são opcionais', () => {
   assert.equal(valida({ nome: '', tel: '', endereco: '', descricao: '' }), true);
   assert.equal(valida({ nome: undefined, tel: undefined, endereco: undefined, descricao: undefined }), true);
+});
+
+test('RP-02 (servidor) [caixa-preta | tabela de decisão] só aceita com GPS, tipo e foto (passo 6, CA01)', () => {
+  for (const temGps of [true, false]) {
+    for (const temTipo of [true, false]) {
+      for (const temFoto of [true, false]) {
+        const aceito = valida({
+          lat: temGps ? -10.1253 : null,
+          lng: temGps ? -36.1756 : null,
+          tipo: temTipo ? 'apagado' : '',
+          foto_base64: temFoto ? reporteValido().foto_base64 : null
+        });
+        assert.equal(aceito, temGps && temTipo && temFoto, `GPS=${temGps}, tipo=${temTipo}, foto=${temFoto}`);
+      }
+    }
+  }
+});
+
+test('RP-03 [caixa-preta | partição inválida] tipo fora da lista do UC01 é rejeitado', () => {
+  for (const tipo of ['POSTE_CAIU', 'fios_soltos', 'Poste apagado', 'APAGADO', '   ']) {
+    assert.equal(valida({ tipo }), false, `o tipo "${tipo}" deveria ser rejeitado`);
+  }
+});
+
+test('RP-06 [caixa-preta | valor-limite] descrição: 500 caracteres aceita, 501 rejeita (passo 5)', () => {
+  assert.equal(valida({ descricao: 'x'.repeat(500) }), true);
+  assert.equal(valida({ descricao: 'x'.repeat(501) }), false);
+});
+
+test('RP-07 [caixa-preta | valor-limite] foto: 2 MB aceita, 2 MB + 1 byte rejeita (RNF02)', () => {
+  assert.equal(valida({ foto_base64: fotoComBytes(2 * UM_MEGABYTE) }), true);
+  assert.equal(valida({ foto_base64: fotoComBytes(2 * UM_MEGABYTE + 1) }), false);
 });
