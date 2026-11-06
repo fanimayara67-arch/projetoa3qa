@@ -74,3 +74,30 @@ test('RP-07 [caixa-preta | valor-limite] foto: 2 MB aceita, 2 MB + 1 byte rejeit
   assert.equal(valida({ foto_base64: fotoComBytes(2 * UM_MEGABYTE) }), true);
   assert.equal(valida({ foto_base64: fotoComBytes(2 * UM_MEGABYTE + 1) }), false);
 });
+
+/* ── Caixa-branca: casos criados a partir do relatório de cobertura (Passo 5) ── */
+
+test('RP-14 [caixa-branca | cobertura de ramos] identificação: id e protocolo ausentes ou de tipo errado', () => {
+  const erros = alterar => Chamado.validarNovoChamado(reporteValido(alterar)).erros;
+  assert.match(erros({ id: undefined }).join(' '), /Identificador único/);
+  assert.match(erros({ id: 123 }).join(' '), /Identificador único/);
+  assert.match(erros({ protocolo: '' }).join(' '), /Protocolo do chamado/);
+  assert.match(erros({ protocolo: 42 }).join(' '), /Protocolo do chamado/);
+  assert.equal(Chamado.validarNovoChamado(null).valido, false, 'entrada nula não pode derrubar o servidor');
+  assert.equal(Chamado.validarNovoChamado(undefined).valido, false);
+});
+
+test('RP-14 [caixa-branca | cobertura de ramos] foto: URL já enviada, campo fotoUrl e preenchimento do Base64', () => {
+  assert.equal(valida({ foto_base64: 'https://exemplo.org/foto.jpg' }), true, 'URL não tem tamanho a medir');
+  assert.equal(valida({ foto_base64: undefined, fotoUrl: '/uploads/fotos/a.jpg' }), true, 'aceita a foto pelo campo fotoUrl');
+  assert.equal(valida({ foto_base64: '   ' }), false, 'foto só com espaços é ausente');
+  // 2 MB − 1 byte termina em "==", 2 MB em "=" e 2 MB + 1 sem preenchimento: os três ramos da conta.
+  assert.equal(valida({ foto_base64: fotoComBytes(2 * UM_MEGABYTE - 1) }), true);
+  assert.equal(valida({ foto_base64: fotoComBytes(2 * UM_MEGABYTE) }), true);
+  assert.equal(valida({ foto_base64: fotoComBytes(2 * UM_MEGABYTE + 1) }), false);
+});
+
+test('RP-14 [caixa-branca | cobertura de ramos] coordenadas como texto vazio e como texto numérico', () => {
+  assert.equal(Chamado.coordenadasValidas('', ''), false);
+  assert.equal(Chamado.coordenadasValidas('-10.1253', '-36.1756'), true);
+});

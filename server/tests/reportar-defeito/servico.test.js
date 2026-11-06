@@ -79,3 +79,32 @@ test('RP-15 [caixa-preta | partição válida] QR de poste cadastrado dispensa o
   assert.equal(chamado.longitude, -36.1702);
   assert.equal(chamado.poste_id, 'P-0001');
 });
+
+/* ── Caixa-branca: ramos de resolverLocalizacao e completarComPoste (Passo 5) ── */
+
+test('RP-14 [caixa-branca | cobertura de ramos] com GPS e QR, prevalece o GPS do aparelho e o endereço informado', async () => {
+  const banco = criarBancoSimulado();
+  const deps = {
+    ...montarDependencias(banco),
+    PosteRepo: { garantirExistencia: async () => ({ id: 'P-0001', latitude: -10.2, longitude: -36.2, endereco: 'Endereço do cadastro' }) }
+  };
+  const chamado = await criarChamado(reporteValido({ poste_id: 'P-0001', endereco: 'Em frente à praça' }), deps);
+  assert.equal(chamado.latitude, reporteValido().lat);
+  assert.equal(chamado.longitude, reporteValido().lng);
+  assert.equal(chamado.endereco, 'Em frente à praça');
+});
+
+test('RP-14 [caixa-branca | cobertura de ramos] poste sem retorno do cadastro: usa o GPS; sem endereço: usa o do poste', async () => {
+  const banco = criarBancoSimulado();
+  const semRetorno = { ...montarDependencias(banco), PosteRepo: { garantirExistencia: async () => null } };
+  const comGps = await criarChamado(reporteValido({ poste_id: 'P-0002' }), semRetorno);
+  assert.equal(comGps.latitude, reporteValido().lat);
+
+  const banco2 = criarBancoSimulado();
+  const comEndereco = {
+    ...montarDependencias(banco2),
+    PosteRepo: { garantirExistencia: async () => ({ id: 'P-0003', latitude: -10.13, longitude: -36.17, endereco: 'Rua B, 10' }) }
+  };
+  const chamado = await criarChamado(reporteValido({ lat: null, lng: null, poste_id: 'P-0003', endereco: '' }), comEndereco);
+  assert.equal(chamado.endereco, 'Rua B, 10');
+});
