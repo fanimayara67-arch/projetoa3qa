@@ -17,6 +17,18 @@ const TIPOS_VALIDOS = Object.freeze([
 ]);
 
 const LIMITE_DESCRICAO = 500; // UC01, passo 5
+const LIMITE_FOTO_BYTES = 2 * 1024 * 1024; // RNF02: imagem comprimida para no máximo 2 MB
+
+/**
+ * Tamanho, em bytes, da imagem enviada em Base64 (com ou sem o prefixo `data:`).
+ * Uma foto que já é URL (enviada antes) não tem conteúdo a medir e conta como 0.
+ */
+function tamanhoFotoBytes(foto) {
+  if (/^https?:\/\//i.test(foto) || foto.startsWith('/uploads/')) return 0;
+  const base64 = foto.replace(/^data:[^;]+;base64,/, '').replace(/\s/g, '');
+  const preenchimento = base64.endsWith('==') ? 2 : base64.endsWith('=') ? 1 : 0;
+  return Math.floor((base64.length * 3) / 4) - preenchimento;
+}
 
 /**
  * Verifica se o chamado pode receber fechamento (baixa técnica ou administrativa).
@@ -74,6 +86,8 @@ function validarNovoChamado(dados = {}) {
   const foto = dados.foto_base64 || dados.fotoUrl;
   if (!foto || typeof foto !== 'string' || !foto.trim()) {
     erros.push('Foto do poste é obrigatória.');
+  } else if (tamanhoFotoBytes(foto) > LIMITE_FOTO_BYTES) {
+    erros.push('A foto pode ter no máximo 2 MB.');
   }
 
   return {
