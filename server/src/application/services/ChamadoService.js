@@ -52,6 +52,15 @@ async function criarChamado(dados, deps = {}) {
       }
     }
 
+    // CA01: nenhum chamado fica sem localização. Sem GPS, o poste do QR precisa ter coordenadas.
+    // O erro é lançado dentro da transação, então o cadastro provisório do poste também é desfeito.
+    if (!Chamado.coordenadasValidas(latitude, longitude)) {
+      throw new DadoInvalido(
+        'Localização indisponível: capture o GPS do aparelho para reportar este poste.',
+        ['O poste do QR Code não tem coordenadas cadastradas e o reporte veio sem GPS.']
+      );
+    }
+
     const chamado = await ChamadoRepo.criarOuRetornarExistente(tx, {
       id: dados.id,
       protocolo: dados.protocolo,
