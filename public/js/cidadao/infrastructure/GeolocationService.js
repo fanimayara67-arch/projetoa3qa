@@ -5,6 +5,9 @@
  */
 
 export function classificarPrecisao(accMetros) {
+  // Precisão ausente, inválida ou negativa é tratada como imprecisa (UC01, A3):
+  // o cidadão vê o aviso e pode recapturar, em vez de ver "Excelente" por engano.
+  if (typeof accMetros !== 'number' || !Number.isFinite(accMetros) || accMetros < 0) return 'poor';
   if (accMetros <= 10) return 'excellent';
   if (accMetros <= 25) return 'good';
   return 'poor';
