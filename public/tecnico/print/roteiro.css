@@ -1,0 +1,16 @@
+/* Janela de impressão: Roteiro. */
+@page { size: A4; margin: 14mm; }
+body { font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif; color:#111; margin:0; padding:0; }
+.stripe { height:5px; background:linear-gradient(95deg,#E85D3F,#F39427,#F5C83D,#3EBD5F,#3EB5D9,#2D7EC4,#7B4FC0); margin-bottom:14px; }
+h1 { font-size:18px; margin:0 0 4px 0; }
+.sub { font-size:11px; color:#666; margin-bottom:12px; }
+.stats { display:flex; gap:20px; padding:10px 14px; background:#F4F5F8; border-radius:6px; margin-bottom:14px; font-size:12px; }
+.stats b { font-size:18px; display:block; color:#0F1420; }
+table { width:100%; border-collapse:collapse; }
+th { background:#17212E; color:#fff; padding:8px 10px; font-size:11px; text-align:left; }
+.footer { margin-top:14px; font-size:10px; color:#888; text-align:center; }
+.actions { margin-bottom:12px; }
+.actions button, .actions a { display:inline-block; padding:8px 14px; margin-right:6px; border-radius:6px; border:none; font-size:12px; font-weight:600; cursor:pointer; text-decoration:none; }
+.btn-print { background:#0F1420; color:#fff; }
+.btn-rota { background:#3EBD5F; color:#fff; }
+@media print { .actions { display:none; } }

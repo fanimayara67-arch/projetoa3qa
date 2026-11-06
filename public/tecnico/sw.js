@@ -1,9 +1,18 @@
 // ILUMINA CORURIPE TÉCNICO — Service Worker
-const CACHE_NAME = 'ilumina-tec-v17-rota-admin-2026-11-05';
+const CACHE_NAME = 'ilumina-tec-v18-css-separado-2026-11-06';
 const APP_SHELL = [
   './',
   './index.html',
   './manifest.json',
+  '../shared/design-tokens.css',
+  '../shared/utilities.css',
+  './tecnico.css',
+  './print/roteiro.css',
+  './print/relatorio.css',
+  './print/tentativas.css',
+  './print/postes.css',
+  './print/qr.css',
+  './print/material.css',
   '../shared/config.js',
   '../shared/infrastructure/config.js',
   '../shared/infrastructure/idb.js',
