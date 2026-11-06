@@ -16,6 +16,8 @@ const TIPOS_VALIDOS = Object.freeze([
   'outro'
 ]);
 
+const LIMITE_DESCRICAO = 500; // UC01, passo 5
+
 /**
  * Verifica se o chamado pode receber fechamento (baixa técnica ou administrativa).
  * Evita que dois técnicos fechem o mesmo chamado silenciosamente.
@@ -63,6 +65,10 @@ function validarNovoChamado(dados = {}) {
 
   if (!temPosteId && !temGps) {
     erros.push('Localização GPS válida ou identificação do poste (QR) é obrigatória.');
+  }
+
+  if (dados.descricao != null && String(dados.descricao).trim().length > LIMITE_DESCRICAO) {
+    erros.push(`A descrição pode ter no máximo ${LIMITE_DESCRICAO} caracteres.`);
   }
 
   const foto = dados.foto_base64 || dados.fotoUrl;
