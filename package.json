@@ -9,7 +9,11 @@
     "start": "npm run dev",
     "start:server": "node server/src/app.js",
     "db:check": "npm --prefix server run db:check",
-    "test": "node --test"
+    "test": "node --test",
+    "test:coverage": "node --test --experimental-test-coverage",
+    "test:uc01": "node --test \"server/tests/reportar-defeito/*.test.js\""
   },
-  "engines": { "node": ">=18" }
+  "engines": {
+    "node": ">=18"
+  }
 }
