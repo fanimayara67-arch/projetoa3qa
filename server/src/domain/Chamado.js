@@ -6,18 +6,14 @@
 
 const STATUS_VALIDOS = Object.freeze(['aberto', 'em_atendimento', 'fechado', 'cancelado']);
 const STATUS_FECHAVEIS = Object.freeze(['aberto', 'em_atendimento']);
+// Tipos de problema do passo 3 do UC01, com os mesmos códigos enviados pelo app do cidadão.
 const TIPOS_VALIDOS = Object.freeze([
   'apagado',
+  'queimada',
   'piscando',
   'aceso_dia',
   'quebrado',
-  'fios_soltos',
-  'outro',
-  'Poste apagado',
-  'Luz piscando',
-  'Aceso durante o dia',
-  'Luminária quebrada',
-  'Outro problema'
+  'outro'
 ]);
 
 /**
@@ -58,6 +54,8 @@ function validarNovoChamado(dados = {}) {
   }
   if (!dados.tipo || typeof dados.tipo !== 'string' || !dados.tipo.trim()) {
     erros.push('Tipo de defeito é obrigatório.');
+  } else if (!TIPOS_VALIDOS.includes(dados.tipo)) {
+    erros.push(`Tipo de defeito não reconhecido: ${dados.tipo}.`);
   }
 
   const temPosteId = Boolean(dados.poste_id && String(dados.poste_id).trim());
