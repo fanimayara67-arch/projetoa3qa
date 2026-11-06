@@ -33,53 +33,66 @@ async function criarChamado(dados, deps = {}) {
   const fotoUrl = await FotoStorage.salvar(dados.foto_base64 || dados.fotoUrl);
 
   return emTransacao(async (tx) => {
-    let latitude = dados.lat ?? dados.latitude ?? null;
-    let longitude = dados.lng ?? dados.longitude ?? null;
-    let endereco = dados.endereco || null;
-
-    if (posteIdNormalizado) {
-      const poste = await PosteRepo.garantirExistencia(tx, posteIdNormalizado, {
-        endereco,
-        latitude,
-        longitude
-      });
-      if ((latitude == null || longitude == null) && poste) {
-        latitude = poste.latitude;
-        longitude = poste.longitude;
-      }
-      if (!endereco && poste && poste.endereco) {
-        endereco = poste.endereco;
-      }
-    }
-
-    // CA01: nenhum chamado fica sem localização. Sem GPS, o poste do QR precisa ter coordenadas.
-    // O erro é lançado dentro da transação, então o cadastro provisório do poste também é desfeito.
-    if (!Chamado.coordenadasValidas(latitude, longitude)) {
-      throw new DadoInvalido(
-        'Localização indisponível: capture o GPS do aparelho para reportar este poste.',
-        ['O poste do QR Code não tem coordenadas cadastradas e o reporte veio sem GPS.']
-      );
-    }
-
-    const chamado = await ChamadoRepo.criarOuRetornarExistente(tx, {
-      id: dados.id,
-      protocolo: dados.protocolo,
-      tipo: dados.tipo,
-      latitude,
-      longitude,
-      precisao_m: dados.acc ?? dados.precisao_m ?? null,
-      descricao: dados.descricao,
-      nome: dados.nome,
-      telefone: dados.tel || dados.telefone,
-      endereco,
-      fotoUrl,
-      posteId: posteIdNormalizado || null,
-      userAgent: dados.user_agent || dados.userAgent,
-      criadoEm: dados.timestamp || dados.criadoEm
-    });
-
-    return chamado;
+    const local = await resolverLocalizacao(tx, dados, posteIdNormalizado, PosteRepo);
+    return ChamadoRepo.criarOuRetornarExistente(
+      tx,
+      montarRegistroChamado(dados, local, fotoUrl, posteIdNormalizado)
+    );
   });
+}
+
+/**
+ * Define a localização do chamado: GPS do aparelho ou, sem GPS, as coordenadas do poste do QR.
+ * CA01: nenhum chamado fica sem localização. O erro é lançado dentro da transação,
+ * então o cadastro provisório do poste também é desfeito.
+ */
+async function resolverLocalizacao(tx, dados, posteId, PosteRepo) {
+  const local = {
+    latitude: dados.lat ?? dados.latitude ?? null,
+    longitude: dados.lng ?? dados.longitude ?? null,
+    endereco: dados.endereco || null
+  };
+  if (posteId) {
+    const poste = await PosteRepo.garantirExistencia(tx, posteId, { ...local });
+    completarComPoste(local, poste);
+  }
+  if (!Chamado.coordenadasValidas(local.latitude, local.longitude)) {
+    throw new DadoInvalido(
+      'Localização indisponível: capture o GPS do aparelho para reportar este poste.',
+      ['O poste do QR Code não tem coordenadas cadastradas e o reporte veio sem GPS.']
+    );
+  }
+  return local;
+}
+
+function completarComPoste(local, poste) {
+  if (!poste) return;
+  if (local.latitude == null || local.longitude == null) {
+    local.latitude = poste.latitude;
+    local.longitude = poste.longitude;
+  }
+  if (!local.endereco && poste.endereco) {
+    local.endereco = poste.endereco;
+  }
+}
+
+function montarRegistroChamado(dados, local, fotoUrl, posteId) {
+  return {
+    id: dados.id,
+    protocolo: dados.protocolo,
+    tipo: dados.tipo,
+    latitude: local.latitude,
+    longitude: local.longitude,
+    precisao_m: dados.acc ?? dados.precisao_m ?? null,
+    descricao: dados.descricao,
+    nome: dados.nome,
+    telefone: dados.tel || dados.telefone,
+    endereco: local.endereco,
+    fotoUrl,
+    posteId: posteId || null,
+    userAgent: dados.user_agent || dados.userAgent,
+    criadoEm: dados.timestamp || dados.criadoEm
+  };
 }
 
 async function listarChamados({ escopo = 'abertos' } = {}, deps = {}) {

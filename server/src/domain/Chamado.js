@@ -39,57 +39,71 @@ function podeFechar(chamado) {
   return STATUS_FECHAVEIS.includes(chamado.status);
 }
 
+/** Converte para número; vazio ou ausente vira NaN (inválido). */
+function paraNumero(valor) {
+  if (valor == null || valor === '') return NaN;
+  return Number(valor);
+}
+
 /**
  * Valida se as coordenadas geográficas são reais e válidas (rejeita 0,0 / NaN / fora do globo).
  */
 function coordenadasValidas(lat, lng) {
-  if (lat == null || lng == null || lat === '' || lng === '') return false;
-  const la = Number(lat);
-  const ln = Number(lng);
+  const la = paraNumero(lat);
+  const ln = paraNumero(lng);
   if (!Number.isFinite(la) || !Number.isFinite(ln)) return false;
-  if (Math.abs(la) < 0.0001 && Math.abs(ln) < 0.0001) return false;
-  if (la < -90 || la > 90) return false;
-  if (ln < -180 || ln > 180) return false;
-  return true;
+  const pontoZero = Math.abs(la) < 0.0001 && Math.abs(ln) < 0.0001;
+  return !pontoZero && Math.abs(la) <= 90 && Math.abs(ln) <= 180;
 }
 
-/**
- * Valida os dados de entrada de um novo chamado do cidadão.
- * Se vier de um QR Code de poste (`poste_id`), as coordenadas podem vir do cadastro do poste.
- */
-function validarNovoChamado(dados = {}) {
-  const erros = [];
+/* Regras do novo chamado (UC01). Cada uma devolve a lista de erros que encontrou. */
 
-  if (!dados.id || typeof dados.id !== 'string') {
+function validarIdentificacao(dados) {
+  const erros = [];
+  if (typeof dados.id !== 'string' || !dados.id) {
     erros.push('Identificador único (id) do chamado é obrigatório para idempotência.');
   }
-  if (!dados.protocolo || typeof dados.protocolo !== 'string') {
+  if (typeof dados.protocolo !== 'string' || !dados.protocolo) {
     erros.push('Protocolo do chamado é obrigatório.');
   }
-  if (!dados.tipo || typeof dados.tipo !== 'string' || !dados.tipo.trim()) {
-    erros.push('Tipo de defeito é obrigatório.');
-  } else if (!TIPOS_VALIDOS.includes(dados.tipo)) {
-    erros.push(`Tipo de defeito não reconhecido: ${dados.tipo}.`);
-  }
+  return erros;
+}
 
+function validarTipo({ tipo }) {
+  if (typeof tipo !== 'string' || !tipo.trim()) return ['Tipo de defeito é obrigatório.'];
+  if (!TIPOS_VALIDOS.includes(tipo)) return [`Tipo de defeito não reconhecido: ${tipo}.`];
+  return [];
+}
+
+/** Se vier de um QR Code de poste (`poste_id`), as coordenadas podem vir do cadastro do poste. */
+function validarLocalizacao(dados) {
   const temPosteId = Boolean(dados.poste_id && String(dados.poste_id).trim());
   const temGps = coordenadasValidas(dados.lat ?? dados.latitude, dados.lng ?? dados.longitude);
+  if (temPosteId || temGps) return [];
+  return ['Localização GPS válida ou identificação do poste (QR) é obrigatória.'];
+}
 
-  if (!temPosteId && !temGps) {
-    erros.push('Localização GPS válida ou identificação do poste (QR) é obrigatória.');
-  }
+function validarDescricao({ descricao }) {
+  if (descricao == null) return [];
+  if (String(descricao).trim().length <= LIMITE_DESCRICAO) return [];
+  return [`A descrição pode ter no máximo ${LIMITE_DESCRICAO} caracteres.`];
+}
 
-  if (dados.descricao != null && String(dados.descricao).trim().length > LIMITE_DESCRICAO) {
-    erros.push(`A descrição pode ter no máximo ${LIMITE_DESCRICAO} caracteres.`);
-  }
-
+function validarFoto(dados) {
   const foto = dados.foto_base64 || dados.fotoUrl;
-  if (!foto || typeof foto !== 'string' || !foto.trim()) {
-    erros.push('Foto do poste é obrigatória.');
-  } else if (tamanhoFotoBytes(foto) > LIMITE_FOTO_BYTES) {
-    erros.push('A foto pode ter no máximo 2 MB.');
-  }
+  if (typeof foto !== 'string' || !foto.trim()) return ['Foto do poste é obrigatória.'];
+  if (tamanhoFotoBytes(foto) > LIMITE_FOTO_BYTES) return ['A foto pode ter no máximo 2 MB.'];
+  return [];
+}
 
+const REGRAS_NOVO_CHAMADO = [validarIdentificacao, validarTipo, validarLocalizacao, validarDescricao, validarFoto];
+
+/**
+ * Valida os dados de entrada de um novo chamado do cidadão, aplicando todas as regras do UC01.
+ */
+function validarNovoChamado(dados) {
+  const entrada = dados || {};
+  const erros = REGRAS_NOVO_CHAMADO.flatMap(regra => regra(entrada));
   return {
     valido: erros.length === 0,
     erros
