@@ -1,5 +1,5 @@
 // ILUMINA CORURIPE TÉCNICO — Service Worker
-const CACHE_NAME = 'ilumina-tec-v17-rota-admin-2026-11-05';
+const CACHE_NAME = 'ilumina-tec-v19-relatorio-tentativas-2026-11-09';
 const APP_SHELL = [
   './',
   './index.html',

@@ -73,6 +73,26 @@ async function listar(escopo = 'abertos', tx = pool) {
     );
     return rows;
   }
+  if (escopo === 'fechados') {
+    // Usado pelo relatório de atendimentos: traz o fechamento e quem fechou.
+    const { rows } = await tx.query(
+      `SELECT c.*,
+              f.status          AS fechamento_status,
+              f.servico         AS fechamento_servico,
+              f.data_fechamento AS fechamento_data,
+              f.administrativo  AS fechamento_administrativo,
+              f.informante      AS fechamento_informante,
+              f.foto_url        AS fechamento_foto_url,
+              u.nome            AS fechamento_tecnico
+         FROM chamados c
+         JOIN fechamentos f ON f.chamado_id = c.id
+         LEFT JOIN usuarios u ON u.id = f.tecnico_id
+        WHERE c.status = 'fechado'
+        ORDER BY f.data_fechamento ASC
+        LIMIT 2000`
+    );
+    return rows;
+  }
   const { rows } = await tx.query('SELECT * FROM chamados ORDER BY criado_em DESC LIMIT 500');
   return rows;
 }

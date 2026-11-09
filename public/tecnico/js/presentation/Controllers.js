@@ -8,7 +8,8 @@ import { sincronizarBaixas } from '../application/SincronizarBaixas.js';
 import { gerarRotaOtimizada } from '../application/CarregarRota.js';
 import { criarFechamentoAdministrativo } from '../domain/AdminClose.js';
 import { fecharAdministrativamente } from '../application/FecharAdministrativamente.js';
-import { autenticarPainel, carregarPainel } from '../application/CarregarPainel.js';
+import { autenticarPainel, carregarPainel, carregarFechados, carregarTentativas } from '../application/CarregarPainel.js';
+import { rotuloTipo, rotuloStatusChamado } from '../domain/Ticket.js';
 
 export class TechnicalControllers {
   constructor({ listView, closeFormView, stockView, ticketCache, closeQueue, photoCache, api }) {
@@ -47,6 +48,14 @@ export class TechnicalControllers {
   async carregarChamados(token) {
     const dados = await carregarPainel(token, { api: this.api });
     return { ...dados, records: this.listView.prepararRegistros(dados.records) };
+  }
+
+  carregarFechadosParaRelatorio(token) {
+    return carregarFechados(token, { api: this.api, rotuloTipo });
+  }
+
+  carregarTentativasParaRelatorio(token) {
+    return carregarTentativas(token, { api: this.api, rotuloTipo, rotuloStatus: rotuloStatusChamado });
   }
 
   iniciarFechamentoAdministrativo() {

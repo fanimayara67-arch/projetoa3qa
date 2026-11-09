@@ -32,3 +32,31 @@ export function calcularDistanciaMetros(lat1, lng1, lat2, lng2) {
     Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
   return R * 2 * Math.atan2(Math.sqrt(Math.min(1, a)), Math.sqrt(Math.max(0, 1 - a)));
 }
+
+const ROTULOS_TIPO = Object.freeze({
+  apagado: 'Poste apagado',
+  piscando: 'Luz piscando',
+  aceso_dia: 'Aceso durante o dia',
+  quebrado: 'Luminária quebrada',
+  fios_soltos: 'Fios soltos',
+  outro: 'Outro problema'
+});
+
+/** Converte o código do tipo de defeito (ex.: 'aceso_dia') no texto exibido ao usuário. */
+export function rotuloTipo(tipo) {
+  const chave = String(tipo || '').trim();
+  return ROTULOS_TIPO[chave] || chave || 'Não informado';
+}
+
+const ROTULOS_STATUS = Object.freeze({
+  aberto: 'Aguardando atendimento',
+  em_atendimento: 'Em atendimento',
+  fechado: 'Concluído',
+  cancelado: 'Cancelado'
+});
+
+/** Converte o status do chamado no banco (ex.: 'em_atendimento') no texto exibido ao usuário. */
+export function rotuloStatusChamado(status) {
+  const chave = String(status || '').trim();
+  return ROTULOS_STATUS[chave] || chave || 'Aguardando atendimento';
+}
