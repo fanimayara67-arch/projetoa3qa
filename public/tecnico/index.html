@@ -779,8 +779,8 @@
 /* ══════════════════════════════════════════════
    CONFIG — trocar após deploy do Apps Script
    ══════════════════════════════════════════════ */
-const SHEETS_URL = window.ILUMINA.ENDPOINT_TECNICO;
-const USA_API_NODE = Boolean(window.ILUMINA.API_URL) || SHEETS_URL === '/api';
+const SHEETS_URL = window.ILUMINA?.ENDPOINT_TECNICO;
+const USA_API_NODE = Boolean(window.ILUMINA?.API_URL) || SHEETS_URL === '/api';
 const TECNICO_DEFAULT = '';
 
 async function controladoresTecnicos() {
@@ -2498,7 +2498,7 @@ async function gerarRelatorioTentativas() {
 }
 
 /* ══ RELATÓRIO DE POSTES ═════════════════════════════════ */
-const CIDADAO_URL = window.ILUMINA.APP_CIDADAO.replace(/\/$/, '');
+const CIDADAO_URL = window.ILUMINA?.APP_CIDADAO?.replace(/\/$/, '');
 function _qrUrl(text, size) {
   const sz = size || 180;
   return 'https://api.qrserver.com/v1/create-qr-code/?size=' + sz + 'x' + sz +
