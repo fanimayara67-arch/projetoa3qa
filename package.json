@@ -9,7 +9,9 @@
     "start": "npm run dev",
     "start:server": "node server/src/app.js",
     "db:check": "npm --prefix server run db:check",
-    "test": "node --test"
+    "test": "node --test --experimental-test-coverage"
   },
-  "engines": { "node": ">=18" }
+  "engines": {
+    "node": ">=18"
+  }
 }
