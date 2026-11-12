@@ -8,7 +8,7 @@ Este documento registra todos os testes executados ao longo das 6 tarefas de est
 
 | Total Planejado | Total Executado | Status |
 |-----------------|-----------------|--------|
-| 18              | 12              | ⏳ Em andamento |
+| 23              | 17              | ⏳ Em andamento |
 
 ---
 
@@ -58,7 +58,7 @@ Este documento registra todos os testes executados ao longo das 6 tarefas de est
 
 ## Próximas Tarefas (3-6)
 
-- **Tarefa 3**: Manter o requisito de PIN com quatro dígitos (ajustar validação do backend para exatamente 4 dígitos, incluindo PINs começando com zero).
+- **Tarefa 3**: Concluída - Manter o requisito de PIN com quatro dígitos (validada alteração da regex `/^\d{4,8}$/` para `/^\d{4}$/` no AuthService.js e 5 novos testes unitários aprovados).
 - **Tarefa 4**: Preparar e validar o banco da autenticação no MySQL (`usuarios`, `sessoes`, `tentativas_login`, migration e cadastro de técnico ativo).
 - **Tarefa 5**: Testar o bloqueio já implementado (5 tentativas incorretas -> 429 e limite de 8 req/min).
 - **Tarefa 6**: Validar o fluxo completo e atualizar o PWA (service worker).
