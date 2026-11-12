@@ -34,6 +34,7 @@
       <div class="header-info">
         <h1>Ilumina <em>Coruripe</em></h1>
         <p>Painel do Técnico</p>
+        <button onclick="logoutTecnico()" class="u-background-transparent u-border-1px-solid-line u-color-ink-2 u-font-size-11_5px u-font-weight-600 u-padding-6px-11px u-border-radius-99px u-cursor-pointer u-gap-5px" style="margin-left: 12px;">Sair</button>
       </div>
       <div class="header-tag" id="tech-name-tag" style="display:none">Técnico</div>
     </div>
@@ -3628,6 +3629,11 @@
     function limparSessao() {
       sessionToken = null; sessionExpiry = 0; sessionUser = null;
       try { localStorage.removeItem('ilu_tech_session'); } catch (_) { }
+    }
+function logoutTecnico() {
+      limparSessao();
+      showScreen('pin');
+      showToast('Logout efetuado. Faça login novamente.', 'err');
     }
 
     /* ══ TOAST ═════════════════════════════════════ */
