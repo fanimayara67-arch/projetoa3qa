@@ -82,7 +82,7 @@ after(async () => {
       await pool.query('DELETE FROM sessoes WHERE token IN (?)', [tokensCriadosNoTeste]);
     }
     await pool.query("DELETE FROM tentativas_login WHERE ip = '127.0.0.99'");
-  } catch (_) {}
+  } catch (_) { }
 
   await pool.end();
 
@@ -92,7 +92,7 @@ after(async () => {
     if (appPool && typeof appPool.end === 'function') {
       await appPool.end();
     }
-  } catch (_) {}
+  } catch (_) { }
 });
 
 // ============================================================================
@@ -288,5 +288,169 @@ test('CT-22 [Caixa Preta] Login real no MySQL rejeita "123" comprovando preserva
   await assert.rejects(
     () => chamarLogin(authService, '123', '127.0.0.99'),
     'PIN "123" sem zero a esquerda deveria ser rejeitado'
+  );
+});
+
+// ============================================================================
+// TAREFA 5 — Bloqueio de Segurança e Rate Limit HTTP
+// ============================================================================
+
+// Hook para limpar as tentativas geradas nos testes de bloqueio
+after(async () => {
+  try {
+    await pool.query(
+      "DELETE FROM tentativas_login WHERE ip IN ('127.0.0.100', '127.0.0.101', '127.0.0.102', '127.0.0.103', '127.0.0.104')"
+    );
+  } catch (_) { }
+});
+
+// Busca recursiva para encontrar o arquivo real do middleware "limitarTentativas"
+// Instancia o middleware real de rate limit (8 req / 1 min)
+let rateLimiterMiddleware = null;
+try {
+  const limiterPath = path.join(SERVER_DIR, 'src/presentation/middlewares/limitarTentativas.js');
+  const mod = require(limiterPath);
+  const limiterFactory = mod.limitarTentativas || mod;
+  rateLimiterMiddleware = limiterFactory({ maxPorJanela: 8, janelaMs: 60000 });
+} catch (e) {
+  console.log('Aviso: Nao foi possivel carregar o middleware.', e.message);
+}
+
+// Helper para simular requisições Express
+function mockExpressReqRes(ip) {
+  const req = { ip };
+  const res = {
+    statusVal: 200,
+    jsonVal: null,
+    status(code) { this.statusVal = code; return this; },
+    json(data) { this.jsonVal = data; return this; },
+    send(data) { this.jsonVal = data; return this; }
+  };
+  let nextCalled = false;
+  let nextErr = null; // Agora capturamos o erro repassado para o next()
+  const next = (err) => { nextCalled = true; nextErr = err; };
+  return { req, res, next, getNextCalled: () => nextCalled, getNextErr: () => nextErr };
+}
+
+test('CT-23 [Caixa Preta] 5 tentativas incorretas de PIN geram bloqueio (MuitasTentativas)', async () => {
+  const authService = carregarAuthService();
+  const ip = '127.0.0.100';
+
+  await pool.query("DELETE FROM tentativas_login WHERE ip = ?", [ip]);
+
+  // Erra 5 vezes
+  for (let i = 0; i < 5; i++) {
+    await assert.rejects(() => chamarLogin(authService, '9999', ip));
+  }
+
+  // A 6ª tentativa bloqueia no nível de serviço e retorna MuitasTentativas (HTTP 429 na Controller)
+  await assert.rejects(
+    () => chamarLogin(authService, '0123', ip),
+    (err) => err.name === 'MuitasTentativas' || err.message.includes('15 minutos')
+  );
+});
+
+test('CT-24 [Caixa Preta] Retroceder o tempo em 16 min no MySQL libera o login bloqueado pelo CT-23', async () => {
+  const authService = carregarAuthService();
+  const ip = '127.0.0.100';
+
+  // Avança no tempo: simula que os erros ocorreram 16 minutos atrás
+  await pool.query(
+    "UPDATE tentativas_login SET criado_em = DATE_SUB(NOW(), INTERVAL 16 MINUTE) WHERE ip = ?",
+    [ip]
+  );
+
+  // Agora, a senha correta deve funcionar
+  const res = await chamarLogin(authService, '0123', ip);
+  assert.ok(res && res.token, 'Login nao foi liberado apos janela de 15 minutos');
+  tokensCriadosNoTeste.push(res.token);
+});
+
+test('CT-25 [Caixa Preta] 8 req/min consecutivas geram HTTP 429 no Rate Limiter (Middleware)', async () => {
+  assert.ok(rateLimiterMiddleware, 'Middleware limitarTentativas não encontrado');
+  const ip = '127.0.0.101';
+
+  // 8 requisições normais para encher o limite
+  for (let i = 0; i < 8; i++) {
+    const { req, res, next } = mockExpressReqRes(ip);
+    await rateLimiterMiddleware(req, res, next);
+  }
+
+  // 9ª (ou 10ª) requisição deve estourar o limite (loop para cobrir se o código original usa > ou >=)
+  let bloqueou = false;
+  for (let i = 0; i < 2; i++) {
+    const { req, res, next, getNextErr } = mockExpressReqRes(ip);
+
+    try {
+      await rateLimiterMiddleware(req, res, next);
+    } catch (e) {
+      bloqueou = true; // Bloqueou via exception
+      break;
+    }
+
+    // Se alterou o status para 429 ou chamou next(new Error(...))
+    if (res.statusVal === 429 || getNextErr() != null) {
+      bloqueou = true;
+      break;
+    }
+  }
+
+  assert.ok(bloqueou, 'Rate limiter nao bloqueou a requisição após exceder limite de 8 req/min');
+});
+
+test('CT-26 [Caixa Preta] 7 req/min consecutivas nao bloqueiam a requisição HTTP', async () => {
+  assert.ok(rateLimiterMiddleware, 'Middleware limitarTentativas não encontrado');
+  const ip = '127.0.0.102';
+
+  for (let i = 0; i < 7; i++) {
+    const { req, res, next, getNextCalled } = mockExpressReqRes(ip);
+    await rateLimiterMiddleware(req, res, next);
+    assert.equal(getNextCalled(), true, `Bloqueio antecipado na requisicao ${i + 1}`);
+  }
+});
+
+test('CT-27 [Caixa Preta] Rate limiter HTTP expira após janela de 1 minuto e libera requisição', async () => {
+  assert.ok(rateLimiterMiddleware, 'Middleware limitarTentativas não encontrado');
+  const ip = '127.0.0.103';
+
+  // Estoura limite
+  for (let i = 0; i < 9; i++) {
+    const { req, res, next } = mockExpressReqRes(ip);
+    await rateLimiterMiddleware(req, res, next);
+  }
+
+  // Simula avanço de tempo substituindo o Date.now() nativo temporariamente
+  const originalNow = global.Date.now;
+  global.Date.now = () => originalNow() + 61000; // +61 segundos
+
+  try {
+    const { req, res, next, getNextCalled } = mockExpressReqRes(ip);
+    await rateLimiterMiddleware(req, res, next);
+    assert.equal(getNextCalled(), true, 'Rate limiter nao liberou apos simulacao de 61s');
+  } finally {
+    global.Date.now = originalNow; // restaura o relogio real
+  }
+});
+
+test('CT-28 [Caixa Branca] Bloqueio do banco e Rate Limiter HTTP atuam em camadas independentes', async () => {
+  assert.ok(rateLimiterMiddleware, 'Middleware limitarTentativas não encontrado');
+  const authService = carregarAuthService();
+  const ip = '127.0.0.104';
+
+  // 1. Bloqueia o IP exclusivamente no banco de dados (regra de negocio)
+  await pool.query("DELETE FROM tentativas_login WHERE ip = ?", [ip]);
+  for (let i = 0; i < 5; i++) {
+    try { await chamarLogin(authService, '9999', ip); } catch (e) { }
+  }
+  await assert.rejects(() => chamarLogin(authService, '0123', ip)); // Banco travado
+
+  // 2. Comprova que o Rate Limiter Express (camada HTTP) continua aberto, pois ele conta reqs, nao erros de PIN
+  const { req, res, next, getNextCalled } = mockExpressReqRes(ip);
+  await rateLimiterMiddleware(req, res, next);
+
+  assert.equal(
+    getNextCalled(),
+    true,
+    'O Rate Limiter (HTTP) bloqueou o IP precipitadamente sem atingir as 8 req/min'
   );
 });

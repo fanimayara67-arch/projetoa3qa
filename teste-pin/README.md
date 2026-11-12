@@ -8,7 +8,7 @@ Este documento registra todos os testes executados ao longo das 6 tarefas de est
 
 | Total Planejado | Total Executado | Status |
 |-----------------|-----------------|--------|
-| 28              | 20              | ⏳ Em andamento |
+| 28              | 28              | ⏳ Em andamento |
 
 ---
 
