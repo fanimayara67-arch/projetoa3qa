@@ -1,0 +1,148 @@
+{
+  "descricao": "Catálogo único dos defeitos encontrados nos testes offline. Vocabulário da disciplina: o erro é a ação humana, o defeito é o que ficou no código e a falha é o comportamento observado no teste.",
+  "severidades": {
+    "Crítica": "a funcionalidade offline não entrega o que promete em nenhum caso",
+    "Alta": "perda ou duplicação de dados em situação comum de campo",
+    "Média": "o usuário fica sem informação ou precisa agir sem ser avisado",
+    "Baixa": "mensagem ruim, sem perda de dados"
+  },
+  "defeitos": [
+    {
+      "id": "DEF-01", "severidade": "Crítica", "servidores": ["api-node"],
+      "titulo": "App do cidadão envia o reporte num formato que a API Node não aceita",
+      "requisitos": ["UC01 passo 7", "UC03", "RF01", "RF02", "CA03"],
+      "defeito": "postReport monta um formulário (payload=...) sem o campo id; a API só lê JSON e exige id para a idempotência.",
+      "onde": ["public/index.html:1481 (postReport)", "public/index.html:1466 (buildPayload)"],
+      "falha": "Com internet, a tela diz \"Salvo sem sinal\" e nenhum reporte chega ao servidor (400 JSON_INVALIDO); a fila nunca esvazia.",
+      "casos": { "api-node": ["CP-03", "CP-10", "CP-11", "CP-12", "CP-15", "CP-16", "CP-17", "CBN-26", "CBN-50", "CBN-51", "CBN-55", "CBN-76"] },
+      "sugestao": "Ligar à tela a camada modular já existente (public/js/cidadao: Report.js gera UUID e SincronizarFila envia JSON por ApiClient) ou fazer postReport enviar JSON com id quando a API Node estiver configurada."
+    },
+    {
+      "id": "DEF-02", "severidade": "Crítica", "servidores": ["api-node"],
+      "titulo": "Painel do técnico envia o fechamento no formato do Apps Script para /api",
+      "requisitos": ["UC05 passos 6 e 7", "UC05-A5", "RF04"],
+      "defeito": "fecharChamado e flushQueue usam apiFetchTO, que manda { action: \"close\" } para o endereço base; a API Node espera POST /api/chamados/{protocolo}/fechamento com Bearer e operacao_id.",
+      "onde": ["public/tecnico/index.html:1651 (apiFetchTO)", "public/tecnico/index.html:4339 (fecharChamado)", "public/tecnico/index.html:1877 (flushQueue)"],
+      "falha": "Nenhum fechamento chega ao servidor, nem com internet (404 ROTA_NAO_ENCONTRADA); o que está na fila nunca sai.",
+      "casos": { "api-node": ["CT-04", "CT-06", "CT-08", "CT-09", "CT-10", "CBN-42", "CBN-52", "CBN-53", "CBN-79"] },
+      "sugestao": "Ligar à tela a camada modular já existente (public/tecnico/js: CloseQueue e SincronizarBaixas usam a rota REST)."
+    },
+    {
+      "id": "DEF-03", "severidade": "Alta", "servidores": ["api-node", "apps-script"],
+      "titulo": "Reporte é apagado do aparelho sem aviso depois de 5 tentativas",
+      "requisitos": ["UC03 regra de negócio (nenhum reporte descartado sem informar o cidadão)", "Atributo Confiabilidade"],
+      "defeito": "flushQueue descarta o item com 5 tentativas (MAX_ATTEMPTS) e só registra console.warn. Erros temporários do servidor (500, 503) contam como tentativa, então uma queda do servidor durante 5 reconexões também apaga reportes.",
+      "onde": ["public/index.html:1277-1283 (flushQueue)"],
+      "falha": "O reporte some do aparelho e o cidadão não é informado.",
+      "casos": { "api-node": ["CP-14", "CBN-10", "CBN-14"], "apps-script": ["CP-14", "CBA-10", "CBA-14"] },
+      "sugestao": "Não apagar: marcar o reporte como \"precisa de atenção\" e avisar o cidadão; separar recusa definitiva (4xx) de falha temporária (5xx)."
+    },
+    {
+      "id": "DEF-04", "severidade": "Alta", "servidores": ["api-node", "apps-script"],
+      "titulo": "Fila do cidadão sem trava contra sincronizações simultâneas",
+      "requisitos": ["UC03 regra de negócio (sem duplicidade)", "CA03"],
+      "defeito": "flushQueue do cidadão não tem a trava que o técnico tem (flushInFlight). Cada gatilho lê uma cópia da fila e envia os mesmos itens.",
+      "onde": ["public/index.html:1271 (flushQueue)", "comparar com public/tecnico/index.html:1867"],
+      "falha": "Quando a internet volta e o app volta ao primeiro plano juntos, o mesmo protocolo é enviado 3 vezes.",
+      "casos": { "api-node": ["CP-17", "CBN-15"], "apps-script": ["CP-17a", "CBA-15"] },
+      "sugestao": "Usar a mesma trava do técnico. Na API Node, o id único também impede o registro duplicado."
+    },
+    {
+      "id": "DEF-05", "severidade": "Média", "servidores": ["api-node", "apps-script"],
+      "titulo": "Reporte recusado não gera aviso de problema",
+      "requisitos": ["UC03-A2"],
+      "defeito": "Depois de uma recusa, o aviso continua o mesmo de um reporte pendente: \"será enviado quando houver sinal\".",
+      "onde": ["public/index.html:1259 (updatePendingBanner)", "public/index.html:1291"],
+      "falha": "O cidadão acha que o reporte só está esperando sinal, quando ele foi recusado.",
+      "casos": { "api-node": ["CP-13"], "apps-script": ["CP-13"] },
+      "sugestao": "Mostrar quantos reportes têm problema e o motivo guardado (lastError)."
+    },
+    {
+      "id": "DEF-06", "severidade": "Média", "servidores": ["api-node", "apps-script"],
+      "titulo": "Formulário preenchido se perde se o app for fechado antes do envio",
+      "requisitos": ["CA02"],
+      "defeito": "Não existe código que salve o estado do formulário no aparelho.",
+      "onde": ["public/index.html (ausência de rascunho)"],
+      "falha": "Ao reabrir sem internet, tipo, descrição e GPS estão em branco.",
+      "casos": { "api-node": ["CP-09"], "apps-script": ["CP-09"] },
+      "sugestao": "Guardar o rascunho (tipo, descrição, GPS, foto reduzida) a cada alteração e restaurar ao abrir."
+    },
+    {
+      "id": "DEF-07", "severidade": "Alta", "servidores": ["api-node", "apps-script"],
+      "titulo": "Fila do técnico para no primeiro fechamento recusado",
+      "requisitos": ["UC05-A5", "Atributo Confiabilidade"],
+      "defeito": "Em flushQueue do técnico, toda resposta que não é sucesso termina em break.",
+      "onde": ["public/tecnico/index.html:1880-1886 (flushQueue)"],
+      "falha": "Um fechamento com erro impede o envio de todos os outros da fila.",
+      "casos": { "api-node": ["CT-08", "CBN-41"], "apps-script": ["CT-08", "CBA-41"] },
+      "sugestao": "Pular o item com erro (guardando o motivo) e seguir com os demais; parar só em erro de rede ou sessão expirada."
+    },
+    {
+      "id": "DEF-08", "severidade": "Alta", "servidores": ["apps-script"],
+      "titulo": "Fechamento reenviado depois de resposta perdida fica preso na fila para sempre",
+      "requisitos": ["UC05-A5", "UC05 pós-condição"],
+      "defeito": "Quando o script responde \"ja_fechado\" a um reenvio, flushQueue trata como erro e para (DEF-07). O item nunca sai.",
+      "onde": ["public/tecnico/index.html:1878-1886 (flushQueue)"],
+      "falha": "O servidor tem o fechamento, mas o aparelho mostra 1 pendente para sempre e trava os próximos.",
+      "casos": { "apps-script": ["CT-09", "CBA-50"] },
+      "sugestao": "Tratar \"ja_fechado\" do mesmo fechamento como sucesso e remover da fila."
+    },
+    {
+      "id": "DEF-09", "severidade": "Média", "servidores": ["api-node", "apps-script"],
+      "titulo": "Sessão expirada não pede o PIN e o novo login não envia a fila",
+      "requisitos": ["UC04-A3", "UC05-A5"],
+      "defeito": "O ramo de sessão expirada em flushQueue faz o mesmo que o ramo de erro (break), sem limpar a sessão. A fila só é reenviada quando a rede muda ou o app volta ao primeiro plano, não depois do login.",
+      "onde": ["public/tecnico/index.html:1880-1882", "public/tecnico/index.html:1927-1934 (login)"],
+      "falha": "O fechamento fica na fila depois do novo login até a próxima troca de rede.",
+      "casos": { "api-node": ["CT-10"], "apps-script": ["CT-10"] },
+      "sugestao": "Na sessão expirada, limpar a sessão e mostrar o PIN; depois do login, chamar a sincronização."
+    },
+    {
+      "id": "DEF-10", "severidade": "Média", "servidores": ["api-node", "apps-script"],
+      "titulo": "Chamado fechado sem internet pode ser fechado de novo",
+      "requisitos": ["UC05 pré-condição", "CA03"],
+      "defeito": "O fechamento offline não marca o chamado na lista guardada; ele continua clicável.",
+      "onde": ["public/tecnico/index.html:4385 (mostrarSucessoOffline)"],
+      "falha": "A fila fica com dois fechamentos do mesmo chamado. No Apps Script o segundo recebe \"ja_fechado\" e trava a fila (DEF-08).",
+      "casos": { "api-node": ["CT-11"], "apps-script": ["CT-11"] },
+      "sugestao": "Ao fechar offline, marcar o chamado como \"fechamento pendente\" e impedir novo fechamento."
+    },
+    {
+      "id": "DEF-11", "severidade": "Alta (condicional)", "servidores": ["apps-script"],
+      "titulo": "Reporte reenviado vira registro repetido se o script não descartar protocolo repetido",
+      "requisitos": ["UC03 regra de negócio", "CA03"],
+      "defeito": "O app não manda identificador único e reenvia o reporte inteiro. A duplicidade só é evitada se o script verificar o protocolo, e o script não está no repositório.",
+      "onde": ["public/index.html:1466 (buildPayload)", "Apps Script (fora do repositório)"],
+      "falha": "Com a planilha sem verificação: 2 registros após resposta perdida e 3 após gatilhos simultâneos. Com verificação: 1 registro.",
+      "casos": { "apps-script": ["CP-16a", "CP-17a", "CBA-52"] },
+      "sugestao": "Conferir no editor do Google se o script descarta protocolo repetido; se não, acrescentar a verificação."
+    },
+    {
+      "id": "DEF-12", "severidade": "Baixa", "servidores": ["api-node"],
+      "titulo": "Erro da API aparece como \"[object Object]\"",
+      "requisitos": ["RNF04 (usabilidade)"],
+      "defeito": "As telas esperam o erro como texto (Apps Script); a API Node manda { codigo, mensagem }.",
+      "onde": ["public/index.html:1514 (submitReport)", "public/tecnico/index.html:4350 (fecharChamado)"],
+      "falha": "O técnico vê \"Falha ao registrar. [object Object]\".",
+      "casos": { "api-node": ["CT-04", "CBN-54"] },
+      "sugestao": "Usar error.mensagem quando o erro for um objeto."
+    },
+    {
+      "id": "DEF-13", "severidade": "Média", "servidores": ["api-node"],
+      "titulo": "Com a API Node, o técnico não reconhece a sessão expirada",
+      "requisitos": ["UC04-A3"],
+      "defeito": "flushQueue procura o texto \"sessao_expirada\" do Apps Script; a API responde 401 com { codigo: \"NAO_AUTENTICADO\" }. O ramo fica inalcançável.",
+      "onde": ["public/tecnico/index.html:1880"],
+      "falha": "Sessão expirada é tratada como erro qualquer.",
+      "casos": { "api-node": ["cobertura: ramo não executado em flushQueue (técnico)"] },
+      "sugestao": "Reconhecer o status 401 / codigo NAO_AUTENTICADO."
+    }
+  ],
+  "observacoes": [
+    { "id": "OBS-01", "titulo": "\"Salvo sem sinal\" aparece quando a causa foi o servidor, não a internet", "casos": ["CP-05", "CP-06"] },
+    { "id": "OBS-02", "titulo": "Funções acima do limite de 10 caminhos do RNF05", "casos": ["flushQueue (cidadão) V(G)=11", "criarChamado V(G)=11", "fecharChamado V(G)=12"] },
+    { "id": "OBS-03", "titulo": "Erro ao ler a fila do técnico escapa da função (\"Uncaught (in promise)\")", "casos": ["CBA-40", "CBN-40"] },
+    { "id": "OBS-04", "titulo": "Se o banco do aparelho falhar, a contagem da fila dá 0 e o limite de 10 fechamentos deixa de valer", "casos": ["CBA-45", "CBN-45"] },
+    { "id": "OBS-05", "titulo": "Existe uma camada modular (public/js/cidadao e public/tecnico/js) instanciada mas não ligada à tela; ela já segue o contrato da API Node, mas não foi testada nesta rodada", "casos": [] }
+  ]
+}
