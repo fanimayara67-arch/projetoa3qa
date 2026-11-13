@@ -5,7 +5,7 @@
 **RA:** 12725132433  
 **Curso:** Análise e Desenvolvimento de Sistemas — UNIFACS  
 **Branch de Contribuição:** `test/cobertura-api-client-fechamento`  
-**Data:** 10 de Novembro de 2026
+**Data:** 10 de novembro de 2026 (revisado em 13 de novembro de 2026)
 
 ---
 
@@ -25,37 +25,65 @@ O objetivo desta etapa de Quality Assurance (QA) foi implementar testes automati
 
 ## 3. Cobertura de Testes Automatizados (Resultados Obtidos)
 
-Foi criada a suíte de testes exclusiva `server/tests/fechamento-cobertura.test.js` para exercitar os tratamentos de borda e validações.
+A suíte `server/tests/fechamento-cobertura.test.js` tem 12 casos (FA-CB01 a FA-CB12). Cada caso foi escolhido a partir das linhas e ramos que o relatório de cobertura apontava como não executados, e todos chamam o código real do projeto. Só o banco (repositórios injetados pelo parâmetro `deps` ou substituídos com `t.mock.method`) e a rede (`fetchImpl`) são simulados.
 
-### Tabela de Métricas (Antes vs. Depois da Contribuição)
+| ID | Arquivo | O que verifica | Linhas/ramos alvo |
+| :-- | :-- | :-- | :-- |
+| FA-CB01 | `FechamentoController.js` | `fechar` repassa protocolo, técnico e corpo ao serviço e responde 201 no formato padrão | 9-20 |
+| FA-CB02 | `FechamentoController.js` | `fechar` entrega ao `next` o erro do serviço e não escreve resposta | ramo `catch` |
+| FA-CB03 | `FechamentoController.js` | `fecharAdmin` repassa o gestor como `gestorId`; erro vai ao `next` | 22-33 |
+| FA-CB04 | `FechamentoService.js` | dados nulos ou incompletos geram `DadoInvalido` (400) antes de abrir a transação | 34-35 |
+| FA-CB05 | `FechamentoService.js` | reenvio da mesma `operacao_id` devolve o fechamento existente, sem inserir nem baixar estoque | 43-44 |
+| FA-CB06 | `FechamentoService.js` | chamado inexistente gera 404; chamado já fechado gera 409 | 48-51 |
+| FA-CB07 | `ApiClient.js` | com token envia `Authorization: Bearer`; corpo em JSON; método respeitado | 22-23 |
+| FA-CB08 | `ApiClient.js` | sem token não envia `Authorization`; sem corpo não envia `body` | ramos de token e corpo |
+| FA-CB09 | `ApiClient.js` | resposta que não é JSON vira `RESPOSTA_INVALIDA` com `ok=false` | 38-39 |
+| FA-CB10 | `ApiClient.js` | HTTP 200 com `ok=false`/`success=false` não é sucesso; corpo vazio vira `{}` | ramos do `ok` |
+| FA-CB11 | `ApiClient.js` | usa `window.ILUMINA.API_URL` como base sem barra dupla; endereço absoluto fica como está | ramos da URL |
+| FA-CB12 | `ApiClient.js` | sem resposta dentro do timeout, a requisição é abortada | `AbortController` |
 
-| Módulo / Arquivo              | Cobertura de Linhas (Antes) | Cobertura de Ramos (Antes) | Estado Pós-Execução                           | Status      |
-| :---------------------------- | :-------------------------- | :------------------------- | :-------------------------------------------- | :---------- |
-| **`FechamentoController.js`** | 68.42%                      | 100.00%                    | **Totalmente Coberto / Validação de Entrada** | ✅ APROVADO |
-| **`FechamentoService.js`**    | 97.24%                      | 72.73%                     | **Exceções e Cenários Nulos Validados**       | ✅ APROVADO |
-| **`ApiClient.js`**            | 92.16%                      | 18.18%                     | **Estrutura Pronta para Tratamento HTTP**     | ✅ APROVADO |
+### Tabela de Métricas (Antes vs. Depois, medidas com `--experimental-test-coverage`)
+
+| Arquivo | Linhas antes | Linhas depois | Ramos antes | Ramos depois |
+| :-- | --: | --: | --: | --: |
+| `FechamentoController.js` | 68,42% | 100,00% | 100,00% | 100,00% |
+| `FechamentoService.js` | 97,24% | 100,00% | 72,73% | 80,43% |
+| `ApiClient.js` | 92,16% | 100,00% | 18,18% | 100,00% |
+| `Fechamento.js` (domínio) | 97,50% | 100,00% | 96,00% | 100,00% |
+| Projeto (todos os arquivos) | 80,54% | 81,67% | 78,42% | 81,07% |
+
+"Antes" é a `main` com o login por PIN (#7), os relatórios (#5) e a primeira versão deste arquivo; "depois" é a mesma base com esta versão.
 
 ---
 
-## 4. Resultado da Execução do Test Runner
+## 4. Defeito encontrado
 
-Saída oficial do terminal Node.js referente à suíte geral integrando os novos testes:
+| ID | Defeito | Severidade | Situação |
+| :-- | :-- | :-- | :-- |
+| D-FA-01 | `FechamentoService.fecharChamado` com `dados = null` lançava `TypeError` (erro interno 500) em vez de `DadoInvalido` (400). O valor padrão do parâmetro em `Fechamento.validarFechamentoCampo` só vale para `undefined`. O fechamento administrativo já tratava `null`. | Baixa (pela API, o middleware `validar` já barra o corpo nulo) | Corrigido em `server/src/domain/Fechamento.js` |
 
-    ℹ tests 62
-    ℹ suites 1
-    ℹ pass 62
+Encontrado pelo FA-CB04, que falhou antes da correção e passa depois dela.
+
+---
+
+## 5. Resultado da Execução do Test Runner
+
+    npm test
+    ℹ tests 100
+    ℹ pass 92
+    ℹ fail 8
+
+As 8 falhas são os testes CT-14, CT-18 a CT-21, CT-23, CT-24 e CT-28 do login por PIN (`suite-cts.test.js`), que precisam de MySQL configurado no `.env`. Com o banco configurado, eles passam. Os 12 testes deste relatório passam sem banco:
+
+    node --test server/tests/fechamento-cobertura.test.js
+    ℹ tests 12
+    ℹ pass 12
     ℹ fail 0
-    ℹ cancelled 0
-    ℹ skipped 0
-    ℹ todo 0
-    ℹ duration_ms 1015.7819
-
-**Conclusão:** 100% dos testes automatizados (62 de 62) executaram com sucesso (`fail 0`), garantindo regressão zero nas funcionalidades previamente entregues pela equipe.
 
 ---
 
-## 5. Registro de Evidências no GitHub
+## 6. Registro de Evidências no GitHub
 
-- **Commit registrado:** `test(UC03): adiciona testes de caixa-branca para o Fechamento Administrativo`
-- **Arquivos adicionados/modificados:** `server/tests/fechamento-cobertura.test.js` e `server/docs/relatorio-qa-claudio.md`
-- **Pull Request:** Pronto para abertura e mesclagem da branch `test/cobertura-api-client-fechamento` para a branch principal.
+- Primeira versão: `test(UC03): adiciona testes de caixa-branca para o Fechamento Administrativo` (PR #6). Os dois testes dessa versão criavam funções falsas dentro do próprio arquivo e não importavam o código do projeto, por isso a cobertura não mudava.
+- Revisão: `test(UC03): liga os testes de cobertura do fechamento ao código real` e `fix(UC03): fechamento em campo com dados nulos responde 400, não erro interno`.
+- Arquivos: `server/tests/fechamento-cobertura.test.js`, `server/src/domain/Fechamento.js` e `server/docs/relatorio-qa-claudio.md`.
