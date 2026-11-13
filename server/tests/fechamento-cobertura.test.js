@@ -129,13 +129,15 @@ describe('UC03 - Caixa-branca: FechamentoService.fecharChamado', () => {
   });
 
   test('FA-CB05: reenvio da mesma operacao_id devolve o fechamento existente sem inserir nem baixar estoque', async () => {
-    const existente = { id: 1, operacao_id: OPERACAO, status: 'Resolvido' };
+    // chamado_id 10 = o chamado do bancoFalso. Desde o UC05 (F-08) a trava do chamado vem antes
+    // da consulta da operação, para conferir se a operação é deste chamado.
+    const existente = { id: 1, operacao_id: OPERACAO, chamado_id: 10, status: 'Concluído' };
     const banco = bancoFalso({ fechamentoExistente: existente });
 
     const resultado = await FechamentoService.fecharChamado({ protocolo: 'IC-1', tecnicoId: 3, dados: fechamentoValido() }, banco.deps);
 
     assert.equal(resultado, existente);
-    assert.deepEqual(banco.chamadas, [['buscarPorOperacaoId', OPERACAO]]);
+    assert.deepEqual(banco.chamadas, [['buscarParaAtualizar'], ['buscarPorOperacaoId', OPERACAO]]);
   });
 
   test('FA-CB06: chamado inexistente gera NaoEncontrado (404) e chamado já fechado gera Conflito (409)', async () => {

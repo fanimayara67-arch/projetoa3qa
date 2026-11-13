@@ -37,15 +37,20 @@ async function fecharChamado({ protocolo, tecnicoId, dados }, deps = {}) {
   const fotoUrl = await FotoStorage.salvar(dados.foto_reparo_base64 || dados.fotoUrl);
 
   return emTransacao(async (tx) => {
-    // 1. Idempotência: se esta operação já foi processada antes, retorna sem duplicar nem debitar 2x
+    // 1. Trava o registro do chamado no banco durante a transação
+    const chamado = await ChamadoRepo.buscarParaAtualizar(tx, protocolo);
+    if (!chamado) throw new NaoEncontrado('Chamado não existe.');
+
+    // 2. Idempotência: se esta operação já foi processada antes, retorna sem duplicar nem debitar 2x.
+    //    Só vale para o mesmo chamado; a mesma operação em outro chamado é conflito (F-08).
     const existente = await FechamentoRepo.buscarPorOperacaoId(tx, dados.operacao_id);
     if (existente) {
+      if (String(existente.chamado_id) !== String(chamado.id)) {
+        throw new Conflito('Identificador da operação já usado em outro chamado. Reabra o formulário.');
+      }
       return existente;
     }
 
-    // 2. Trava o registro do chamado no banco durante a transação
-    const chamado = await ChamadoRepo.buscarParaAtualizar(tx, protocolo);
-    if (!chamado) throw new NaoEncontrado('Chamado não existe.');
     if (!Chamado.podeFechar(chamado)) {
       throw new Conflito('Chamado já foi fechado por outro técnico.');
     }
