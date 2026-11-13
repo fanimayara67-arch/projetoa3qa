@@ -17,6 +17,8 @@ const PRECISAO_MAXIMA_M = 100;
 /** Status de resolução do passo 3 do UC05 (mesmos valores do projeto de banco do grupo). */
 const STATUS_CAMPO = Object.freeze(['Concluído', 'Parcialmente resolvido', 'Requer material', 'Ponto não localizado']);
 
+const LIMITE_REFERENCIA = 255;
+
 const textoPreenchido = (valor) => typeof valor === 'string' && valor.trim() !== '';
 
 /**
@@ -37,6 +39,10 @@ function validarFechamentoCampo(dados) {
   }
   if (!dados.servico || typeof dados.servico !== 'string' || !dados.servico.trim()) {
     erros.push('Descrição do serviço executado é obrigatória.');
+  }
+  // A coluna referencia é VARCHAR(255): acima disso o banco recusa com erro interno.
+  if (typeof dados.referencia === 'string' && dados.referencia.length > LIMITE_REFERENCIA) {
+    erros.push(`Referência do local deve ter até ${LIMITE_REFERENCIA} caracteres.`);
   }
   // Passo 6 do UC05: a foto do reparo é obrigatória (foto nova em Base64 ou URL de foto já enviada).
   if (!textoPreenchido(dados.foto_reparo_base64) && !textoPreenchido(dados.fotoUrl)) {
