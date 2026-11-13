@@ -1,0 +1,12 @@
+# Cobertura depois dos testes e correções do UC05 (13/11/2026)
+# comando: node --test --experimental-test-coverage
+# tests 295
+# pass 278
+# fail 8
+# todo 9
+#     FechamentoService.js          | 100.00 |    95.45 |  100.00 |
+#    Fechamento.js                  | 100.00 |   100.00 |  100.00 |
+#     EstoqueRepository.js          |  98.82 |    85.00 |  100.00 | 123-124
+#     FechamentoRepository.js       | 100.00 |    80.00 |  100.00 |
+#     FechamentoController.js       | 100.00 |   100.00 |  100.00 |
+# all files                         |  90.25 |    88.17 |   89.19 |

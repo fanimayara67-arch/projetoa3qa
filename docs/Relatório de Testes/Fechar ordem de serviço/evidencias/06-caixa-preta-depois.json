@@ -1,0 +1,182 @@
+{
+  "tipo": "caixa-preta",
+  "servidor": "api-node",
+  "executadoEm": "2026-11-13T16:11:11.963Z",
+  "ambiente": {
+    "node": "v22.23.4",
+    "navegador": "chromium 153.0.8010.12",
+    "playwright": "1.63.0",
+    "sistema": "linux"
+  },
+  "rodadas": 2,
+  "total": 8,
+  "aprovados": 6,
+  "reprovados": 1,
+  "errosDeExecucao": 1,
+  "instaveis": [
+    "CT-04",
+    "CT-11"
+  ],
+  "casos": [
+    {
+      "id": "CT-04",
+      "titulo": "Fechamento com internet é registrado no servidor",
+      "requisito": "UC05 (passos 6 e 7); RF04",
+      "derivacao": "Fluxo principal",
+      "tecnica": "Baseado em requisito (caso positivo)",
+      "dado": "o técnico está no painel com internet",
+      "quando": "ele preenche e confirma o fechamento do chamado T01",
+      "entao": "a tela mostra \"Chamado fechado!\" e o servidor registra o fechamento do T01",
+      "servidor": "api-node",
+      "obtido": "Resultado na tela: \"Chamado fechado!\". Fechado no servidor: sim. Endereço usado: /api/chamados/IC-261112-T01/fechamento.",
+      "resultado": "Aprovado",
+      "observacao": "",
+      "duracaoMs": 2395,
+      "resultadosPorRodada": [
+        "Aprovado",
+        "Erro de execução"
+      ],
+      "estavel": false
+    },
+    {
+      "id": "CT-05",
+      "titulo": "Fechamento sem internet vai para a fila do aparelho",
+      "requisito": "UC05-A5",
+      "derivacao": "Fluxo alternativo",
+      "tecnica": "Baseado em requisito",
+      "dado": "o técnico está no painel e perde a internet",
+      "quando": "ele confirma o fechamento do T01",
+      "entao": "a tela mostra \"Salvo no aparelho\" e há 1 fechamento na fila",
+      "servidor": "api-node",
+      "obtido": "Tela: \"Salvo no aparelho\". Fila: 1.",
+      "resultado": "Aprovado",
+      "observacao": "",
+      "duracaoMs": 2071,
+      "resultadosPorRodada": [
+        "Aprovado",
+        "Aprovado"
+      ],
+      "estavel": true
+    },
+    {
+      "id": "CT-06",
+      "titulo": "Fechamento pendente é enviado quando a internet volta",
+      "requisito": "UC05-A5; UC05 (pós-condição)",
+      "derivacao": "Fluxo alternativo",
+      "tecnica": "Transição de estado (offline → online)",
+      "dado": "há 1 fechamento na fila do aparelho",
+      "quando": "a internet volta",
+      "entao": "o servidor registra o fechamento uma vez e a fila esvazia",
+      "servidor": "api-node",
+      "obtido": "Fechamentos registrados no servidor: 1. Tentativas recebidas: 1 (em /api/chamados/IC-261112-T02/fechamento). Fila: 0.",
+      "resultado": "Aprovado",
+      "observacao": "",
+      "duracaoMs": 2512,
+      "resultadosPorRodada": [
+        "Aprovado",
+        "Aprovado"
+      ],
+      "estavel": true
+    },
+    {
+      "id": "CT-07",
+      "titulo": "Com 10 fechamentos na fila, o 11º é bloqueado",
+      "requisito": "UC05-A6",
+      "derivacao": "Fluxo alternativo",
+      "tecnica": "Análise de valor limite (10 e 11)",
+      "dado": "o técnico está sem internet",
+      "quando": "ele fecha 10 chamados e tenta fechar o 11º",
+      "entao": "os 10 primeiros entram na fila; o 11º mostra aviso e não entra",
+      "servidor": "api-node",
+      "obtido": "Fila depois de 10: 10. Depois do 11º: 10. Aviso: \"Você tem 10 fechamentos na fila. Vá a uma área com sinal para enviá-los antes de fechar novos.\".",
+      "resultado": "Aprovado",
+      "observacao": "",
+      "duracaoMs": 10191,
+      "resultadosPorRodada": [
+        "Aprovado",
+        "Aprovado"
+      ],
+      "estavel": true
+    },
+    {
+      "id": "CT-08",
+      "titulo": "Um fechamento recusado não pode travar o envio dos outros",
+      "requisito": "UC05-A5; atributo Confiabilidade",
+      "derivacao": "Fluxo alternativo (risco)",
+      "tecnica": "Baseado em risco (fila travada)",
+      "dado": "há 3 fechamentos na fila e o servidor recusa o primeiro",
+      "quando": "a internet volta",
+      "entao": "o 2º e o 3º são registrados no servidor",
+      "servidor": "api-node",
+      "obtido": "Fechamentos 2 e 3 registrados: 2. Itens que continuam na fila: 1. Envios recebidos: 3.",
+      "resultado": "Aprovado",
+      "observacao": "",
+      "duracaoMs": 4377,
+      "resultadosPorRodada": [
+        "Aprovado",
+        "Aprovado"
+      ],
+      "estavel": true
+    },
+    {
+      "id": "CT-09",
+      "titulo": "Resposta perdida no fechamento: o reenvio não trava a fila nem fecha duas vezes",
+      "requisito": "UC05-A5; UC05 (pós-condição: materiais abatidos uma única vez)",
+      "derivacao": "Fluxo alternativo (risco)",
+      "tecnica": "Baseado em risco (resposta perdida)",
+      "dado": "o servidor grava o fechamento, mas a resposta não chega",
+      "quando": "o app reenvia o fechamento na reconexão",
+      "entao": "o servidor tem 1 fechamento do chamado e a fila do aparelho esvazia",
+      "servidor": "api-node",
+      "obtido": "Tela após a resposta perdida: \"Salvo no aparelho\". Fechamentos no servidor: 1. Envios recebidos: 2. Itens presos na fila: 0.",
+      "resultado": "Aprovado",
+      "observacao": "",
+      "duracaoMs": 2770,
+      "resultadosPorRodada": [
+        "Aprovado",
+        "Aprovado"
+      ],
+      "estavel": true
+    },
+    {
+      "id": "CT-10",
+      "titulo": "Sessão expirada com fechamento na fila: nada se perde e o app pede o PIN",
+      "requisito": "UC04-A3; UC05-A5",
+      "derivacao": "Fluxo alternativo",
+      "tecnica": "Transição de estado (sessão válida → expirada)",
+      "dado": "há 1 fechamento na fila e a sessão expirou no servidor",
+      "quando": "a internet volta e o técnico reabre o painel",
+      "entao": "o fechamento continua na fila, o app volta a pedir o PIN e, depois do novo login, o fechamento é registrado",
+      "servidor": "api-node",
+      "obtido": "Depois da recusa por sessão expirada: 1 item na fila; pediu PIN na hora: não. Ao reabrir, pediu PIN: sim. Depois do novo login: 0 fechamento(s) no servidor e 1 item(ns) na fila.",
+      "resultado": "Reprovado",
+      "observacao": "",
+      "duracaoMs": 13279,
+      "resultadosPorRodada": [
+        "Reprovado",
+        "Reprovado"
+      ],
+      "estavel": true
+    },
+    {
+      "id": "CT-11",
+      "titulo": "Chamado fechado sem internet não pode ser fechado de novo",
+      "requisito": "UC05 (pré-condição: chamado \"Aguardando atendimento\"); CA03",
+      "derivacao": "Violação de pré-condição",
+      "tecnica": "Baseado em risco (fechamento em dobro)",
+      "dado": "o técnico fechou o T06 sem internet",
+      "quando": "ele volta à lista e tenta fechar o T06 outra vez",
+      "entao": "o app não deixa abrir o fechamento de novo e a fila tem só 1 fechamento do T06",
+      "servidor": "api-node",
+      "obtido": "Erro ao executar o teste: page.waitForSelector: Timeout 15000ms exceeded.",
+      "resultado": "Erro de execução",
+      "observacao": "",
+      "duracaoMs": 15828,
+      "resultadosPorRodada": [
+        "Erro de execução",
+        "Reprovado"
+      ],
+      "estavel": false
+    }
+  ]
+}
