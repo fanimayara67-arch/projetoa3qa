@@ -1,0 +1,11 @@
+/* Janela de impressão: Material. */
+@page { size:A4; margin:14mm; }
+body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif; color:#111; margin:0; }
+.stripe { height:5px; background:linear-gradient(95deg,#E85D3F,#F39427,#F5C83D,#3EBD5F,#3EB5D9,#2D7EC4,#7B4FC0); margin-bottom:14px; }
+h1 { font-size:19px; margin:0 0 4px 0; } .sub { font-size:11px; color:#666; margin-bottom:14px; }
+h2 { border-left:4px solid #0A6E3E; padding-left:8px; font-size:15px; margin:18px 0 8px 0; }
+table { width:100%; border-collapse:collapse; margin-bottom:14px; }
+th { background:#17212E; color:#fff; padding:7px 10px; font-size:11px; text-align:left; }
+.actions button { padding:9px 16px; margin-right:6px; border-radius:6px; border:none; font-size:12px; font-weight:700; cursor:pointer; background:#0F1420; color:#fff; }
+.footer { margin-top:18px; font-size:10px; color:#888; text-align:center; border-top:1px solid #eee; padding-top:10px; }
+@media print { .actions { display:none; } }

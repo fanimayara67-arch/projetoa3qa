@@ -1,0 +1,25 @@
+/* Janela de impressão: Relatório. */
+@page { size:A4; margin:14mm; }
+body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif; color:#111; margin:0; }
+.stripe { height:5px; background:linear-gradient(95deg,#E85D3F,#F39427,#F5C83D,#3EBD5F,#3EB5D9,#2D7EC4,#7B4FC0); margin-bottom:14px; }
+h1 { font-size:19px; margin:0 0 4px 0; }
+.sub { font-size:11px; color:#666; margin-bottom:14px; }
+h2 { border-left:4px solid #2D7EC4; padding-left:8px; }
+.actions button, .actions a { display:inline-block; padding:9px 16px; margin-right:6px; border-radius:6px; border:none; font-size:12px; font-weight:700; cursor:pointer; text-decoration:none; }
+.btn-print { background:#0F1420; color:#fff; }
+.btn-wa { background:#25D366; color:#fff; }
+.footer { margin-top:18px; font-size:10px; color:#888; text-align:center; border-top:1px solid #eee; padding-top:10px; }
+.btn-pdf { background:#C03A21; color:#fff; }
+.btn-pdf[disabled] { opacity:.6; cursor:wait; }
+.grafico { border:1px solid #ddd; border-radius:8px; padding:12px 14px; margin:4px 0 8px 0; page-break-inside:avoid; break-inside:avoid; }
+.grafico-tit { font-size:13px; font-weight:700; color:#17212E; }
+.grafico-sub { font-size:11px; color:#666; margin:2px 0 10px 0; }
+.gbar { display:flex; align-items:center; gap:10px; padding:3px 0; }
+.gbar-rot { width:150px; flex:none; font-size:11.5px; color:#333; text-align:right; }
+.gbar-trilho { flex:1; height:16px; border-left:1px solid #bbb; }
+.gbar-barra { height:100%; background:#2D7EC4; border-radius:0 4px 4px 0; }
+.gbar-val { width:70px; flex:none; font-size:12px; font-weight:700; color:#111; }
+.gbar-val span { font-weight:400; color:#666; font-size:11px; }
+.gbar:hover .gbar-barra { background:#1F5F96; }
+* { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+@media print { .actions, #__dica-mobile { display:none; } }

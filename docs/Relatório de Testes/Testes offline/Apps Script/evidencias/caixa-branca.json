@@ -1,0 +1,783 @@
+{
+  "tipo": "caixa-branca",
+  "servidor": "apps-script",
+  "executadoEm": "2026-11-13T02:09:31.543Z",
+  "ambiente": {
+    "node": "v24.16.0",
+    "sistema": "win32"
+  },
+  "comando": "node --test \"server/tests/testes-offline/apps-script/caixa-branca/*.test.js\"",
+  "resultado": {
+    "total": 51,
+    "aprovados": 46,
+    "defeitosConfirmados": 5,
+    "reprovados": 0,
+    "todoQuePassou": 0,
+    "codigoDeSaida": 0
+  },
+  "testes": [
+    {
+      "id": "CBA-01",
+      "titulo": "flushQueue (cidadão): sem internet não lê a fila nem envia",
+      "arquivo": "server/tests/testes-offline/apoio/casos-cliente.js",
+      "situacao": "aprovado",
+      "duracaoMs": 8.2
+    },
+    {
+      "id": "CBA-02",
+      "titulo": "flushQueue (cidadão): endereço do servidor não configurado (\"__...\") não envia",
+      "arquivo": "server/tests/testes-offline/apoio/casos-cliente.js",
+      "situacao": "aprovado",
+      "duracaoMs": 6.5
+    },
+    {
+      "id": "CBA-03",
+      "titulo": "flushQueue (cidadão): erro ao ler o banco do aparelho encerra sem enviar e sem lançar erro",
+      "arquivo": "server/tests/testes-offline/apoio/casos-cliente.js",
+      "situacao": "aprovado",
+      "duracaoMs": 6.3
+    },
+    {
+      "id": "CBA-04",
+      "titulo": "flushQueue (cidadão): fila vazia encerra sem enviar",
+      "arquivo": "server/tests/testes-offline/apoio/casos-cliente.js",
+      "situacao": "aprovado",
+      "duracaoMs": 6.2
+    },
+    {
+      "id": "CBA-05",
+      "titulo": "flushQueue (cidadão): envio aceito (Apps Script) apaga o item e atualiza o aviso",
+      "arquivo": "server/tests/testes-offline/apoio/casos-cliente.js",
+      "situacao": "aprovado",
+      "duracaoMs": 6.7
+    },
+    {
+      "id": "CBA-06",
+      "titulo": "flushQueue (cidadão): recusa do servidor (Apps Script) mantém o item e soma 1 tentativa com o motivo",
+      "arquivo": "server/tests/testes-offline/apoio/casos-cliente.js",
+      "situacao": "aprovado",
+      "duracaoMs": 6.4
+    },
+    {
+      "id": "CBA-07",
+      "titulo": "flushQueue (cidadão): resposta vazia conta como recusa (\"server error\")",
+      "arquivo": "server/tests/testes-offline/apoio/casos-cliente.js",
+      "situacao": "aprovado",
+      "duracaoMs": 4.1
+    },
+    {
+      "id": "CBA-08",
+      "titulo": "flushQueue (cidadão): erro de rede mantém o item, soma 1 tentativa e guarda a mensagem do erro",
+      "arquivo": "server/tests/testes-offline/apoio/casos-cliente.js",
+      "situacao": "aprovado",
+      "duracaoMs": 3
+    },
+    {
+      "id": "CBA-09",
+      "titulo": "flushQueue (cidadão): erro de rede sem mensagem é guardado como \"network error\"",
+      "arquivo": "server/tests/testes-offline/apoio/casos-cliente.js",
+      "situacao": "aprovado",
+      "duracaoMs": 2.4
+    },
+    {
+      "id": "CBA-10",
+      "titulo": "flushQueue (cidadão): valor limite — com 4 tentativas ainda envia; com 5 descarta sem enviar",
+      "arquivo": "server/tests/testes-offline/apoio/casos-cliente.js",
+      "situacao": "aprovado",
+      "duracaoMs": 2.5,
+      "defeitos": [
+        "DEF-03"
+      ]
+    },
+    {
+      "id": "CBA-11",
+      "titulo": "flushQueue (cidadão): falha ao apagar um item descartado não interrompe a fila",
+      "arquivo": "server/tests/testes-offline/apoio/casos-cliente.js",
+      "situacao": "aprovado",
+      "duracaoMs": 5.3
+    },
+    {
+      "id": "CBA-12",
+      "titulo": "flushQueue (cidadão): falha ao gravar a tentativa depois de um erro de rede não interrompe a fila",
+      "arquivo": "server/tests/testes-offline/apoio/casos-cliente.js",
+      "situacao": "aprovado",
+      "duracaoMs": 3.1
+    },
+    {
+      "id": "CBA-13",
+      "titulo": "flushQueue (cidadão): falha no 1º item não impede o envio do 2º",
+      "arquivo": "server/tests/testes-offline/apoio/casos-cliente.js",
+      "situacao": "aprovado",
+      "duracaoMs": 4.1
+    },
+    {
+      "id": "CBA-14",
+      "titulo": "flushQueue (cidadão): reporte descartado após 5 tentativas deve avisar o cidadão",
+      "arquivo": "server/tests/testes-offline/apoio/casos-cliente.js",
+      "situacao": "defeito-confirmado",
+      "motivoTodo": "Defeito DEF-03 — descarte silencioso (UC03 regra de negócio)",
+      "mensagem": "o reporte foi apagado e só houve console.warn, que o cidadão não vê",
+      "duracaoMs": 8.3,
+      "defeitos": [
+        "DEF-03"
+      ]
+    },
+    {
+      "id": "CBA-15",
+      "titulo": "flushQueue (cidadão): três sincronizações ao mesmo tempo enviam o reporte uma única vez",
+      "arquivo": "server/tests/testes-offline/apoio/casos-cliente.js",
+      "situacao": "defeito-confirmado",
+      "motivoTodo": "Defeito DEF-04 — falta trava contra execução simultânea",
+      "mensagem": "o mesmo protocolo foi enviado 3 vezes 3 !== 1",
+      "duracaoMs": 6.6,
+      "defeitos": [
+        "DEF-04"
+      ]
+    },
+    {
+      "id": "CBA-16",
+      "titulo": "updatePendingBanner: esconde com 0; singular com 1; plural com 3",
+      "arquivo": "server/tests/testes-offline/apoio/casos-cliente.js",
+      "situacao": "aprovado",
+      "duracaoMs": 26.8
+    },
+    {
+      "id": "CBA-17",
+      "titulo": "updatePendingBanner: erro no banco ou tela sem o aviso não quebram o app",
+      "arquivo": "server/tests/testes-offline/apoio/casos-cliente.js",
+      "situacao": "aprovado",
+      "duracaoMs": 8.4
+    },
+    {
+      "id": "CBA-18",
+      "titulo": "submitReport: segundo toque durante o envio é ignorado",
+      "arquivo": "server/tests/testes-offline/apoio/casos-cliente.js",
+      "situacao": "aprovado",
+      "duracaoMs": 11.5
+    },
+    {
+      "id": "CBA-19",
+      "titulo": "submitReport: com internet e envio aceito (Apps Script), mostra \"enviado\" sem gravar na fila",
+      "arquivo": "server/tests/testes-offline/apoio/casos-cliente.js",
+      "situacao": "aprovado",
+      "duracaoMs": 135.6
+    },
+    {
+      "id": "CBA-20",
+      "titulo": "submitReport: com internet e recusa (Apps Script), guarda na fila",
+      "arquivo": "server/tests/testes-offline/apoio/casos-cliente.js",
+      "situacao": "aprovado",
+      "duracaoMs": 13.4
+    },
+    {
+      "id": "CBA-21",
+      "titulo": "submitReport: com internet e erro de rede, guarda na fila",
+      "arquivo": "server/tests/testes-offline/apoio/casos-cliente.js",
+      "situacao": "aprovado",
+      "duracaoMs": 17.5
+    },
+    {
+      "id": "CBA-22",
+      "titulo": "submitReport: envio e gravação falham — mensagem de erro e botão liberado (UC01-E1)",
+      "arquivo": "server/tests/testes-offline/apoio/casos-cliente.js",
+      "situacao": "aprovado",
+      "duracaoMs": 5.2
+    },
+    {
+      "id": "CBA-23",
+      "titulo": "submitReport: sem internet grava direto na fila, sem tentar enviar",
+      "arquivo": "server/tests/testes-offline/apoio/casos-cliente.js",
+      "situacao": "aprovado",
+      "duracaoMs": 10.3
+    },
+    {
+      "id": "CBA-24",
+      "titulo": "submitReport: sem internet e sem conseguir gravar — mensagem de erro (UC01-E1)",
+      "arquivo": "server/tests/testes-offline/apoio/casos-cliente.js",
+      "situacao": "aprovado",
+      "duracaoMs": 18.6
+    },
+    {
+      "id": "CBA-25",
+      "titulo": "submitReport: com internet e servidor não configurado (\"__...\"), guarda na fila",
+      "arquivo": "server/tests/testes-offline/apoio/casos-cliente.js",
+      "situacao": "aprovado",
+      "duracaoMs": 6.8
+    },
+    {
+      "id": "CBA-26",
+      "titulo": "postReport: envia ao endereço do Apps Script no formato que ele aceita",
+      "arquivo": "server/tests/testes-offline/apoio/casos-cliente.js",
+      "situacao": "aprovado",
+      "duracaoMs": 10.5
+    },
+    {
+      "id": "CBA-27",
+      "titulo": "postReport: limite de 60 s, timer limpo e resposta lida",
+      "arquivo": "server/tests/testes-offline/apoio/casos-cliente.js",
+      "situacao": "aprovado",
+      "duracaoMs": 3.1
+    },
+    {
+      "id": "CBA-28",
+      "titulo": "postReport: resposta que não é JSON vira recusa (\"resposta inválida do servidor\")",
+      "arquivo": "server/tests/testes-offline/apoio/casos-cliente.js",
+      "situacao": "aprovado",
+      "duracaoMs": 10.9
+    },
+    {
+      "id": "CBA-29",
+      "titulo": "postReport: erro de rede é repassado e o timer é limpo",
+      "arquivo": "server/tests/testes-offline/apoio/casos-cliente.js",
+      "situacao": "aprovado",
+      "duracaoMs": 8.4
+    },
+    {
+      "id": "CBA-30",
+      "titulo": "postReport: depois de 60 s sem resposta a requisição é cancelada",
+      "arquivo": "server/tests/testes-offline/apoio/casos-cliente.js",
+      "situacao": "aprovado",
+      "duracaoMs": 180.5
+    },
+    {
+      "id": "CBA-31",
+      "titulo": "generateProtocol: formato IC-AAMMDD-XXXXX com zero à esquerda no mês e no dia",
+      "arquivo": "server/tests/testes-offline/apoio/casos-cliente.js",
+      "situacao": "aprovado",
+      "duracaoMs": 8.1
+    },
+    {
+      "id": "CBA-32",
+      "titulo": "buildPayload: a mensagem do reporte leva protocolo, tipo, GPS, foto, poste e textos limpos",
+      "arquivo": "server/tests/testes-offline/apoio/casos-cliente.js",
+      "situacao": "aprovado",
+      "duracaoMs": 6.3
+    },
+    {
+      "id": "CBA-33",
+      "titulo": "flushQueue (técnico): sem internet não envia e não atualiza o aviso",
+      "arquivo": "server/tests/testes-offline/apoio/casos-cliente.js",
+      "situacao": "aprovado",
+      "duracaoMs": 9.8
+    },
+    {
+      "id": "CBA-34",
+      "titulo": "flushQueue (técnico): sem sessão (sem PIN) não envia",
+      "arquivo": "server/tests/testes-offline/apoio/casos-cliente.js",
+      "situacao": "aprovado",
+      "duracaoMs": 4.5
+    },
+    {
+      "id": "CBA-35",
+      "titulo": "flushQueue (técnico): fila vazia libera a trava e atualiza o aviso",
+      "arquivo": "server/tests/testes-offline/apoio/casos-cliente.js",
+      "situacao": "aprovado",
+      "duracaoMs": 6.4
+    },
+    {
+      "id": "CBA-36",
+      "titulo": "flushQueue (técnico): todos aceitos (Apps Script) são apagados na ordem da fila",
+      "arquivo": "server/tests/testes-offline/apoio/casos-cliente.js",
+      "situacao": "aprovado",
+      "duracaoMs": 6.7
+    },
+    {
+      "id": "CBA-37",
+      "titulo": "flushQueue (técnico): sessão expirada (Apps Script) interrompe e mantém a fila",
+      "arquivo": "server/tests/testes-offline/apoio/casos-cliente.js",
+      "situacao": "aprovado",
+      "duracaoMs": 4.6
+    },
+    {
+      "id": "CBA-38",
+      "titulo": "flushQueue (técnico): erro de rede interrompe e mantém a fila",
+      "arquivo": "server/tests/testes-offline/apoio/casos-cliente.js",
+      "situacao": "aprovado",
+      "duracaoMs": 3.7
+    },
+    {
+      "id": "CBA-39",
+      "titulo": "flushQueue (técnico): três sincronizações ao mesmo tempo enviam cada fechamento uma vez (trava)",
+      "arquivo": "server/tests/testes-offline/apoio/casos-cliente.js",
+      "situacao": "aprovado",
+      "duracaoMs": 8.4
+    },
+    {
+      "id": "CBA-40",
+      "titulo": "flushQueue (técnico): erro ao ler a fila libera a trava, mas o erro escapa da função",
+      "arquivo": "server/tests/testes-offline/apoio/casos-cliente.js",
+      "situacao": "aprovado",
+      "duracaoMs": 4.5
+    },
+    {
+      "id": "CBA-41",
+      "titulo": "flushQueue (técnico): erro do servidor em um fechamento não trava os seguintes",
+      "arquivo": "server/tests/testes-offline/apoio/casos-cliente.js",
+      "situacao": "defeito-confirmado",
+      "motivoTodo": "Defeito DEF-07 — a fila do técnico para no primeiro erro",
+      "mensagem": "enviados: IC-RUIM + actual - expected [ 'IC-RUIM', - 'IC-2',",
+      "duracaoMs": 7.3,
+      "defeitos": [
+        "DEF-07"
+      ]
+    },
+    {
+      "id": "CBA-42",
+      "titulo": "apiFetchTO: fechamento vai ao endereço e formato do Apps Script",
+      "arquivo": "server/tests/testes-offline/apoio/casos-cliente.js",
+      "situacao": "aprovado",
+      "duracaoMs": 5.5
+    },
+    {
+      "id": "CBA-43",
+      "titulo": "apiFetchTO: usa 15 s por padrão, limpa o timer e cancela ao fim do tempo",
+      "arquivo": "server/tests/testes-offline/apoio/casos-cliente.js",
+      "situacao": "aprovado",
+      "duracaoMs": 6.8
+    },
+    {
+      "id": "CBA-44",
+      "titulo": "renderPendingBanner: esconde com 0; singular/plural; \"enviando…\" e \"sem sinal\"; tela sem aviso",
+      "arquivo": "server/tests/testes-offline/apoio/casos-cliente.js",
+      "situacao": "aprovado",
+      "duracaoMs": 18.1
+    },
+    {
+      "id": "CBA-45",
+      "titulo": "queueCount: conta a fila e devolve 0 se o banco falhar (o limite de 10 deixa de valer)",
+      "arquivo": "server/tests/testes-offline/apoio/casos-cliente.js",
+      "situacao": "aprovado",
+      "duracaoMs": 4.6
+    },
+    {
+      "id": "CBA-46",
+      "titulo": "submitReport: recusa sem motivo é registrada como \"server error\" e guardada na fila",
+      "arquivo": "server/tests/testes-offline/apoio/casos-cliente.js",
+      "situacao": "aprovado",
+      "duracaoMs": 17
+    },
+    {
+      "id": "CBA-47",
+      "titulo": "submitReport: durante o envio o botão fica travado e marcado \"Enviando…\"",
+      "arquivo": "server/tests/testes-offline/apoio/casos-cliente.js",
+      "situacao": "aprovado",
+      "duracaoMs": 14
+    },
+    {
+      "id": "CBA-50",
+      "titulo": "flushQueue (técnico): reenvio que o script responde \"ja_fechado\" deve sair da fila",
+      "arquivo": "server/tests/testes-offline/apps-script/caixa-branca/cliente.test.js",
+      "situacao": "defeito-confirmado",
+      "motivoTodo": "Defeito DEF-08 — fechamento já registrado trava a fila para sempre",
+      "mensagem": "itens presos na fila: 2 2 !== 0",
+      "duracaoMs": 3.7,
+      "defeitos": [
+        "DEF-08"
+      ]
+    },
+    {
+      "id": "CBA-51",
+      "titulo": "integração (cidadão ↔ dublê do Apps Script): flushQueue e postReport reais esvaziam a fila",
+      "arquivo": "server/tests/testes-offline/apps-script/caixa-branca/cliente.test.js",
+      "situacao": "aprovado",
+      "duracaoMs": 663.8
+    },
+    {
+      "id": "CBA-52",
+      "titulo": "integração (cidadão ↔ dublê): resposta perdida e reenvio geram um único registro",
+      "arquivo": "server/tests/testes-offline/apps-script/caixa-branca/cliente.test.js",
+      "situacao": "defeito-confirmado",
+      "motivoTodo": "Defeito DEF-11 — sem identificador único, a duplicidade depende de o script descartar protocolo repetido",
+      "mensagem": "linhas na planilha com o mesmo protocolo: 2 2 !== 1",
+      "duracaoMs": 128.4,
+      "defeitos": [
+        "DEF-11"
+      ]
+    },
+    {
+      "id": "CBA-53",
+      "titulo": "integração (técnico ↔ dublê): fechamento na fila é registrado e sai da fila",
+      "arquivo": "server/tests/testes-offline/apps-script/caixa-branca/cliente.test.js",
+      "situacao": "aprovado",
+      "duracaoMs": 58.8
+    }
+  ],
+  "cobertura": [
+    {
+      "funcao": "buildPayload (cidadão)",
+      "local": "public/index.html:1466",
+      "linhas": {
+        "executadas": 13,
+        "total": 13,
+        "percentual": 100,
+        "naoExecutadas": []
+      },
+      "ramos": {
+        "executados": 2,
+        "total": 2,
+        "percentual": 100,
+        "naoExecutados": []
+      }
+    },
+    {
+      "funcao": "flushQueue (cidadão)",
+      "local": "public/index.html:1271",
+      "linhas": {
+        "executadas": 23,
+        "total": 23,
+        "percentual": 100,
+        "naoExecutadas": []
+      },
+      "ramos": {
+        "executados": 28,
+        "total": 28,
+        "percentual": 100,
+        "naoExecutados": []
+      }
+    },
+    {
+      "funcao": "generateProtocol (cidadão)",
+      "local": "public/index.html:1460",
+      "linhas": {
+        "executadas": 5,
+        "total": 5,
+        "percentual": 100,
+        "naoExecutadas": []
+      },
+      "ramos": {
+        "executados": 1,
+        "total": 1,
+        "percentual": 100,
+        "naoExecutados": []
+      }
+    },
+    {
+      "funcao": "postReport (cidadão)",
+      "local": "public/index.html:1481",
+      "linhas": {
+        "executadas": 16,
+        "total": 16,
+        "percentual": 100,
+        "naoExecutadas": []
+      },
+      "ramos": {
+        "executados": 5,
+        "total": 5,
+        "percentual": 100,
+        "naoExecutados": []
+      }
+    },
+    {
+      "funcao": "submitReport (cidadão)",
+      "local": "public/index.html:1502",
+      "linhas": {
+        "executadas": 26,
+        "total": 26,
+        "percentual": 100,
+        "naoExecutadas": []
+      },
+      "ramos": {
+        "executados": 15,
+        "total": 15,
+        "percentual": 100,
+        "naoExecutados": []
+      }
+    },
+    {
+      "funcao": "updatePendingBanner (cidadão)",
+      "local": "public/index.html:1259",
+      "linhas": {
+        "executadas": 11,
+        "total": 11,
+        "percentual": 100,
+        "naoExecutadas": []
+      },
+      "ramos": {
+        "executados": 13,
+        "total": 13,
+        "percentual": 100,
+        "naoExecutados": []
+      }
+    },
+    {
+      "funcao": "apiFetchTO (técnico)",
+      "local": "public/tecnico/index.html:1651",
+      "linhas": {
+        "executadas": 10,
+        "total": 10,
+        "percentual": 100,
+        "naoExecutadas": []
+      },
+      "ramos": {
+        "executados": 5,
+        "total": 5,
+        "percentual": 100,
+        "naoExecutados": []
+      }
+    },
+    {
+      "funcao": "flushQueue (técnico)",
+      "local": "public/tecnico/index.html:1868",
+      "linhas": {
+        "executadas": 21,
+        "total": 21,
+        "percentual": 100,
+        "naoExecutadas": []
+      },
+      "ramos": {
+        "executados": 17,
+        "total": 17,
+        "percentual": 100,
+        "naoExecutados": []
+      }
+    },
+    {
+      "funcao": "queueCount (técnico)",
+      "local": "public/tecnico/index.html:1717",
+      "linhas": {
+        "executadas": 2,
+        "total": 2,
+        "percentual": 100,
+        "naoExecutadas": []
+      },
+      "ramos": {
+        "executados": 2,
+        "total": 2,
+        "percentual": 100,
+        "naoExecutados": []
+      }
+    },
+    {
+      "funcao": "renderPendingBanner (técnico)",
+      "local": "public/tecnico/index.html:1852",
+      "linhas": {
+        "executadas": 11,
+        "total": 11,
+        "percentual": 100,
+        "naoExecutadas": []
+      },
+      "ramos": {
+        "executados": 9,
+        "total": 9,
+        "percentual": 100,
+        "naoExecutados": []
+      }
+    }
+  ],
+  "complexidade": [
+    {
+      "funcao": "flushQueue (cidadão)",
+      "local": "public/index.html:1271",
+      "decisoes": 10,
+      "vG": 11,
+      "vGComLogicos": 20
+    },
+    {
+      "funcao": "submitReport (cidadão)",
+      "local": "public/index.html:1502",
+      "decisoes": 6,
+      "vG": 7,
+      "vGComLogicos": 9
+    },
+    {
+      "funcao": "postReport (cidadão)",
+      "local": "public/index.html:1481",
+      "decisoes": 1,
+      "vG": 2,
+      "vGComLogicos": 2
+    },
+    {
+      "funcao": "updatePendingBanner (cidadão)",
+      "local": "public/index.html:1259",
+      "decisoes": 6,
+      "vG": 7,
+      "vGComLogicos": 7
+    },
+    {
+      "funcao": "generateProtocol (cidadão)",
+      "local": "public/index.html:1460",
+      "decisoes": 0,
+      "vG": 1,
+      "vGComLogicos": 1
+    },
+    {
+      "funcao": "buildPayload (cidadão)",
+      "local": "public/index.html:1466",
+      "decisoes": 0,
+      "vG": 1,
+      "vGComLogicos": 2
+    },
+    {
+      "funcao": "flushQueue (técnico)",
+      "local": "public/tecnico/index.html:1868",
+      "decisoes": 7,
+      "vG": 8,
+      "vGComLogicos": 10
+    },
+    {
+      "funcao": "apiFetchTO (técnico)",
+      "local": "public/tecnico/index.html:1651",
+      "decisoes": 0,
+      "vG": 1,
+      "vGComLogicos": 2
+    },
+    {
+      "funcao": "renderPendingBanner (técnico)",
+      "local": "public/tecnico/index.html:1852",
+      "decisoes": 4,
+      "vG": 5,
+      "vGComLogicos": 5
+    },
+    {
+      "funcao": "queueCount (técnico)",
+      "local": "public/tecnico/index.html:1717",
+      "decisoes": 1,
+      "vG": 2,
+      "vGComLogicos": 2
+    }
+  ],
+  "mutacao": {
+    "operadores": [
+      "relacional",
+      "igualdade",
+      "lógico",
+      "negação removida",
+      "desvio removido",
+      "retorno antecipado removido",
+      "constante",
+      "booleano"
+    ],
+    "total": 83,
+    "mortos": 75,
+    "sobreviventes": 8,
+    "escore": 90.4,
+    "porFuncao": [
+      {
+        "funcao": "flushQueue (cidadão)",
+        "total": 26,
+        "mortos": 22,
+        "escore": 84.6
+      },
+      {
+        "funcao": "submitReport (cidadão)",
+        "total": 12,
+        "mortos": 12,
+        "escore": 100
+      },
+      {
+        "funcao": "postReport (cidadão)",
+        "total": 2,
+        "mortos": 2,
+        "escore": 100
+      },
+      {
+        "funcao": "updatePendingBanner (cidadão)",
+        "total": 10,
+        "mortos": 9,
+        "escore": 90
+      },
+      {
+        "funcao": "generateProtocol (cidadão)",
+        "total": 7,
+        "mortos": 7,
+        "escore": 100
+      },
+      {
+        "funcao": "buildPayload (cidadão)",
+        "total": 3,
+        "mortos": 3,
+        "escore": 100
+      },
+      {
+        "funcao": "flushQueue (técnico)",
+        "total": 14,
+        "mortos": 11,
+        "escore": 78.6
+      },
+      {
+        "funcao": "apiFetchTO (técnico)",
+        "total": 2,
+        "mortos": 2,
+        "escore": 100
+      },
+      {
+        "funcao": "renderPendingBanner (técnico)",
+        "total": 6,
+        "mortos": 6,
+        "escore": 100
+      },
+      {
+        "funcao": "queueCount (técnico)",
+        "total": 1,
+        "mortos": 1,
+        "escore": 100
+      }
+    ],
+    "listaSobreviventes": [
+      {
+        "funcao": "flushQueue (cidadão)",
+        "local": "public/index.html:1281",
+        "operador": "lógico",
+        "de": "&&",
+        "para": "||",
+        "trecho": "console.warn('flushQueue: descartando item após', rec.attempts, 'tentativas', rec.payload && rec.payload.proto"
+      },
+      {
+        "funcao": "flushQueue (cidadão)",
+        "local": "public/index.html:1292",
+        "operador": "desvio removido",
+        "de": "continue;",
+        "para": ";",
+        "trecho": "continue;"
+      },
+      {
+        "funcao": "flushQueue (cidadão)",
+        "local": "public/index.html:1297",
+        "operador": "desvio removido",
+        "de": "continue;",
+        "para": ";",
+        "trecho": "continue;"
+      },
+      {
+        "funcao": "flushQueue (cidadão)",
+        "local": "public/index.html:1280",
+        "operador": "constante",
+        "de": "0",
+        "para": "1",
+        "trecho": "if ((rec.attempts || 0) >= MAX_ATTEMPTS) {"
+      },
+      {
+        "funcao": "updatePendingBanner (cidadão)",
+        "local": "public/index.html:1264",
+        "operador": "retorno antecipado removido",
+        "de": "return;",
+        "para": ";",
+        "trecho": "if (!banner) return;"
+      },
+      {
+        "funcao": "flushQueue (técnico)",
+        "local": "public/tecnico/index.html:1880",
+        "operador": "igualdade",
+        "de": "===",
+        "para": "!==",
+        "trecho": "} else if (resp && resp.error === 'sessao_expirada') {"
+      },
+      {
+        "funcao": "flushQueue (técnico)",
+        "local": "public/tecnico/index.html:1880",
+        "operador": "lógico",
+        "de": "&&",
+        "para": "||",
+        "trecho": "} else if (resp && resp.error === 'sessao_expirada') {"
+      },
+      {
+        "funcao": "flushQueue (técnico)",
+        "local": "public/tecnico/index.html:1885",
+        "operador": "desvio removido",
+        "de": "break;",
+        "para": ";",
+        "trecho": "break;"
+      }
+    ]
+  }
+}

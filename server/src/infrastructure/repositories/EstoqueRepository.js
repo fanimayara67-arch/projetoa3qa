@@ -1,38 +1,62 @@
 /**
  * CAMADA DE PERSISTÊNCIA / INFRAESTRUTURA — EstoqueRepository
- * Operações SQL de estoque, baixa de materiais em fechamento e controle de missões.
+ * Operações SQL (MySQL) de estoque, baixa de materiais em fechamento e controle de missões.
  */
 
 const pool = require('../database/pool');
 const { Conflito, NaoEncontrado } = require('../../application/errors');
+
+const ehId = valor => /^\d+$/.test(String(valor));
 
 async function listarItens(tx = pool) {
   const { rows } = await tx.query('SELECT * FROM itens_estoque ORDER BY nome ASC');
   return rows;
 }
 
+/**
+ * Cria o item ou atualiza o existente com o mesmo nome (upsert) e devolve a linha salva.
+ */
 async function salvarItem(dados, tx = pool) {
-  const { rows } = await tx.query(
+  const nome = dados.nome.trim();
+  await tx.query(
     `INSERT INTO itens_estoque (nome, unidade, saldo, minimo, atualizado_em)
-     VALUES ($1, $2, $3, $4, now())
-     ON CONFLICT (nome) DO UPDATE SET
-       unidade       = EXCLUDED.unidade,
-       saldo         = EXCLUDED.saldo,
-       minimo        = EXCLUDED.minimo,
-       atualizado_em = now()
-     RETURNING *`,
-    [dados.nome.trim(), dados.unidade || 'un', Number(dados.saldo || 0), Number(dados.minimo || 0)]
+     VALUES (?, ?, ?, ?, NOW()) AS novo
+     ON DUPLICATE KEY UPDATE
+       unidade       = novo.unidade,
+       saldo         = novo.saldo,
+       minimo        = novo.minimo,
+       atualizado_em = NOW()`,
+    [nome, dados.unidade || 'un', Number(dados.saldo || 0), Number(dados.minimo || 0)]
   );
+  const { rows } = await tx.query('SELECT * FROM itens_estoque WHERE nome = ?', [nome]);
   return rows[0];
 }
 
+/**
+ * Remove o item (por id numérico ou por nome) e devolve a linha removida, ou null se não existir.
+ */
 async function removerItem(nomeOuId, tx = pool) {
-  const isNum = /^\d+$/.test(String(nomeOuId));
-  const query = isNum
-    ? 'DELETE FROM itens_estoque WHERE id = $1 RETURNING *'
-    : 'DELETE FROM itens_estoque WHERE nome = $1 RETURNING *';
-  const { rows } = await tx.query(query, [nomeOuId]);
+  const coluna = ehId(nomeOuId) ? 'id' : 'nome';
+  const { rows } = await tx.query(`SELECT * FROM itens_estoque WHERE ${coluna} = ?`, [nomeOuId]);
+  const item = rows[0];
+  if (!item) return null;
+  await tx.query('DELETE FROM itens_estoque WHERE id = ?', [item.id]);
+  return item;
+}
+
+/** Busca o item travando a linha até o fim da transação (evita duas baixas simultâneas do mesmo saldo). */
+async function buscarItemParaAtualizar(tx, itemId, nome) {
+  const { rows } = itemId
+    ? await tx.query('SELECT * FROM itens_estoque WHERE id = ? FOR UPDATE', [itemId])
+    : await tx.query('SELECT * FROM itens_estoque WHERE nome = ? FOR UPDATE', [nome]);
   return rows[0] || null;
+}
+
+async function debitarSaldo(tx, itemId, quantidade) {
+  await tx.query(
+    'UPDATE itens_estoque SET saldo = saldo - ?, atualizado_em = NOW() WHERE id = ?',
+    [quantidade, itemId]
+  );
 }
 
 /**
@@ -47,13 +71,8 @@ async function baixarMateriais(tx, fechamentoId, materiais = []) {
     const qtd = Number(mat.quantidade);
     if (!Number.isFinite(qtd) || qtd <= 0) continue;
 
-    const buscaQuery = mat.item_id
-      ? 'SELECT * FROM itens_estoque WHERE id = $1 FOR UPDATE'
-      : 'SELECT * FROM itens_estoque WHERE nome = $1 FOR UPDATE';
     const chave = mat.item_id || mat.nome;
-
-    const { rows } = await tx.query(buscaQuery, [chave]);
-    const item = rows[0];
+    const item = await buscarItemParaAtualizar(tx, mat.item_id, mat.nome);
     if (!item) {
       throw new NaoEncontrado(`Material '${chave}' não encontrado no almoxarifado.`);
     }
@@ -63,15 +82,11 @@ async function baixarMateriais(tx, fechamentoId, materiais = []) {
       );
     }
 
-    await tx.query(
-      'UPDATE itens_estoque SET saldo = saldo - $1, atualizado_em = now() WHERE id = $2',
-      [qtd, item.id]
-    );
-
+    await debitarSaldo(tx, item.id, qtd);
     await tx.query(
       `INSERT INTO fechamento_materiais (fechamento_id, item_id, quantidade)
-       VALUES ($1, $2, $3)
-       ON CONFLICT (fechamento_id, item_id) DO UPDATE SET quantidade = EXCLUDED.quantidade`,
+       VALUES (?, ?, ?) AS novo
+       ON DUPLICATE KEY UPDATE quantidade = novo.quantidade`,
       [fechamentoId, item.id, qtd]
     );
 
@@ -82,34 +97,25 @@ async function baixarMateriais(tx, fechamentoId, materiais = []) {
 }
 
 async function criarMissaoComItens(tx, { data, equipe, obs, criadoPor, itens }) {
-  const { rows: missaoRows } = await tx.query(
-    `INSERT INTO missoes (data, equipe, obs, criado_por)
-     VALUES ($1, $2, $3, $4)
-     RETURNING *`,
+  const { rows: resultado } = await tx.query(
+    'INSERT INTO missoes (data, equipe, obs, criado_por) VALUES (?, ?, ?, ?)',
     [data, equipe, obs || null, criadoPor || null]
   );
+  const { rows: missaoRows } = await tx.query('SELECT * FROM missoes WHERE id = ?', [resultado.insertId]);
   const missao = missaoRows[0];
 
   for (const it of itens) {
     const qtd = Number(it.qtd_saida);
-    const buscaQuery = it.item_id
-      ? 'SELECT * FROM itens_estoque WHERE id = $1 FOR UPDATE'
-      : 'SELECT * FROM itens_estoque WHERE nome = $1 FOR UPDATE';
     const chave = it.item_id || it.nome;
-
-    const { rows } = await tx.query(buscaQuery, [chave]);
-    const item = rows[0];
+    const item = await buscarItemParaAtualizar(tx, it.item_id, it.nome);
     if (!item) throw new NaoEncontrado(`Item '${chave}' não encontrado no estoque.`);
     if (Number(item.saldo) < qtd) {
       throw new Conflito(`Saldo insuficiente para '${item.nome}' na saída de missão.`);
     }
 
+    await debitarSaldo(tx, item.id, qtd);
     await tx.query(
-      'UPDATE itens_estoque SET saldo = saldo - $1, atualizado_em = now() WHERE id = $2',
-      [qtd, item.id]
-    );
-    await tx.query(
-      'INSERT INTO missao_itens (missao_id, item_id, qtd_saida) VALUES ($1, $2, $3)',
+      'INSERT INTO missao_itens (missao_id, item_id, qtd_saida) VALUES (?, ?, ?)',
       [missao.id, item.id, qtd]
     );
   }
@@ -117,28 +123,30 @@ async function criarMissaoComItens(tx, { data, equipe, obs, criadoPor, itens }) 
   return missao;
 }
 
+/**
+ * Lista as missões com seus itens agregados em um array JSON (`itens`).
+ */
 async function listarMissoes(tx = pool) {
   const { rows } = await tx.query(
     `SELECT m.*,
        COALESCE(
-         json_agg(
-           json_build_object(
-             'item_id', mi.item_id,
-             'nome', ie.nome,
-             'unidade', ie.unidade,
-             'qtd_saida', mi.qtd_saida,
-             'qtd_retorno', mi.qtd_retorno
-           )
-         ) FILTER (WHERE mi.item_id IS NOT NULL),
-         '[]'
+         (SELECT JSON_ARRAYAGG(JSON_OBJECT(
+                   'item_id', mi.item_id,
+                   'nome', ie.nome,
+                   'unidade', ie.unidade,
+                   'qtd_saida', mi.qtd_saida,
+                   'qtd_retorno', mi.qtd_retorno
+                 ))
+            FROM missao_itens mi
+            JOIN itens_estoque ie ON ie.id = mi.item_id
+           WHERE mi.missao_id = m.id),
+         JSON_ARRAY()
        ) AS itens
      FROM missoes m
-     LEFT JOIN missao_itens mi ON mi.missao_id = m.id
-     LEFT JOIN itens_estoque ie ON ie.id = mi.item_id
-     GROUP BY m.id
      ORDER BY m.data DESC, m.id DESC`
   );
-  return rows;
+  // mysql2 já converte colunas JSON; o fallback cobre drivers que devolvem texto.
+  return rows.map(m => ({ ...m, itens: typeof m.itens === 'string' ? JSON.parse(m.itens) : (m.itens || []) }));
 }
 
 module.exports = {

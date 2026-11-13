@@ -5,6 +5,7 @@
 
 const ChamadoService = require('../../application/services/ChamadoService');
 const formatarChamado = require('../views/chamado.view');
+const formatarTentativa = require('../views/tentativa.view');
 const { ok } = require('../views/resposta');
 
 async function criar(req, res, next) {
@@ -53,9 +54,19 @@ async function registrarTentativa(req, res, next) {
   }
 }
 
+async function listarTentativas(req, res, next) {
+  try {
+    const tentativas = await ChamadoService.listarTentativas();
+    return ok(res, { tentativas: tentativas.map(formatarTentativa) });
+  } catch (err) {
+    next(err);
+  }
+}
+
 module.exports = {
   criar,
   listar,
   buscar,
-  registrarTentativa
+  registrarTentativa,
+  listarTentativas
 };

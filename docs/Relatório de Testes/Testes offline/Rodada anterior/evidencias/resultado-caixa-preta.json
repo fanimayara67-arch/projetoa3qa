@@ -1,0 +1,267 @@
+{
+  "executadoEm": "2026-11-13T00:18:25.763Z",
+  "ambiente": {
+    "node": "v24.16.0",
+    "navegador": "chrome",
+    "sistema": "win32"
+  },
+  "total": 23,
+  "aprovados": 15,
+  "reprovados": 8,
+  "erros": 0,
+  "casos": [
+    {
+      "id": "CP-01",
+      "titulo": "App do cidadão abre sem internet depois do primeiro acesso",
+      "requisito": "RNF01; UC01 (pré-condição)",
+      "tecnica": "Partição de equivalência (com/sem internet)",
+      "esperado": "Com o aparelho offline, ao reabrir o app a tela de reporte aparece normalmente.",
+      "obtido": "A tela de reporte abriu offline (arquivos vieram do cache do service worker).",
+      "resultado": "Aprovado",
+      "observacao": "",
+      "duracaoMs": 13574
+    },
+    {
+      "id": "CP-02",
+      "titulo": "Reporte feito sem internet fica salvo no aparelho com protocolo",
+      "requisito": "RF02; UC01-A1",
+      "tecnica": "Baseado em requisito (fluxo alternativo)",
+      "esperado": "Tela \"Salvo sem sinal\", protocolo no formato IC-AAMMDD-XXXXX, 1 item na fila local e aviso de pendente.",
+      "obtido": "Título \"Salvo sem sinal\", Protocolo: IC-261112-JZ86Y, 1 item na fila, aviso: \"📡 1 reporte pendente — será enviado quando houver sinal\".",
+      "resultado": "Aprovado",
+      "observacao": "",
+      "duracaoMs": 2846
+    },
+    {
+      "id": "CP-03",
+      "titulo": "Reporte pendente é enviado sozinho quando a internet volta",
+      "requisito": "RF02; UC03 (fluxo principal); CA03",
+      "tecnica": "Transição de estado (offline → online)",
+      "esperado": "Ao voltar a internet, o servidor recebe o reporte uma vez, a fila esvazia e o aviso some.",
+      "obtido": "Servidor recebeu 1 cópia(s); fila com 0 item(ns); aviso: \"oculto\".",
+      "resultado": "Aprovado",
+      "observacao": "",
+      "duracaoMs": 30726
+    },
+    {
+      "id": "CP-04",
+      "titulo": "Três reportes offline são enviados sem perda e sem duplicidade",
+      "requisito": "UC03; CA03",
+      "tecnica": "Valor limite (vários itens na fila)",
+      "esperado": "O servidor recebe exatamente 3 reportes, cada protocolo uma única vez.",
+      "obtido": "Recebidos 3 envios; cópias por protocolo: 1, 1, 1.",
+      "resultado": "Aprovado",
+      "observacao": "",
+      "duracaoMs": 22947
+    },
+    {
+      "id": "CP-05",
+      "titulo": "Fila sobrevive ao fechamento do app e é enviada na próxima abertura com internet",
+      "requisito": "UC03-A3; Confiabilidade",
+      "tecnica": "Transição de estado (app fechado)",
+      "esperado": "Depois de fechar o app offline, o reporte continua na fila e é enviado quando o app é aberto com internet.",
+      "obtido": "Após reabrir offline havia 1 item na fila; após abrir online, servidor recebeu: sim.",
+      "resultado": "Aprovado",
+      "observacao": "",
+      "duracaoMs": 2808
+    },
+    {
+      "id": "CP-06",
+      "titulo": "Com internet, erro do servidor no envio guarda o reporte na fila",
+      "requisito": "UC01-A2",
+      "tecnica": "Baseado em requisito (falha no envio)",
+      "esperado": "Servidor responde erro 500: o app mostra o protocolo, informa envio pendente e guarda o reporte na fila.",
+      "obtido": "Título \"Salvo sem sinal\", Protocolo: IC-261112-H8S1T, 1 item na fila.",
+      "resultado": "Aprovado",
+      "observacao": "O título diz \"Salvo sem sinal\" mesmo havendo sinal; a mensagem é imprecisa, mas o comportamento atende ao requisito.",
+      "duracaoMs": 2391
+    },
+    {
+      "id": "CP-07",
+      "titulo": "Falha de servidor durante a sincronização mantém o reporte na fila",
+      "requisito": "UC03-A1",
+      "tecnica": "Baseado em requisito (falha na sincronização)",
+      "esperado": "O reporte continua na fila com uma tentativa a mais e o aviso continua aparecendo; depois é enviado.",
+      "obtido": "Após a falha: 1 item, tentativas = 1, aviso \"📡 1 reporte pendente — será enviado quando houver sinal\". Após o servidor voltar: enviado.",
+      "resultado": "Aprovado",
+      "observacao": "",
+      "duracaoMs": 2174
+    },
+    {
+      "id": "CP-08",
+      "titulo": "Reporte rejeitado pelo servidor não pode sumir sem avisar o cidadão",
+      "requisito": "UC03-A2; regra \"nenhum reporte pode ser descartado sem que o cidadão seja informado\"",
+      "tecnica": "Baseado em risco (perda de dados)",
+      "esperado": "O reporte fica na fila com o motivo e o cidadão vê um aviso de reporte com problema.",
+      "obtido": "Depois de 6 tentativas o reporte IC-261112-88CSU foi APAGADO da fila. Aviso na tela: \"nenhum\". O cidadão não foi informado.",
+      "resultado": "Reprovado",
+      "observacao": "",
+      "duracaoMs": 3948
+    },
+    {
+      "id": "CP-09",
+      "titulo": "Resposta perdida: o mesmo reporte não pode virar dois registros",
+      "requisito": "UC03 regra de negócio; CA03 (sem duplicidade)",
+      "tecnica": "Baseado em risco (duplicidade)",
+      "esperado": "Mesmo que a resposta do servidor se perca, o protocolo é gravado uma única vez.",
+      "obtido": "O servidor recebeu 8 envios do mesmo protocolo. O app não manda identificador único (id) e reenvia o reporte inteiro.",
+      "resultado": "Reprovado",
+      "observacao": "No modo Apps Script a deduplicação depende do script do servidor, que não está no repositório. Se ele não descartar protocolos repetidos, haverá chamado duplicado.",
+      "duracaoMs": 2788
+    },
+    {
+      "id": "CP-10",
+      "titulo": "Sincronizações simultâneas não podem enviar o mesmo reporte duas vezes",
+      "requisito": "CA03 (sem duplicidade)",
+      "tecnica": "Baseado em risco (concorrência)",
+      "esperado": "Mesmo com vários gatilhos ao mesmo tempo (internet volta, app volta ao primeiro plano, timer), o reporte é enviado uma vez.",
+      "obtido": "O mesmo protocolo foi enviado 4 vez(es) ao servidor.",
+      "resultado": "Reprovado",
+      "observacao": "",
+      "duracaoMs": 3208
+    },
+    {
+      "id": "CP-11",
+      "titulo": "Internet cai no meio do preenchimento e o reporte ainda é concluído",
+      "requisito": "CA02; UC01-A1",
+      "tecnica": "Transição de estado (online → offline durante o uso)",
+      "esperado": "Os dados já preenchidos continuam na tela e o reporte é salvo com eles.",
+      "obtido": "Salvo com tipo \"piscando\", descrição \"Preenchido antes de cair\", GPS presente.",
+      "resultado": "Aprovado",
+      "observacao": "",
+      "duracaoMs": 2414
+    },
+    {
+      "id": "CP-12",
+      "titulo": "Rascunho do formulário é guardado no aparelho se o app for fechado sem internet",
+      "requisito": "CA02",
+      "tecnica": "Baseado em requisito / risco (perda do preenchimento)",
+      "esperado": "Ao reabrir o app, o que já havia sido preenchido (tipo, descrição, localização) continua lá.",
+      "obtido": "Após reabrir: descrição \"\", tipo \"nenhum\", GPS perdido.",
+      "resultado": "Reprovado",
+      "observacao": "Enquanto a página fica aberta, a queda de conexão não apaga nada (ver CP-11). O problema aparece só quando o app é fechado ou recarregado.",
+      "duracaoMs": 2582
+    },
+    {
+      "id": "CP-13",
+      "titulo": "Indicador mostra quando o aparelho está sem sinal",
+      "requisito": "RNF01; RNF04 (usabilidade)",
+      "tecnica": "Partição de equivalência (online/offline)",
+      "esperado": "Offline o indicador mostra \"Sem sinal\"; online mostra \"Online\".",
+      "obtido": "Offline: \"Sem sinal\"; online: \"Online\".",
+      "resultado": "Aprovado",
+      "observacao": "",
+      "duracaoMs": 9786
+    },
+    {
+      "id": "CP-14",
+      "titulo": "App abre sem internet quando o link tem parâmetros",
+      "requisito": "RNF01",
+      "tecnica": "Partição de equivalência (endereço com/sem parâmetros)",
+      "esperado": "Um link como /?utm_source=whatsapp, já usado antes, também abre offline.",
+      "obtido": "Abriu normalmente.",
+      "resultado": "Aprovado",
+      "observacao": "",
+      "duracaoMs": 14421
+    },
+    {
+      "id": "CP-15",
+      "titulo": "Com a API Node, reporte com internet chega ao servidor",
+      "requisito": "RF01; UC01 (passo 7); integração com a API",
+      "tecnica": "Baseado em requisito (fluxo principal)",
+      "esperado": "O chamado é criado na API e o app mostra \"Reporte enviado\".",
+      "obtido": "Tela: \"Salvo sem sinal\". A API recebeu 1 POST em formato \"application/x-www-form-urlencoded;charset=UTF-8\" e criou 0 chamado(s).",
+      "resultado": "Reprovado",
+      "observacao": "A tela do cidadão envia o reporte como formulário (payload=...) e sem o campo id. A API só aceita JSON com id e responde 400 (JSON_INVALIDO).",
+      "duracaoMs": 4144
+    },
+    {
+      "id": "CP-16",
+      "titulo": "Com a API Node, reporte offline é entregue quando a internet volta",
+      "requisito": "RF02; UC03; CA03",
+      "tecnica": "Transição de estado (offline → online)",
+      "esperado": "Ao voltar a internet, o chamado é criado na API e a fila esvazia.",
+      "obtido": "Chamados criados na API: 0. Itens na fila do aparelho depois de 6 tentativas: 0.",
+      "resultado": "Reprovado",
+      "observacao": "O reporte não chegou ao servidor e foi apagado do aparelho: perda total do reporte.",
+      "duracaoMs": 4199
+    },
+    {
+      "id": "CP-17",
+      "titulo": "Login do técnico sem internet informa que não há conexão",
+      "requisito": "UC04-A4",
+      "tecnica": "Baseado em requisito (fluxo alternativo)",
+      "esperado": "O login não acontece e aparece uma mensagem de falta de conexão.",
+      "obtido": "Mensagem: \"Sem conexão. Verifique a internet.\"; entrou no painel: não.",
+      "resultado": "Aprovado",
+      "observacao": "",
+      "duracaoMs": 11002
+    },
+    {
+      "id": "CP-18",
+      "titulo": "Lista de chamados continua disponível offline",
+      "requisito": "RNF01; UC05 (Portabilidade, uso em campo)",
+      "tecnica": "Transição de estado (online → offline)",
+      "esperado": "Depois de carregar a lista com internet, ao reabrir offline os chamados aparecem a partir do cache.",
+      "obtido": "Chamados visíveis offline: 3.",
+      "resultado": "Aprovado",
+      "observacao": "",
+      "duracaoMs": 5622
+    },
+    {
+      "id": "CP-19",
+      "titulo": "Fechamento sem internet vai para a fila do aparelho",
+      "requisito": "UC05-A5",
+      "tecnica": "Baseado em requisito (fluxo alternativo)",
+      "esperado": "Tela \"Salvo no aparelho\" e 1 fechamento na fila local.",
+      "obtido": "Título \"Salvo no aparelho\"; 1 fechamento(s) na fila.",
+      "resultado": "Aprovado",
+      "observacao": "",
+      "duracaoMs": 4006
+    },
+    {
+      "id": "CP-20",
+      "titulo": "Fechamento pendente é enviado quando a internet volta",
+      "requisito": "UC05-A5",
+      "tecnica": "Transição de estado (offline → online)",
+      "esperado": "O servidor recebe o fechamento e a fila esvazia.",
+      "obtido": "Servidor recebeu 1 fechamento(s); fila com 0.",
+      "resultado": "Aprovado",
+      "observacao": "",
+      "duracaoMs": 2886
+    },
+    {
+      "id": "CP-21",
+      "titulo": "Com 10 fechamentos na fila, o 11º é bloqueado",
+      "requisito": "UC05-A6",
+      "tecnica": "Análise de valor limite (10 e 11)",
+      "esperado": "Os 10 primeiros entram na fila; o 11º mostra aviso e não entra.",
+      "obtido": "Fila após 10: 10; após o 11º: 10. Aviso: \"Você tem 10 fechamentos na fila. Vá a uma área com sinal para enviá-los antes de fechar novos.\".",
+      "resultado": "Aprovado",
+      "observacao": "",
+      "duracaoMs": 8559
+    },
+    {
+      "id": "CP-22",
+      "titulo": "Um fechamento com erro não pode travar o envio dos outros",
+      "requisito": "UC05-A5; Confiabilidade",
+      "tecnica": "Baseado em risco (fila travada)",
+      "esperado": "Se o servidor recusar o 1º fechamento, os demais da fila ainda são enviados.",
+      "obtido": "Fechamentos 2 e 3 enviados: 0. Itens que continuam presos na fila: 3.",
+      "resultado": "Reprovado",
+      "observacao": "",
+      "duracaoMs": 7604
+    },
+    {
+      "id": "CP-23",
+      "titulo": "Com a API Node, fechamento feito offline é entregue quando a internet volta",
+      "requisito": "UC05-A5; integração com a API",
+      "tecnica": "Transição de estado (offline → online)",
+      "esperado": "Ao voltar a internet, o fechamento chega em POST /api/chamados/{protocolo}/fechamento e sai da fila.",
+      "obtido": "Tela offline: \"Salvo no aparelho\". Caminhos chamados ao reconectar: /api. Itens presos na fila: 1.",
+      "resultado": "Reprovado",
+      "observacao": "A tela do técnico ainda envia o formato do Apps Script (action: \"close\") para /api, rota que não existe na API Node.",
+      "duracaoMs": 6245
+    }
+  ]
+}
