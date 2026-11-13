@@ -63,12 +63,11 @@ async function debitarSaldo(tx, itemId, quantidade) {
  * Debita materiais utilizados no fechamento de um chamado dentro da mesma transação ACID.
  * Usa `SELECT ... FOR UPDATE` no item do estoque e valida saldo antes de debitar.
  */
-async function baixarMateriais(tx, fechamentoId, materiais = []) {
-  if (!Array.isArray(materiais) || materiais.length === 0) return [];
-
-  // Soma as quantidades por item do almoxarifado antes de conferir o saldo. Assim, o mesmo item
-  // listado duas vezes (ou uma vez pelo id e outra pelo nome) é abatido e registrado na OS com o
-  // mesmo total (CA04). Antes, o estoque abatia a soma e a OS guardava só a última quantidade.
+/**
+ * Soma as quantidades por item do almoxarifado (travando cada item). O mesmo item listado duas
+ * vezes, ou uma vez pelo id e outra pelo nome, vira uma linha só com o total (CA04).
+ */
+async function somarPorItem(tx, materiais) {
   const totais = new Map();
   for (const mat of materiais) {
     const qtd = Number(mat && mat.quantidade);
@@ -82,9 +81,14 @@ async function baixarMateriais(tx, fechamentoId, materiais = []) {
     total.quantidade += qtd;
     totais.set(item.id, total);
   }
+  return [...totais.values()];
+}
+
+async function baixarMateriais(tx, fechamentoId, materiais = []) {
+  if (!Array.isArray(materiais) || materiais.length === 0) return [];
 
   const baixados = [];
-  for (const { item, quantidade } of totais.values()) {
+  for (const { item, quantidade } of await somarPorItem(tx, materiais)) {
     if (Number(item.saldo) < quantidade) {
       throw new Conflito(
         `Saldo insuficiente para '${item.nome}': disponível ${item.saldo} ${item.unidade}, solicitado ${quantidade}.`
@@ -99,7 +103,6 @@ async function baixarMateriais(tx, fechamentoId, materiais = []) {
     );
     baixados.push({ item_id: item.id, nome: item.nome, quantidade });
   }
-
   return baixados;
 }
 

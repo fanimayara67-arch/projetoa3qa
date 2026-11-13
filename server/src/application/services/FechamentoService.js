@@ -41,46 +41,22 @@ async function fecharChamado({ protocolo, tecnicoId, dados }, deps = {}) {
     const chamado = await ChamadoRepo.buscarParaAtualizar(tx, protocolo);
     if (!chamado) throw new NaoEncontrado('Chamado não existe.');
 
-    // 2. Idempotência: se esta operação já foi processada antes, retorna sem duplicar nem debitar 2x.
-    //    Só vale para o mesmo chamado; a mesma operação em outro chamado é conflito (F-08).
-    const existente = await FechamentoRepo.buscarPorOperacaoId(tx, dados.operacao_id);
-    if (existente) {
-      if (String(existente.chamado_id) !== String(chamado.id)) {
-        throw new Conflito('Identificador da operação já usado em outro chamado. Reabra o formulário.');
-      }
-      return existente;
-    }
+    // 2. Idempotência: reenvio da mesma operação devolve o fechamento já gravado (sem debitar 2x)
+    const existente = await buscarOperacaoDoChamado(FechamentoRepo, tx, dados.operacao_id, chamado);
+    if (existente) return existente;
 
     if (!Chamado.podeFechar(chamado)) {
       throw new Conflito('Chamado já foi fechado por outro técnico.');
     }
 
+    // 3. Atualiza a ficha técnica do poste (se identificado)
     const posteIdFinal = Poste.normalizarPosteId(dados.poste_id || chamado.poste_id);
-
-    // 3. Atualiza ficha técnica do poste (se identificado) antes ou junto ao fechamento
     if (posteIdFinal) {
-      await PosteRepo.atualizarConfiguracao(tx, posteIdFinal, {
-        ...(dados.config || {}),
-        latitude: dados.lat ?? dados.latitude ?? chamado.latitude,
-        longitude: dados.lng ?? dados.longitude ?? chamado.longitude,
-        foto_ref_url: fotoUrl || undefined
-      });
+      await PosteRepo.atualizarConfiguracao(tx, posteIdFinal, configuracaoDoPoste(dados, fotoUrl));
     }
 
     // 4. Insere o registro de fechamento
-    const fechamento = await FechamentoRepo.inserir(tx, {
-      operacaoId: dados.operacao_id,
-      chamadoId: chamado.id,
-      tecnicoId,
-      status: dados.status,
-      servico: dados.servico,
-      referencia: dados.referencia,
-      latitude: dados.lat ?? dados.latitude,
-      longitude: dados.lng ?? dados.longitude,
-      fotoUrl,
-      administrativo: false,
-      dataFechamento: dados.data_fechamento || new Date().toISOString()
-    });
+    const fechamento = await FechamentoRepo.inserir(tx, montarRegistroFechamento(dados, chamado, tecnicoId, fotoUrl));
 
     // 5. Debita os materiais utilizados no estoque (reverte toda a transação se faltar saldo)
     await EstoqueRepo.baixarMateriais(tx, fechamento.id, dados.materiais_os || []);
@@ -90,6 +66,44 @@ async function fecharChamado({ protocolo, tecnicoId, dados }, deps = {}) {
 
     return fechamento;
   });
+}
+
+/**
+ * Devolve o fechamento já gravado com esta operação, se houver. A mesma operação em outro
+ * chamado é conflito: devolvê-la como sucesso deixaria o segundo chamado aberto sem aviso.
+ */
+async function buscarOperacaoDoChamado(FechamentoRepo, tx, operacaoId, chamado) {
+  const existente = await FechamentoRepo.buscarPorOperacaoId(tx, operacaoId);
+  if (existente && String(existente.chamado_id) !== String(chamado.id)) {
+    throw new Conflito('Identificador da operação já usado em outro chamado. Reabra o formulário.');
+  }
+  return existente;
+}
+
+/** Configuração do poste (passo 4) com o GPS do técnico e a foto do reparo. O GPS é obrigatório (passo 6). */
+function configuracaoDoPoste(dados, fotoUrl) {
+  return {
+    ...(dados.config || {}),
+    latitude: dados.lat ?? dados.latitude,
+    longitude: dados.lng ?? dados.longitude,
+    foto_ref_url: fotoUrl || undefined
+  };
+}
+
+function montarRegistroFechamento(dados, chamado, tecnicoId, fotoUrl) {
+  return {
+    operacaoId: dados.operacao_id,
+    chamadoId: chamado.id,
+    tecnicoId,
+    status: dados.status,
+    servico: dados.servico,
+    referencia: dados.referencia,
+    latitude: dados.lat ?? dados.latitude,
+    longitude: dados.lng ?? dados.longitude,
+    fotoUrl,
+    administrativo: false,
+    dataFechamento: dados.data_fechamento || new Date().toISOString()
+  };
 }
 
 /**

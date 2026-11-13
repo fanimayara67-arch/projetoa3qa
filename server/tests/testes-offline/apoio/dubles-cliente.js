@@ -130,7 +130,8 @@ function montarFilaTecnico({ itens = [], online = true, token = 'tok-valido', re
     queueDelete: async (id) => { registro.apagados.push(id); banco.delete(id); },
     renderPendingBanner: () => { registro.avisos++; }
   };
-  let nomes = ['flushQueue'];
+  // saiDaFila: decisão de tirar o item da fila, separada do flushQueue no UC05 (RNF05).
+  let nomes = ['flushQueue', 'saiDaFila'];
   if (rede) {
     // Integração: a função real apiFetchTO faz a requisição ao servidor de teste.
     Object.assign(globais, {
@@ -138,7 +139,7 @@ function montarFilaTecnico({ itens = [], online = true, token = 'tok-valido', re
       fetch: (u, opcoes) => { registro.envios.push(JSON.parse(opcoes.body).protocolo); return rede(u, opcoes); }
     });
     // fechamentoParaApiNode e respostaDaApiNode: conversões do envio para a API Node (UC05, DEF-02).
-    nomes = ['flushQueue', 'apiFetchTO', 'fechamentoParaApiNode', 'respostaDaApiNode'];
+    nomes = ['flushQueue', 'saiDaFila', 'apiFetchTO', 'fechamentoParaApiNode', 'respostaDaApiNode'];
   } else {
     globais.apiFetchTO = async (payload, ms) => {
       registro.envios.push(payload.protocolo);

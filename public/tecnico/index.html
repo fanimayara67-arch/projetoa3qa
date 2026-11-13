@@ -1218,6 +1218,12 @@
 
     /* ══ FLUSH DA FILA ═════════════════════════════════ */
     let flushInFlight = false;
+    /* Um fechamento sai da fila quando foi aceito ou quando o chamado já estava fechado:
+       um envio anterior cuja resposta se perdeu (ou outro técnico) já fechou (DEF-08). */
+    function saiDaFila(resp) {
+      return Boolean(resp && (resp.success || resp.error === 'ja_fechado'));
+    }
+
     async function flushQueue() {
       if (flushInFlight) return;
       if (!navigator.onLine) return;
@@ -1228,9 +1234,7 @@
         for (const rec of all) {
           try {
             const resp = await apiFetchTO(rec.payload, 40000);
-            if (resp && (resp.success || resp.error === 'ja_fechado')) {
-              // "ja_fechado": um envio anterior cuja resposta se perdeu (ou outro técnico) já fechou
-              // o chamado; não há o que reenviar (DEF-08).
+            if (saiDaFila(resp)) {
               await queueDelete(rec.id);
             } else if (resp && resp.error === 'sessao_expirada') {
               // Não adianta insistir — vai precisar de PIN novo online
