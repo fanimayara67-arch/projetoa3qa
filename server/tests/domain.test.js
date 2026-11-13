@@ -39,7 +39,8 @@ test('Domínio Chamado: rejeita coordenada (0,0) e exige GPS válido ou poste_id
     id: '6f1c2b0e-8d6a-4a57-9e0b-3c1f8a2d7e44',
     protocolo: 'IC-261104-ABCDE',
     tipo: 'apagado',
-    poste_id: 'P-0001'
+    poste_id: 'P-0001',
+    foto_base64: 'data:image/jpeg;base64,/9j/4AAQ' // a foto passou a ser obrigatória (D-01)
   });
   assert.equal(comQrSemGps.valido, true);
 });

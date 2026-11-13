@@ -1,0 +1,75 @@
+Comando: npm run test:uc01 -- --test-reporter=spec
+Data: 06/11/2026 13:24 | Commit testado: 3b214ef + testes novos do Passo 4 | Node v22.23.4
+Situação: TDD, fase VERMELHA — testes escritos antes das correções; as 6 falhas são os defeitos D-01 a D-06
+
+✔ RP-11 [caixa-preta | integração] POST /api/chamados: 201 para reporte válido e 400 para inválido
+✔ RP-02 (cliente) [caixa-preta | tabela de decisão] envio só é liberado com GPS, tipo e foto (passo 6, A4, A5)
+✔ RP-12 [caixa-preta | partição válida] protocolo no formato IC-AAMMDD-XXXXX com a data do aparelho
+✔ RP-13 [baseada em risco | perda de reporte] grava na fila antes de enviar; sem rede fica pendente (A1)
+✔ RP-16 [caixa-preta | valor-limite] classificação da precisão do GPS: 10 m e 25 m (passo 2)
+✖ RP-16 [suposição de erro] precisão desconhecida ou negativa não é exibida como "Excelente" (passo 2, A3)
+✔ RP-01 [caixa-preta | partição válida] reporte completo é aceito
+✔ RP-04 [caixa-preta | partição válida] os seis tipos do UC01 são aceitos
+✔ RP-05 [caixa-preta | valor-limite] limites de latitude e longitude e o ponto (0,0)
+✔ RP-08 [caixa-preta | partição válida] nome, telefone, endereço e descrição são opcionais
+✖ RP-02 (servidor) [caixa-preta | tabela de decisão] só aceita com GPS, tipo e foto (passo 6, CA01)
+✖ RP-03 [caixa-preta | partição inválida] tipo fora da lista do UC01 é rejeitado
+✖ RP-06 [caixa-preta | valor-limite] descrição: 500 caracteres aceita, 501 rejeita (passo 5)
+✖ RP-07 [caixa-preta | valor-limite] foto: 2 MB aceita, 2 MB + 1 byte rejeita (RNF02)
+✔ RP-09 [baseada em risco | duplicidade] reenvio do mesmo reporte devolve o mesmo chamado (CA03)
+✔ RP-09 [baseada em risco | duplicidade] outro reporte com protocolo já usado é recusado
+✔ RP-10 [caixa-branca | ramo de erro] falha ao salvar a foto não cria chamado
+✖ RP-15 [baseada em risco | chamado sem localização] QR de poste sem coordenadas e sem GPS é recusado (CA01)
+✔ RP-15 [caixa-preta | partição válida] QR de poste cadastrado dispensa o GPS e usa as coordenadas do poste
+ℹ tests 19
+ℹ suites 0
+ℹ pass 13
+ℹ fail 6
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 336.495632
+✖ failing tests:
+test at server/tests/reportar-defeito/cliente.test.js:76:1
+✖ RP-16 [suposição de erro] precisão desconhecida ou negativa não é exibida como "Excelente" (passo 2, A3)
+  AssertionError [ERR_ASSERTION]: precisão null
+  + actual - expected
+  + 'excellent'
+  - 'poor'
+    actual: 'excellent',
+    expected: 'poor',
+    diff: 'simple'
+test at server/tests/reportar-defeito/dominio.test.js:46:1
+✖ RP-02 (servidor) [caixa-preta | tabela de decisão] só aceita com GPS, tipo e foto (passo 6, CA01)
+  AssertionError [ERR_ASSERTION]: GPS=true, tipo=true, foto=false
+  true !== false
+    actual: true,
+    expected: false,
+    diff: 'simple'
+test at server/tests/reportar-defeito/dominio.test.js:62:1
+✖ RP-03 [caixa-preta | partição inválida] tipo fora da lista do UC01 é rejeitado
+  AssertionError [ERR_ASSERTION]: o tipo "POSTE_CAIU" deveria ser rejeitado
+  true !== false
+    actual: true,
+    expected: false,
+    diff: 'simple'
+test at server/tests/reportar-defeito/dominio.test.js:68:1
+✖ RP-06 [caixa-preta | valor-limite] descrição: 500 caracteres aceita, 501 rejeita (passo 5)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  true !== false
+    actual: true,
+    expected: false,
+    diff: 'simple'
+test at server/tests/reportar-defeito/dominio.test.js:73:1
+✖ RP-07 [caixa-preta | valor-limite] foto: 2 MB aceita, 2 MB + 1 byte rejeita (RNF02)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  true !== false
+    actual: true,
+    expected: false,
+    diff: 'simple'
+test at server/tests/reportar-defeito/servico.test.js:58:1
+✖ RP-15 [baseada em risco | chamado sem localização] QR de poste sem coordenadas e sem GPS é recusado (CA01)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+    actual: undefined,
+    expected: { status: 400 },
+    diff: 'simple'

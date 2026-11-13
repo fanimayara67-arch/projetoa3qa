@@ -1,0 +1,24 @@
+Comando: npm run test:uc01 -- --test-reporter=spec
+Data: 06/11/2026 13:19 | Commit testado: 2791aae + testes de caracterização | Node v22.23.4
+Situação: testes de caracterização do código existente (Passo 3)
+
+✔ RP-11 [caixa-preta | integração] POST /api/chamados: 201 para reporte válido e 400 para inválido
+✔ RP-02 (cliente) [caixa-preta | tabela de decisão] envio só é liberado com GPS, tipo e foto (passo 6, A4, A5)
+✔ RP-12 [caixa-preta | partição válida] protocolo no formato IC-AAMMDD-XXXXX com a data do aparelho
+✔ RP-13 [baseada em risco | perda de reporte] grava na fila antes de enviar; sem rede fica pendente (A1)
+✔ RP-16 [caixa-preta | valor-limite] classificação da precisão do GPS: 10 m e 25 m (passo 2)
+✔ RP-01 [caixa-preta | partição válida] reporte completo é aceito
+✔ RP-04 [caixa-preta | partição válida] os seis tipos do UC01 são aceitos
+✔ RP-05 [caixa-preta | valor-limite] limites de latitude e longitude e o ponto (0,0)
+✔ RP-08 [caixa-preta | partição válida] nome, telefone, endereço e descrição são opcionais
+✔ RP-09 [baseada em risco | duplicidade] reenvio do mesmo reporte devolve o mesmo chamado (CA03)
+✔ RP-09 [baseada em risco | duplicidade] outro reporte com protocolo já usado é recusado
+✔ RP-10 [caixa-branca | ramo de erro] falha ao salvar a foto não cria chamado
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 314.200429

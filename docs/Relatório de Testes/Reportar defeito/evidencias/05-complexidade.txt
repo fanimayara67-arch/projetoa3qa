@@ -1,0 +1,48 @@
+Ferramenta: ESLint 9.39.1, regra complexity (complexidade ciclomática)
+Requisito: RNF05 — cada função com no máximo 10 caminhos de execução
+Data: 06/11/2026 13:27
+
+== ANTES (commit 7b1184c) ==
+-- server/src/domain/Chamado.js
+27:1  Function 'podeFechar' has a complexity of 3.
+35:1  Function 'coordenadasValidas' has a complexity of 13.
+50:1  Function 'validarNovoChamado' has a complexity of 14.
+-- server/src/application/services/ChamadoService.js
+21:1   Async function 'criarChamado' has a complexity of 9.
+35:33  Async arrow function has a complexity of 19.
+76:1   Async function 'listarChamados' has a complexity of 5.
+88:1   Async function 'buscarPorProtocolo' has a complexity of 4.
+95:1   Async function 'registrarTentativa' has a complexity of 8.
+108:33  Async arrow function has a complexity of 5.
+
+== DEPOIS (commit atual) ==
+-- server/src/domain/Chamado.js
+26:1  Function 'tamanhoFotoBytes' has a complexity of 5.
+37:1  Function 'podeFechar' has a complexity of 3.
+43:1  Function 'paraNumero' has a complexity of 3.
+51:1  Function 'coordenadasValidas' has a complexity of 6.
+61:1  Function 'validarIdentificacao' has a complexity of 5.
+72:1  Function 'validarTipo' has a complexity of 4.
+79:1  Function 'validarLocalizacao' has a complexity of 6.
+86:1  Function 'validarDescricao' has a complexity of 3.
+92:1  Function 'validarFoto' has a complexity of 5.
+104:1  Function 'validarNovoChamado' has a complexity of 2.
+-- server/src/application/services/ChamadoService.js
+21:1   Async function 'criarChamado' has a complexity of 9.
+49:1   Async function 'resolverLocalizacao' has a complexity of 8.
+68:1   Function 'completarComPoste' has a complexity of 6.
+79:1   Function 'montarRegistroChamado' has a complexity of 7.
+98:1   Async function 'listarChamados' has a complexity of 5.
+110:1   Async function 'buscarPorProtocolo' has a complexity of 4.
+117:1   Async function 'registrarTentativa' has a complexity of 8.
+130:33  Async arrow function has a complexity of 5.
+
+== FORA DO ESCOPO DA CORREÇÃO (app do cidadão, registrado como pendência) ==
+-- public/js/cidadao/domain/Report.js
+18:8   Function 'gerarUuid' has a complexity of 3.
+22:70  Arrow function has a complexity of 2.
+29:8   Function 'gerarProtocolo' has a complexity of 2.
+35:8   Function 'normalizarPosteId' has a complexity of 4.
+46:8   Function 'criarReport' has a complexity of 24.
+88:8   Function 'validarReport' has a complexity of 12.
+116:8   Function 'calcularBackoffMs' has a complexity of 3.
