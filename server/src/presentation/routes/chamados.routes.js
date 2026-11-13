@@ -14,6 +14,7 @@ function registrarRotasChamados(router) {
   // Equipe Técnica / Gestor
   router.get('/api/chamados', autenticar('tecnico'), ChamadoController.listar);
   router.get('/api/chamados/:protocolo', autenticar('tecnico'), ChamadoController.buscar);
+  router.get('/api/tentativas', autenticar('tecnico'), ChamadoController.listarTentativas);
   router.post(
     '/api/chamados/:protocolo/tentativas',
     autenticar('tecnico'),
