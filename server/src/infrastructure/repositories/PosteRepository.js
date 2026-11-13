@@ -1,21 +1,23 @@
 /**
  * CAMADA DE PERSISTÊNCIA / INFRAESTRUTURA — PosteRepository
- * Consultas e atualizações cadastrais/técnicas dos postes.
+ * Consultas e atualizações cadastrais/técnicas dos postes (MySQL).
  */
 
 const pool = require('../database/pool');
 
 async function buscarPorId(posteId, tx = pool) {
-  const { rows } = await tx.query('SELECT * FROM postes WHERE id = $1', [posteId]);
+  const { rows } = await tx.query('SELECT * FROM postes WHERE id = ?', [posteId]);
   return rows[0] || null;
 }
 
+/**
+ * Cria o poste se ainda não existir; se já existir, não altera nada. Devolve a linha do poste.
+ */
 async function garantirExistencia(tx = pool, posteId, dadosIniciais = {}) {
-  const { rows } = await tx.query(
+  await tx.query(
     `INSERT INTO postes (id, endereco, latitude, longitude, atualizado_em)
-     VALUES ($1, $2, $3, $4, now())
-     ON CONFLICT (id) DO UPDATE SET atualizado_em = postes.atualizado_em
-     RETURNING *`,
+     VALUES (?, ?, ?, ?, NOW())
+     ON DUPLICATE KEY UPDATE id = id`,
     [
       posteId,
       dadosIniciais.endereco || null,
@@ -23,14 +25,14 @@ async function garantirExistencia(tx = pool, posteId, dadosIniciais = {}) {
       dadosIniciais.longitude ?? null
     ]
   );
-  return rows[0];
+  return buscarPorId(posteId, tx);
 }
 
 async function buscarChamadoAbertoNoPoste(posteId, tx = pool) {
   const { rows } = await tx.query(
     `SELECT protocolo, tipo, descricao, criado_em
      FROM chamados
-     WHERE poste_id = $1 AND status IN ('aberto', 'em_atendimento')
+     WHERE poste_id = ? AND status IN ('aberto', 'em_atendimento')
      ORDER BY criado_em DESC
      LIMIT 1`,
     [posteId]
@@ -47,42 +49,44 @@ async function listarHistoricoDoPoste(posteId, tx = pool) {
      FROM chamados c
      LEFT JOIN fechamentos f ON f.chamado_id = c.id
      LEFT JOIN usuarios u ON u.id = f.tecnico_id
-     WHERE c.poste_id = $1
+     WHERE c.poste_id = ?
      ORDER BY c.criado_em DESC`,
     [posteId]
   );
   return rows;
 }
 
+/**
+ * Cria ou atualiza a ficha técnica do poste. Campos não informados (null) mantêm o valor já salvo.
+ */
 async function atualizarConfiguracao(tx = pool, posteId, config = {}) {
   if (!posteId) return null;
-  const { rows } = await tx.query(
+  await tx.query(
     `INSERT INTO postes (
        id, codigo, bairro, rua, referencia, endereco, latitude, longitude,
        braco, luminaria, reator, fotosensor, porta_fusivel, fusivel, cabo, conector,
        foto_ref_url, obs, atualizado_em
      )
-     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,now())
-     ON CONFLICT (id) DO UPDATE SET
-       codigo        = COALESCE(EXCLUDED.codigo, postes.codigo),
-       bairro        = COALESCE(EXCLUDED.bairro, postes.bairro),
-       rua           = COALESCE(EXCLUDED.rua, postes.rua),
-       referencia    = COALESCE(EXCLUDED.referencia, postes.referencia),
-       endereco      = COALESCE(EXCLUDED.endereco, postes.endereco),
-       latitude      = COALESCE(EXCLUDED.latitude, postes.latitude),
-       longitude     = COALESCE(EXCLUDED.longitude, postes.longitude),
-       braco         = COALESCE(EXCLUDED.braco, postes.braco),
-       luminaria     = COALESCE(EXCLUDED.luminaria, postes.luminaria),
-       reator        = COALESCE(EXCLUDED.reator, postes.reator),
-       fotosensor    = COALESCE(EXCLUDED.fotosensor, postes.fotosensor),
-       porta_fusivel = COALESCE(EXCLUDED.porta_fusivel, postes.porta_fusivel),
-       fusivel       = COALESCE(EXCLUDED.fusivel, postes.fusivel),
-       cabo          = COALESCE(EXCLUDED.cabo, postes.cabo),
-       conector      = COALESCE(EXCLUDED.conector, postes.conector),
-       foto_ref_url  = COALESCE(EXCLUDED.foto_ref_url, postes.foto_ref_url),
-       obs           = COALESCE(EXCLUDED.obs, postes.obs),
-       atualizado_em = now()
-     RETURNING *`,
+     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,NOW()) AS novo
+     ON DUPLICATE KEY UPDATE
+       codigo        = COALESCE(novo.codigo, postes.codigo),
+       bairro        = COALESCE(novo.bairro, postes.bairro),
+       rua           = COALESCE(novo.rua, postes.rua),
+       referencia    = COALESCE(novo.referencia, postes.referencia),
+       endereco      = COALESCE(novo.endereco, postes.endereco),
+       latitude      = COALESCE(novo.latitude, postes.latitude),
+       longitude     = COALESCE(novo.longitude, postes.longitude),
+       braco         = COALESCE(novo.braco, postes.braco),
+       luminaria     = COALESCE(novo.luminaria, postes.luminaria),
+       reator        = COALESCE(novo.reator, postes.reator),
+       fotosensor    = COALESCE(novo.fotosensor, postes.fotosensor),
+       porta_fusivel = COALESCE(novo.porta_fusivel, postes.porta_fusivel),
+       fusivel       = COALESCE(novo.fusivel, postes.fusivel),
+       cabo          = COALESCE(novo.cabo, postes.cabo),
+       conector      = COALESCE(novo.conector, postes.conector),
+       foto_ref_url  = COALESCE(novo.foto_ref_url, postes.foto_ref_url),
+       obs           = COALESCE(novo.obs, postes.obs),
+       atualizado_em = NOW()`,
     [
       posteId,
       config.codigo || null,
@@ -104,13 +108,14 @@ async function atualizarConfiguracao(tx = pool, posteId, config = {}) {
       config.obs || null
     ]
   );
-  return rows[0];
+  return buscarPorId(posteId, tx);
 }
 
 async function listarTodos(filtroBairro = '', tx = pool) {
   if (filtroBairro && filtroBairro.trim()) {
+    // A collation da tabela (utf8mb4_0900_ai_ci) já ignora maiúsculas e acentos, como o ILIKE fazia.
     const { rows } = await tx.query(
-      'SELECT * FROM postes WHERE bairro ILIKE $1 ORDER BY id ASC',
+      'SELECT * FROM postes WHERE bairro LIKE ? ORDER BY id ASC',
       [`%${filtroBairro.trim()}%`]
     );
     return rows;

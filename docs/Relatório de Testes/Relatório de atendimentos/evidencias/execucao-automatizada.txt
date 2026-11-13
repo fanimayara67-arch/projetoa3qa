@@ -1,0 +1,20 @@
+✔ Relatório: escopo "fechados" junta fechamento e técnico, só de chamados fechados (0.6952ms)
+✔ Relatório: a view inclui o fechamento só quando a consulta trouxe esses campos (0.5762ms)
+✔ Relatório: carregarFechados devolve registros no formato da tela, com data em pt-BR (12.0299ms)
+✔ Relatório: carregarFechados propaga o status HTTP quando a API recusa (sessão expirada) (0.4303ms)
+✔ Relatório: rotuloTipo traduz códigos conhecidos e preserva textos livres (0.6862ms)
+✔ Tentativas: inserir usa SQL do MySQL (placeholders ?) e devolve a linha salva (1.0406ms)
+✔ Tentativas: reenvio com a mesma operacao_id devolve o registro existente sem erro (0.2088ms)
+✔ Tentativas: outros erros do banco não são engolidos (0.3403ms)
+✔ Tentativas: listagem do relatório junta chamado e técnico (0.1446ms)
+✔ Tentativas: a view expõe só os campos usados pelo relatório (0.7104ms)
+✔ Tentativas: carregarTentativas converte para o formato da tela (12.1084ms)
+✔ Tentativas: rotuloStatusChamado traduz os status do banco (0.1634ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 102.6738

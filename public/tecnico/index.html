@@ -3,6 +3,13 @@
 
 <head>
   <meta charset="UTF-8" />
+  <script>
+    // Sem a barra final (/tecnico), os caminhos relativos (./js/main.js, ./leaflet.js…)
+    // apontam para a raiz do site e dão 404. Corrige o endereço antes de carregar qualquer coisa.
+    if (/\/tecnico$/.test(location.pathname)) {
+      location.replace(location.pathname + '/' + location.search + location.hash);
+    }
+  </script>
   <meta name="viewport"
     content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover" />
   <title>Ilumina Coruripe — Técnico</title>
@@ -2237,12 +2244,50 @@
     <tbody>${_aggRows(_agg(records))}</tbody>
   </table>`;
     }
+    /* Gráfico simples: atendimentos por tipo de defeito (barras horizontais em HTML,
+       saem iguais na tela, na impressão e no PDF baixado). */
+    function _graficoPorTipo(records) {
+      const cont = {};
+      records.forEach(r => { const t = String(r.tipo || 'Não informado').trim() || 'Não informado'; cont[t] = (cont[t] || 0) + 1; });
+      const tipos = Object.keys(cont).sort((a, b) => cont[b] - cont[a] || a.localeCompare(b));
+      const max = Math.max(...tipos.map(t => cont[t]));
+      const total = records.length;
+      const linhas = tipos.map(t => {
+        const n = cont[t];
+        const pct = Math.round((n / total) * 100);
+        const largura = Math.max(2, (n / max) * 100);
+        const dica = `${t}: ${n} atendimento(s) — ${pct}% do total`;
+        return `<div class="gbar" title="${escapeAttr(dica)}">
+      <div class="gbar-rot">${escapeHtml(t)}</div>
+      <div class="gbar-trilho"><div class="gbar-barra" style="width:${largura}%"></div></div>
+      <div class="gbar-val">${n} <span>(${pct}%)</span></div>
+    </div>`;
+      }).join('');
+      return `<div class="grafico">
+    <div class="grafico-tit">Atendimentos por tipo de defeito</div>
+    <div class="grafico-sub">${total} atendimento(s) fechado(s) no período</div>
+    ${linhas}
+  </div>`;
+    }
+
     async function gerarRelatorio() {
       if (!sessionToken) return showToast('Sessão expirada. Faça login de novo.', 'err');
       showToast('Gerando relatório…', 'info');
 
       let recs;
-      try {
+      if (USA_API_NODE) {
+        // API Node: busca só os fechados, já com técnico, serviço e data do fechamento.
+        try {
+          recs = await (await controladoresTecnicos()).carregarFechadosParaRelatorio(sessionToken);
+        } catch (e) {
+          if (e && e.status === 401) {
+            limparSessao();
+            showScreen('pin');
+            return showToast('Sessão expirada. Digite o PIN novamente.', 'err');
+          }
+          return showToast(navigator.onLine ? 'Não foi possível carregar os atendimentos.' : 'Sem conexão: o relatório precisa de internet.', 'err');
+        }
+      } else try {
         const data = await apiFetchTO({ action: 'list', token: sessionToken }, 40000);
         if (!data || !data.success) {
           const cached = listCacheLoad();
@@ -2327,16 +2372,53 @@
       const html = `<!DOCTYPE html>
 <html lang="pt-BR"><head><meta charset="UTF-8"><title>Relatório — Ilumina Coruripe</title>
 <link rel="stylesheet" href="${new URL('print/relatorio.css', location.href)}">
-<link rel="stylesheet" href="${new URL('../shared/utilities.css', location.href)}"></head>
+<link rel="stylesheet" href="${new URL('../shared/utilities.css', location.href)}">
+<script>
+  // Gera um arquivo .pdf de verdade (download direto), sem passar pela tela de impressão.
+  var __PDF_LIB = ${JSON.stringify(new URL('./html2pdf.bundle.min.js', location.href).href)};
+  var __PDF_NOME = ${JSON.stringify('relatorio-atendimentos-' + new Date().toISOString().slice(0, 10) + '.pdf')};
+  function __carregarPdfLib(){
+    if (window.html2pdf) return Promise.resolve();
+    return new Promise(function(ok, falha){
+      var s = document.createElement('script');
+      s.src = __PDF_LIB; s.onload = ok;
+      s.onerror = function(){ falha(new Error('Biblioteca de PDF indisponível.')); };
+      document.head.appendChild(s);
+    });
+  }
+  function __baixarPdf(){
+    var b = document.getElementById('__btn-pdf');
+    var texto = b.textContent;
+    b.disabled = true; b.textContent = '⏳ Gerando PDF…';
+    __carregarPdfLib().then(function(){
+      return html2pdf().set({
+        margin: [10, 10, 12, 10],
+        filename: __PDF_NOME,
+        image: { type: 'jpeg', quality: 0.95 },
+        html2canvas: {
+          scale: 2, useCORS: true, backgroundColor: '#ffffff',
+          ignoreElements: function(el){ return (el.classList && el.classList.contains('actions')) || el.id === '__dica-mobile'; }
+        },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+        pagebreak: { mode: ['css', 'legacy'], avoid: ['.grafico', 'tr', 'h2'] }
+      }).from(document.body).save();
+    }).catch(function(){
+      alert('Não foi possível gerar o PDF. Use o botão "Imprimir / Salvar PDF".');
+    }).then(function(){ b.disabled = false; b.textContent = texto; });
+  }
+<\/script>
+</head>
 <body>
   <div class="stripe"></div>
   <h1>📊 RELATÓRIO DE ATENDIMENTOS — ILUMINA CORURIPE</h1>
   <div class="sub">Período: <b>${periodo}</b> · Gerado em ${geradoEm} · Total: <b>${fechados.length}</b> atendimento(s) fechado(s)</div>
   <div class="actions u-margin-bottom-14px">
+    <button class="btn-pdf" id="__btn-pdf" onclick="__baixarPdf()">⬇️ Baixar PDF</button>
     <button class="btn-print" onclick="__imprimir()">🖨️ Imprimir / Salvar PDF</button>
     <button class="btn-print u-background-0a6e3e" id="__btn-share" style="display:none" onclick="__compartilhar()">📤 Salvar / Enviar PDF</button>
     <a class="btn-wa" href="https://wa.me/?text=${waMsg}" target="_blank">📲 Resumo no WhatsApp</a>
   </div>
+  ${_graficoPorTipo(fechados)}
   ${_blocoMateriais('📋 Consolidado geral', fechados)}
   <h2 class="u-font-size-15px u-margin-24px-0-4px-0 u-color-17212e">Por técnico</h2>
   ${blocosTec}
@@ -2411,7 +2493,19 @@
       showToast('Gerando relatório de tentativas…', 'info');
 
       let tents;
-      try {
+      if (USA_API_NODE) {
+        // API Node: tentativas já vêm com protocolo, tipo, endereço, técnico e status do chamado.
+        try {
+          tents = await (await controladoresTecnicos()).carregarTentativasParaRelatorio(sessionToken);
+        } catch (e) {
+          if (e && e.status === 401) {
+            limparSessao();
+            showScreen('pin');
+            return showToast('Sessão expirada. Digite o PIN novamente.', 'err');
+          }
+          return showToast(navigator.onLine ? 'Não foi possível carregar as tentativas.' : 'Sem conexão. Tente em área com sinal.', 'err');
+        }
+      } else try {
         const data = await apiFetchTO({ action: 'list_attempts', token: sessionToken }, 40000);
         if (!data || !data.success) return showToast('Não foi possível carregar os dados.', 'err');
         tents = data.tentativas || [];

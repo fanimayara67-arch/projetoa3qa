@@ -127,9 +127,16 @@ async function registrarTentativa({ protocolo, tecnicoId, dados }, deps = {}) {
   });
 }
 
+/** Lista as tentativas (visitas sem resolução) para o relatório de tentativas. */
+async function listarTentativas(deps = {}) {
+  const TentativaRepo = deps.TentativaRepo || TentativaRepoDefault;
+  return TentativaRepo.listarParaRelatorio();
+}
+
 module.exports = {
   criarChamado,
   listarChamados,
   buscarPorProtocolo,
-  registrarTentativa
+  registrarTentativa,
+  listarTentativas
 };

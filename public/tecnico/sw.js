@@ -1,5 +1,5 @@
 // ILUMINA CORURIPE TÉCNICO — Service Worker
-const CACHE_NAME = 'ilumina-tec-v18-css-separado-2026-11-06';
+const CACHE_NAME = 'ilumina-tec-v20-login-pin-e-relatorios-2026-11-13';
 const APP_SHELL = [
   './',
   './index.html',
