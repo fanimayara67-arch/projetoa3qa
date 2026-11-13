@@ -61,7 +61,8 @@ function fakes(chamadosIniciais = []) {
   };
 }
 
-const reporte = (extra = {}) => ({ id: crypto.randomUUID(), protocolo: 'IC-261112-AAAAA', tipo: 'apagado', lat: -10.12, lng: -36.17, ...extra });
+// A foto é obrigatória desde o UC01 (D-01), então o reporte de exemplo leva uma foto pequena.
+const reporte = (extra = {}) => ({ id: crypto.randomUUID(), protocolo: 'IC-261112-AAAAA', tipo: 'apagado', lat: -10.12, lng: -36.17, foto_base64: 'data:image/jpeg;base64,AAAA', ...extra });
 const fechamento = (extra = {}) => ({ operacao_id: crypto.randomUUID(), status: 'Concluído', servico: 'Troca de lâmpada', ...extra });
 
 /* ───────────── Domínio: Chamado.coordenadasValidas (valor limite) ───────────── */
@@ -99,7 +100,7 @@ test('CBN-64 validarNovoChamado: sem id (como o app envia hoje) é inválido', (
 });
 
 test('CBN-65 validarNovoChamado: id que não é texto, sem protocolo e tipo em branco geram um erro cada', () => {
-  const r = Chamado.validarNovoChamado({ id: 123, tipo: '   ', lat: -10.12, lng: -36.17 });
+  const r = Chamado.validarNovoChamado({ id: 123, tipo: '   ', lat: -10.12, lng: -36.17, foto_base64: 'data:image/jpeg;base64,AAAA' });
   assert.equal(r.erros.length, 3);
 });
 
@@ -370,8 +371,10 @@ test('CBN-92 API: um único campo faltando (ou vazio, ou nulo) já é recusado',
 
 test('CBN-93 API: valor limite do corpo — exatamente 8 MB é aceito', () => comApi(async (srv) => {
   const limite = 8 * 1024 * 1024;
-  const base = JSON.stringify(reporte({ protocolo: 'IC-261112-LIMIT', foto_base64: '' }));
-  const corpo = base.replace('"foto_base64":""', `"foto_base64":"${'A'.repeat(limite - Buffer.byteLength(base))}"`);
+  // O limite testado aqui é o do corpo HTTP (8 MB). A foto em si é limitada a 2 MB pelo UC01 (D-04),
+  // então o volume vai num campo que a API ignora, para o teste continuar medindo só o limite do corpo.
+  const base = JSON.stringify(reporte({ protocolo: 'IC-261112-LIMIT', preenchimento: '' }));
+  const corpo = base.replace('"preenchimento":""', `"preenchimento":"${'A'.repeat(limite - Buffer.byteLength(base))}"`);
   assert.equal(Buffer.byteLength(corpo), limite);
   const r = await fetch(srv.url + '/api/chamados', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: corpo });
   assert.equal(r.status, 201);
