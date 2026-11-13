@@ -6,7 +6,9 @@
 /**
  * Valida os dados obrigatórios para fechar um chamado em campo.
  */
-function validarFechamentoCampo(dados = {}) {
+function validarFechamentoCampo(dados) {
+  // Corpo nulo (ex.: JSON "null") é tratado como vazio, igual ao fechamento administrativo.
+  dados = dados || {};
   const erros = [];
 
   if (!dados.operacao_id || typeof dados.operacao_id !== 'string') {
