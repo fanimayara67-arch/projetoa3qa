@@ -45,6 +45,10 @@ function validarFechamentoCampo(dados) {
   erros.push(...errosDeLocalizacao(dados));
   if (Array.isArray(dados.materiais_os)) {
     for (const mat of dados.materiais_os) {
+      if (!mat || typeof mat !== 'object') {
+        erros.push('Material da OS em formato inválido.');
+        continue;
+      }
       if (!mat.nome && !mat.item_id) {
         erros.push('Todo material utilizado deve identificar o item.');
       }
