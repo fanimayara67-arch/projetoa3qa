@@ -961,12 +961,56 @@
       ms = ms || 15000;
       const ctrl = new AbortController();
       const to = setTimeout(() => ctrl.abort(), ms);
+      // API Node (DEF-02): o fechamento vai para a rota REST, em JSON, com o token no cabeçalho.
+      // As outras ações e o Apps Script continuam no formato antigo.
+      if (/\/api\/?$/.test(String(SHEETS_URL || '')) && payload && payload.action === 'close') {
+        const envio = fechamentoParaApiNode(payload);
+        return fetch(String(SHEETS_URL).replace(/\/$/, '') + envio.caminho, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + envio.token },
+          body: JSON.stringify(envio.corpo),
+          signal: ctrl.signal
+        }).finally(() => clearTimeout(to)).then(r => r.json()).then(respostaDaApiNode);
+      }
       return fetch(SHEETS_URL, {
         method: 'POST', mode: 'cors',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify(payload),
         signal: ctrl.signal
       }).finally(() => clearTimeout(to)).then(r => r.json());
+    }
+
+    /* Converte o fechamento montado pela tela (formato do Apps Script) no contrato de
+       POST /api/chamados/:protocolo/fechamento da API Node (DEF-02). */
+    function fechamentoParaApiNode(payload) {
+      if (!payload.operacao_id) {
+        // Fechamento antigo da fila, salvo antes desta versão: cria a operação e guarda no
+        // próprio item, para um reenvio na mesma rodada usar a mesma.
+        payload.operacao_id = (typeof crypto !== 'undefined' && crypto.randomUUID)
+          ? crypto.randomUUID()
+          : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+            const r = (Math.random() * 16) | 0;
+            return (c === 'x' ? r : (r & 0x3) | 0x8).toString(16);
+          });
+      }
+      const { action, token, tecnico, poste_id_override, poste_force_new, data_fechamento_iso, ...corpo } = payload;
+      corpo.poste_id = poste_id_override || payload.poste_id || '';
+      corpo.data_fechamento = data_fechamento_iso || new Date().toISOString();
+      corpo.materiais_os = (payload.materiais_os || []).map(m => ({ nome: m.nome || m.item, quantidade: m.quantidade ?? m.qtd }));
+      return { caminho: '/chamados/' + encodeURIComponent(payload.protocolo) + '/fechamento', corpo, token };
+    }
+
+    /* Traduz a resposta da API Node para o formato que a tela já trata ({ success, error }).
+       "ja_fechado" só quando o conflito é de chamado já fechado: saldo insuficiente também é
+       CONFLITO, mas não pode tirar o fechamento da fila. */
+    function respostaDaApiNode(json) {
+      if (json && (json.ok === true || json.success === true) && !json.error) return { success: true, ...(json.data || {}) };
+      const erro = (json && json.error) || {};
+      const codigo = typeof erro === 'string' ? erro : erro.codigo;
+      const mensagem = (typeof erro === 'string' ? '' : erro.mensagem) || '';
+      if (codigo === 'NAO_AUTENTICADO') return { success: false, error: 'sessao_expirada' };
+      if (codigo === 'CONFLITO' && /já foi fechado/i.test(mensagem)) return { success: false, error: 'ja_fechado', mensagem };
+      return { success: false, error: mensagem || (typeof erro === 'string' ? erro : 'Erro ao registrar.') };
     }
     function apiFetch(payload) { return apiFetchTO(payload, 15000); }
 
@@ -3533,6 +3577,14 @@
       fecharChamado();
     }
 
+    function novaOperacaoId() {
+      if (typeof crypto !== 'undefined' && crypto.randomUUID) return crypto.randomUUID();
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+        const r = (Math.random() * 16) | 0;
+        return (c === 'x' ? r : (r & 0x3) | 0x8).toString(16);
+      });
+    }
+
     async function fecharChamado() {
       const tecnico = document.getElementById('f-tecnico').value.trim();
       const servico = document.getElementById('f-servico').value.trim();
@@ -3620,6 +3672,8 @@
       const payload = {
         action: 'close',
         token: sessionToken,
+        // Identifica este fechamento: um reenvio (fila offline, resposta perdida) não fecha duas vezes.
+        operacao_id: novaOperacaoId(),
         protocolo: currentCall.protocolo,
         tecnico,
         status: statusSel,
@@ -3641,7 +3695,9 @@
         },
         latitude: lat,
         longitude: lng,
+        precisao_m: Math.round(techGPS.acc),
         data_fechamento: dataFmt,
+        data_fechamento_iso: agora.toISOString(),
         foto_reparo_base64: techFoto
       };
 
@@ -3687,7 +3743,7 @@
         } else { pb.style.display = 'none'; }
         document.getElementById('success-title').textContent = 'Chamado fechado!';
         document.getElementById('success-message').textContent =
-          'O atendimento foi registrado na planilha. A Secretaria já tem visibilidade do reparo concluído.';
+          'O atendimento foi registrado. A Secretaria já tem visibilidade do reparo.';
         document.getElementById('success-icon-wrap').classList.remove('offline');
         showScreen('success');
         btn.disabled = false;

@@ -117,8 +117,9 @@ function montarPayloadCidadao({ poste = '', navegador = 'Teste' } = {}) {
 /* ───────────── Painel do técnico ───────────── */
 
 /** flushQueue do técnico com fila Fake e rede Stub (ou o servidor de teste). */
-function montarFilaTecnico({ itens = [], online = true, token = 'tok-valido', responder, rede, url } = {}) {
-  const banco = new Map(itens.map((protocolo, i) => [i + 1, { id: i + 1, payload: { action: 'close', protocolo, token } }]));
+function montarFilaTecnico({ itens = [], online = true, token = 'tok-valido', responder, rede, url, dadosFechamento = {} } = {}) {
+  // dadosFechamento: campos do formulário (status, serviço, foto, GPS…), para a integração com a API real.
+  const banco = new Map(itens.map((protocolo, i) => [i + 1, { id: i + 1, payload: { action: 'close', protocolo, token, ...dadosFechamento } }]));
   const registro = { envios: [], apagados: [], avisos: 0 };
   // A trava `flushInFlight` é uma variável do script da página: vem do próprio HTML.
   const trava = extrairDeclaracao('tecnico', /let flushInFlight\s*=\s*false;/);
@@ -136,7 +137,8 @@ function montarFilaTecnico({ itens = [], online = true, token = 'tok-valido', re
       SHEETS_URL: url, AbortController, setTimeout, clearTimeout,
       fetch: (u, opcoes) => { registro.envios.push(JSON.parse(opcoes.body).protocolo); return rede(u, opcoes); }
     });
-    nomes = ['flushQueue', 'apiFetchTO'];
+    // fechamentoParaApiNode e respostaDaApiNode: conversões do envio para a API Node (UC05, DEF-02).
+    nomes = ['flushQueue', 'apiFetchTO', 'fechamentoParaApiNode', 'respostaDaApiNode'];
   } else {
     globais.apiFetchTO = async (payload, ms) => {
       registro.envios.push(payload.protocolo);
@@ -151,7 +153,7 @@ function montarFilaTecnico({ itens = [], online = true, token = 'tok-valido', re
 /** apiFetchTO com rede Stub e temporizador controlado. */
 function montarRequisicaoTecnico({ url = ENDPOINT_APPS_SCRIPT, resposta = { success: true } } = {}) {
   const registro = { chamadas: [], timers: [], limpos: [] };
-  const ctx = carregar('tecnico', ['apiFetchTO'], {
+  const ctx = carregar('tecnico', ['apiFetchTO', 'fechamentoParaApiNode', 'respostaDaApiNode'], {
     SHEETS_URL: url,
     AbortController,
     setTimeout: (fn, ms) => { registro.timers.push({ fn, ms }); return registro.timers.length; },
