@@ -11,7 +11,8 @@
     "db:check": "npm --prefix server run db:check",
     "test": "node --test --experimental-test-coverage",
     "test:coverage": "node --test --experimental-test-coverage",
-    "test:uc01": "node --test \"server/tests/reportar-defeito/*.test.js\""
+    "test:uc01": "node --test \"server/tests/reportar-defeito/*.test.js\"",
+    "test:uc05": "node --test \"server/tests/fechar-os/*.test.js\""
   },
   "engines": {
     "node": ">=18"

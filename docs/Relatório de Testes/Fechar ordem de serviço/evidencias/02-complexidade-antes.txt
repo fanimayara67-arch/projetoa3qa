@@ -1,0 +1,23 @@
+# Complexidade ciclomática antes (ESLint 8, regra complexity; RNF05: no máximo 10 por função)
+# tecnico-index.js = funções fecharChamado, flushQueue e apiFetchTO recortadas de public/tecnico/index.html
+EstoqueRepository.js
+   19:1   warning  Async function 'salvarItem' has a complexity of 4. Maximum allowed is 1               complexity
+   38:1   warning  Async function 'removerItem' has a complexity of 3. Maximum allowed is 1              complexity
+   48:1   warning  Async function 'buscarItemParaAtualizar' has a complexity of 3. Maximum allowed is 1  complexity
+   66:1   warning  Async function 'baixarMateriais' has a complexity of 9. Maximum allowed is 1          complexity
+   99:1   warning  Async function 'criarMissaoComItens' has a complexity of 7. Maximum allowed is 1      complexity
+  149:19  warning  Arrow function has a complexity of 3. Maximum allowed is 1                            complexity
+Fechamento.js
+   9:1   warning  Function 'validarFechamentoCampo' has a complexity of 17. Maximum allowed is 1    complexity
+  45:1   warning  Function 'normalizarFechamentoAdmin' has a complexity of 2. Maximum allowed is 1  complexity
+  46:17  warning  Arrow function has a complexity of 2. Maximum allowed is 1                        complexity
+  55:1   warning  Function 'validarFechamentoAdmin' has a complexity of 6. Maximum allowed is 1     complexity
+FechamentoService.js
+   24:1   warning  Async function 'fecharChamado' has a complexity of 9. Maximum allowed is 1       complexity
+   39:22  warning  Async arrow function has a complexity of 17. Maximum allowed is 1                complexity
+   93:1   warning  Async function 'fecharChamadoAdmin' has a complexity of 5. Maximum allowed is 1  complexity
+  103:22  warning  Async arrow function has a complexity of 11. Maximum allowed is 1                complexity
+tecnico-index.js
+    1:1  warning  Async function 'fecharChamado' has a complexity of 55. Maximum allowed is 1  complexity
+  173:1  warning  Async function 'flushQueue' has a complexity of 10. Maximum allowed is 1     complexity
+  203:1  warning  Function 'apiFetchTO' has a complexity of 2. Maximum allowed is 1            complexity

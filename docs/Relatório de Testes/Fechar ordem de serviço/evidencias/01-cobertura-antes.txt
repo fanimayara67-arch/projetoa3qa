@@ -1,0 +1,12 @@
+# Cobertura antes dos testes do UC05 (main ff77cbb, 13/11/2026)
+# comando: node --test --experimental-test-coverage
+# tests 262
+# pass 240
+# fail 8
+# todo 14
+#     FechamentoService.js          | 100.00 |    98.28 |  100.00 |
+#    Fechamento.js                  | 100.00 |   100.00 |  100.00 |
+#     EstoqueRepository.js          |  98.74 |    78.79 |  100.00 | 113-114
+#     FechamentoRepository.js       |  81.25 |    40.00 |   50.00 | 8-16
+#     FechamentoController.js       | 100.00 |   100.00 |  100.00 |
+# all files                         |  88.92 |    87.12 |   87.96 |
