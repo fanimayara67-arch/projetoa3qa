@@ -56,7 +56,8 @@ function bancoFalso({ fechamentoExistente = null, chamado = { id: 10, protocolo:
   };
 }
 
-const fechamentoValido = (extra = {}) => ({ operacao_id: OPERACAO, status: 'Resolvido', servico: 'Troca de lâmpada', ...extra });
+// Fechamento completo do UC05 (status da lista, foto do reparo e GPS com precisão).
+const fechamentoValido = (extra = {}) => ({ operacao_id: OPERACAO, status: 'Concluído', servico: 'Troca de lâmpada', foto_reparo_base64: 'data:image/jpeg;base64,AAAA', lat: -10.1253, lng: -36.1756, precisao_m: 8, ...extra });
 
 /** fetch falso: devolve o texto e o status pedidos e guarda o que recebeu. */
 function fetchFalso({ status = 200, texto = '{"ok":true,"data":{}}' } = {}) {

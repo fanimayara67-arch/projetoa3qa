@@ -63,7 +63,8 @@ function fakes(chamadosIniciais = []) {
 
 // A foto é obrigatória desde o UC01 (D-01), então o reporte de exemplo leva uma foto pequena.
 const reporte = (extra = {}) => ({ id: crypto.randomUUID(), protocolo: 'IC-261112-AAAAA', tipo: 'apagado', lat: -10.12, lng: -36.17, foto_base64: 'data:image/jpeg;base64,AAAA', ...extra });
-const fechamento = (extra = {}) => ({ operacao_id: crypto.randomUUID(), status: 'Concluído', servico: 'Troca de lâmpada', ...extra });
+// UC05: o fechamento de exemplo leva foto do reparo e GPS com precisão, obrigatórios desde o PR do UC05.
+const fechamento = (extra = {}) => ({ operacao_id: crypto.randomUUID(), status: 'Concluído', servico: 'Troca de lâmpada', foto_reparo_base64: 'data:image/jpeg;base64,AAAA', lat: -10.1253, lng: -36.1756, precisao_m: 8, ...extra });
 
 /* ───────────── Domínio: Chamado.coordenadasValidas (valor limite) ───────────── */
 
@@ -283,7 +284,8 @@ test('CBN-85 fecharChamado: com poste identificado, atualiza a ficha do poste na
   await FechamentoService.fecharChamado({ protocolo: 'IC-261112-T01', tecnicoId: 1, dados: fechamento({ poste_id: 'p-0007', config: { braco: '1m' } }) }, f.deps);
   assert.equal(atualizados.length, 1);
   assert.equal(atualizados[0].cfg.braco, '1m');
-  assert.equal(atualizados[0].cfg.latitude, -10.1, 'sem GPS no fechamento, usa o do chamado');
+  // Revisado no UC05: o GPS do fechamento é obrigatório (passo 6), então o poste recebe as coordenadas do técnico.
+  assert.equal(atualizados[0].cfg.latitude, -10.1253, 'usa o GPS do fechamento');
   const outro = fakes([{ ...aberto(), poste_id: 'P-0009' }]);
   const vistos = [];
   outro.deps.PosteRepo.atualizarConfiguracao = async (_tx, id, cfg) => { vistos.push({ id, cfg }); };
@@ -294,7 +296,7 @@ test('CBN-85 fecharChamado: com poste identificado, atualiza a ficha do poste na
 });
 
 test('CBN-86 validarFechamentoCampo: sem status e sem serviço gera um erro para cada', () => {
-  const r = Fechamento.validarFechamentoCampo({ operacao_id: 'op-1', status: '  ', servico: '' });
+  const r = Fechamento.validarFechamentoCampo(fechamento({ operacao_id: 'op-1', status: '  ', servico: '' }));
   assert.equal(r.valido, false);
   assert.equal(r.erros.length, 2);
   assert.match(r.erros.join(' '), /Status de resolução/);

@@ -71,8 +71,10 @@ test('Domínio Fechamento: exige operacao_id, status e serviço na baixa em camp
 
   const valido = Fechamento.validarFechamentoCampo({
     operacao_id: '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d',
-    status: 'Resolvido',
-    servico: 'Substituição de luminária LED 100W'
+    status: 'Concluído',
+    servico: 'Substituição de luminária LED 100W',
+    // Passo 6 do UC05: foto do reparo e GPS (com precisão) são obrigatórios.
+    foto_reparo_base64: 'data:image/jpeg;base64,AAAA', lat: -10.1253, lng: -36.1756, precisao_m: 8
   });
   assert.equal(valido.valido, true);
 });

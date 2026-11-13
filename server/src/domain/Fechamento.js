@@ -3,6 +3,8 @@
  * Regras puras para validação de baixa em campo (técnico) e baixa administrativa (gestor).
  */
 
+const textoPreenchido = (valor) => typeof valor === 'string' && valor.trim() !== '';
+
 /**
  * Valida os dados obrigatórios para fechar um chamado em campo.
  */
@@ -19,6 +21,10 @@ function validarFechamentoCampo(dados) {
   }
   if (!dados.servico || typeof dados.servico !== 'string' || !dados.servico.trim()) {
     erros.push('Descrição do serviço executado é obrigatória.');
+  }
+  // Passo 6 do UC05: a foto do reparo é obrigatória (foto nova em Base64 ou URL de foto já enviada).
+  if (!textoPreenchido(dados.foto_reparo_base64) && !textoPreenchido(dados.fotoUrl)) {
+    erros.push('Foto do reparo é obrigatória.');
   }
   if (Array.isArray(dados.materiais_os)) {
     for (const mat of dados.materiais_os) {
