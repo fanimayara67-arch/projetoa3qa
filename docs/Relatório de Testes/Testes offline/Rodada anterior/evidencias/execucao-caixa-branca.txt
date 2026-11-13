@@ -1,0 +1,62 @@
+Comando: node --test "server/tests/testes-offline/caixa-branca/*.test.js"  (Node.js v24.16.0, Windows)
+(os testes marcados com ⚠ são 'todo': exigem o comportamento correto e falham hoje, confirmando os defeitos D1, D2, D4, D5 e D6)
+
+✔ CB-16 submitReport: um segundo toque durante o envio é ignorado (44.9592ms)
+✔ CB-17 submitReport: com internet e envio aceito, mostra "enviado" e não grava na fila (35.9989ms)
+✔ CB-18 submitReport: com internet e recusa do servidor, guarda na fila (3.778ms)
+✔ CB-19 submitReport: com internet e erro de rede, guarda na fila (9.773ms)
+✔ CB-20 submitReport: se o envio falha e o aparelho não consegue gravar, avisa e libera o botão (5.7789ms)
+✔ CB-21 submitReport: sem internet, grava direto na fila sem tentar enviar (7.9304ms)
+✔ CB-22 submitReport: sem internet e sem conseguir gravar, avisa e libera o botão (3.7308ms)
+✔ CB-23 submitReport: com internet mas servidor não configurado ("__..."), guarda na fila (3.7199ms)
+✔ CB-24 postReport: envia como formulário (campo payload em JSON), lê a resposta e limpa o timer (10.7042ms)
+✔ CB-25 postReport: resposta que não é JSON vira recusa ("resposta inválida do servidor") (4.0057ms)
+✔ CB-26 postReport: erro de rede é repassado a quem chamou e o timer é limpo (12.1998ms)
+✔ CB-27 postReport: depois de 60 s sem resposta a requisição é cancelada (55.2159ms)
+⚠ CB-28 [D4] postReport: com a API Node deve enviar JSON com o campo id (15.4849ms) # Defeito D4 — formato incompatível com a API Node
+✔ CB-29 generateProtocol: formato IC-AAMMDD-XXXXX com zero à esquerda no mês e no dia (32.1238ms)
+✔ CB-01 flushQueue: sem internet não lê a fila nem envia nada (21.7941ms)
+✔ CB-02 flushQueue: com o endereço do servidor ainda não configurado ("__...") não envia (45.3462ms)
+✔ CB-03 flushQueue: erro ao ler o banco do aparelho encerra sem enviar e sem lançar erro (10.7643ms)
+✔ CB-04 flushQueue: fila vazia encerra sem tentar enviar (3.5133ms)
+✔ CB-05 flushQueue: envio aceito apaga o item da fila e atualiza o aviso (14.5013ms)
+✔ CB-06 flushQueue: recusa do servidor mantém o item e soma uma tentativa com o motivo (3.521ms)
+✔ CB-06b flushQueue: resposta vazia do servidor conta como recusa ("server error") (35.3783ms)
+✔ CB-07 flushQueue: erro de rede mantém o item e soma uma tentativa com a mensagem do erro (10.6738ms)
+✔ CB-07b flushQueue: erro de rede sem mensagem é registrado como "network error" (4.9995ms)
+✔ CB-08 flushQueue: valor limite das tentativas — com 4 ainda envia, com 5 descarta sem enviar (10.8153ms)
+✔ CB-09 flushQueue: falha ao apagar um item descartado não interrompe o resto da fila (3.3014ms)
+✔ CB-10 flushQueue: falha ao gravar a tentativa depois de um erro de rede não interrompe a fila (3.1276ms)
+✔ CB-11 flushQueue: falha no primeiro item não impede o envio do segundo (6.3751ms)
+⚠ CB-12 [D1] flushQueue: reporte descartado após 5 tentativas deve avisar o cidadão (7.2544ms) # Defeito D1 — descarte silencioso
+⚠ CB-13 [D2] flushQueue: três sincronizações ao mesmo tempo devem enviar o reporte uma única vez (5.2368ms) # Defeito D2 — falta trava contra execução simultânea
+✔ CB-14 updatePendingBanner: esconde com 0, usa singular com 1 e plural com 3 (23.1522ms)
+✔ CB-15 updatePendingBanner: erro no banco ou tela sem o aviso não quebram o app (11.4662ms)
+✔ CB-30 flushQueue (técnico): sem internet não envia e não atualiza o aviso (81.3947ms)
+✔ CB-31 flushQueue (técnico): sem sessão (sem PIN) não envia (12.4924ms)
+✔ CB-32 flushQueue (técnico): fila vazia libera a trava e atualiza o aviso (6.1978ms)
+✔ CB-33 flushQueue (técnico): todos aceitos são apagados na ordem da fila (12.9486ms)
+✔ CB-34 flushQueue (técnico): sessão expirada interrompe o envio e mantém a fila (3.9437ms)
+✔ CB-35 flushQueue (técnico): erro de rede interrompe o envio e mantém a fila (10.1752ms)
+✔ CB-36 flushQueue (técnico): duas sincronizações ao mesmo tempo enviam cada fechamento uma vez (3.6841ms)
+✔ CB-37 flushQueue (técnico): erro ao ler a fila libera a trava, mas o erro escapa da função (9.2965ms)
+⚠ CB-38 [D5] flushQueue (técnico): erro do servidor em um fechamento não deve travar os seguintes (8.3081ms) # Defeito D5 — fila do técnico para no primeiro erro
+✔ CB-39 apiFetchTO: envia JSON como text/plain, usa 15 s por padrão e limpa o timer (9.7982ms)
+✔ CB-39b apiFetchTO: esgotado o tempo limite, a requisição é cancelada (3.7341ms)
+⚠ CB-40 [D6] apiFetchTO: com a API Node, o fechamento deve ir para /api/chamados/{protocolo}/fechamento (3.9948ms) # Defeito D6 — formato do Apps Script enviado à API Node
+✔ CB-41 renderPendingBanner: esconde com 0; singular/plural; "enviando…" online e "sem sinal" offline (32.0625ms)
+✔ CB-42 queueCount: erro ao ler a fila conta como 0 (o limite de 10 deixa de valer) (7.4358ms)
+ℹ tests 45
+ℹ suites 0
+ℹ pass 40
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 5
+ℹ duration_ms 830.9753
+✖ failing tests:
+⚠ CB-28 [D4] postReport: com a API Node deve enviar JSON com o campo id (15.4849ms) # Defeito D4 — formato incompatível com a API Node
+⚠ CB-12 [D1] flushQueue: reporte descartado após 5 tentativas deve avisar o cidadão (7.2544ms) # Defeito D1 — descarte silencioso
+⚠ CB-13 [D2] flushQueue: três sincronizações ao mesmo tempo devem enviar o reporte uma única vez (5.2368ms) # Defeito D2 — falta trava contra execução simultânea
+⚠ CB-38 [D5] flushQueue (técnico): erro do servidor em um fechamento não deve travar os seguintes (8.3081ms) # Defeito D5 — fila do técnico para no primeiro erro
+⚠ CB-40 [D6] apiFetchTO: com a API Node, o fechamento deve ir para /api/chamados/{protocolo}/fechamento (3.9948ms) # Defeito D6 — formato do Apps Script enviado à API Node
