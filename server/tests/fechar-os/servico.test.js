@@ -79,6 +79,12 @@ test('FO-16 [baseada em risco | CA04] material repetido na lista: o estoque e a 
   const abatido = 50 - banco.saldo('Cabo (m)');
   assert.equal(abatido, 5);
   assert.equal(registrado.reduce((s, m) => s + m.quantidade, 0), abatido, 'a OS precisa mostrar o que saiu do estoque');
+
+  // O mesmo item uma vez pelo id e outra pelo nome também é somado.
+  const misto = criarBancoSimulado();
+  const g = await fechar(misto, { materiais_os: [{ item_id: 1, quantidade: 1 }, { nome: 'Reator', quantidade: 2 }] });
+  assert.equal(misto.saldo('Reator'), 7);
+  assert.deepEqual(misto.tabelas.materiaisOS, [{ fechamento_id: g.id, item_id: 1, quantidade: 3 }]);
 });
 
 test('FO-17 [baseada em risco | atomicidade] saldo insuficiente: 409 e nada fica gravado', async () => {

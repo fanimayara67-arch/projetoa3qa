@@ -66,31 +66,38 @@ async function debitarSaldo(tx, itemId, quantidade) {
 async function baixarMateriais(tx, fechamentoId, materiais = []) {
   if (!Array.isArray(materiais) || materiais.length === 0) return [];
 
-  const baixados = [];
+  // Soma as quantidades por item do almoxarifado antes de conferir o saldo. Assim, o mesmo item
+  // listado duas vezes (ou uma vez pelo id e outra pelo nome) é abatido e registrado na OS com o
+  // mesmo total (CA04). Antes, o estoque abatia a soma e a OS guardava só a última quantidade.
+  const totais = new Map();
   for (const mat of materiais) {
-    const qtd = Number(mat.quantidade);
+    const qtd = Number(mat && mat.quantidade);
     if (!Number.isFinite(qtd) || qtd <= 0) continue;
 
-    const chave = mat.item_id || mat.nome;
     const item = await buscarItemParaAtualizar(tx, mat.item_id, mat.nome);
     if (!item) {
-      throw new NaoEncontrado(`Material '${chave}' não encontrado no almoxarifado.`);
+      throw new NaoEncontrado(`Material '${mat.item_id || mat.nome}' não encontrado no almoxarifado.`);
     }
-    if (Number(item.saldo) < qtd) {
+    const total = totais.get(item.id) || { item, quantidade: 0 };
+    total.quantidade += qtd;
+    totais.set(item.id, total);
+  }
+
+  const baixados = [];
+  for (const { item, quantidade } of totais.values()) {
+    if (Number(item.saldo) < quantidade) {
       throw new Conflito(
-        `Saldo insuficiente para '${item.nome}': disponível ${item.saldo} ${item.unidade}, solicitado ${qtd}.`
+        `Saldo insuficiente para '${item.nome}': disponível ${item.saldo} ${item.unidade}, solicitado ${quantidade}.`
       );
     }
-
-    await debitarSaldo(tx, item.id, qtd);
+    await debitarSaldo(tx, item.id, quantidade);
     await tx.query(
       `INSERT INTO fechamento_materiais (fechamento_id, item_id, quantidade)
        VALUES (?, ?, ?) AS novo
        ON DUPLICATE KEY UPDATE quantidade = novo.quantidade`,
-      [fechamentoId, item.id, qtd]
+      [fechamentoId, item.id, quantidade]
     );
-
-    baixados.push({ item_id: item.id, nome: item.nome, quantidade: qtd });
+    baixados.push({ item_id: item.id, nome: item.nome, quantidade });
   }
 
   return baixados;
