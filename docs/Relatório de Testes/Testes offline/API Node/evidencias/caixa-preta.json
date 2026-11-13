@@ -1,0 +1,693 @@
+{
+  "tipo": "caixa-preta",
+  "servidor": "api-node",
+  "executadoEm": "2026-11-13T02:22:56.628Z",
+  "ambiente": {
+    "node": "v24.16.0",
+    "navegador": "chrome 157.0.8103.52",
+    "playwright": "1.56.1",
+    "sistema": "win32"
+  },
+  "rodadas": 2,
+  "total": 31,
+  "aprovados": 14,
+  "reprovados": 16,
+  "errosDeExecucao": 1,
+  "instaveis": [
+    "CT-07"
+  ],
+  "casos": [
+    {
+      "id": "CP-01",
+      "titulo": "App do cidadão abre sem internet depois do primeiro acesso",
+      "requisito": "UC01 (pré-condição); RNF01",
+      "derivacao": "Pré-condição atendida",
+      "tecnica": "Partição de equivalência (com/sem internet)",
+      "dado": "o app já foi aberto uma vez com internet",
+      "quando": "o cidadão abre o app de novo sem internet",
+      "entao": "a tela de reporte aparece normalmente",
+      "servidor": "api-node",
+      "obtido": "A tela de reporte abriu sem internet (arquivos guardados pelo service worker).",
+      "resultado": "Aprovado",
+      "observacao": "",
+      "duracaoMs": 6775,
+      "resultadosPorRodada": [
+        "Aprovado",
+        "Aprovado"
+      ],
+      "estavel": true
+    },
+    {
+      "id": "CP-02",
+      "titulo": "Primeiro acesso sem internet não abre o app (violação da pré-condição)",
+      "requisito": "UC01 (pré-condição)",
+      "derivacao": "Violação de pré-condição",
+      "tecnica": "Partição de equivalência (classe inválida)",
+      "dado": "o app nunca foi aberto no aparelho",
+      "quando": "o cidadão tenta abrir o app sem internet",
+      "entao": "o app não abre (não há nada guardado) e nenhum dado é criado no aparelho ou no servidor",
+      "servidor": "api-node",
+      "obtido": "O navegador mostrou erro de conexão (page.goto: net::ERR_INTERNET_DISCONNECTED at http://localhost:59552/). Nada chegou ao servidor.",
+      "resultado": "Aprovado",
+      "observacao": "",
+      "duracaoMs": 984,
+      "resultadosPorRodada": [
+        "Aprovado",
+        "Aprovado"
+      ],
+      "estavel": true
+    },
+    {
+      "id": "CP-03",
+      "titulo": "Reporte com internet chega ao servidor (fluxo principal)",
+      "requisito": "UC01 (passo 7); RF01",
+      "derivacao": "Fluxo principal",
+      "tecnica": "Baseado em requisito (caso positivo)",
+      "dado": "o aparelho tem internet e o formulário está completo",
+      "quando": "o cidadão toca em \"Enviar reporte\"",
+      "entao": "a tela mostra \"Reporte enviado\" com protocolo IC-AAMMDD-XXXXX, o servidor tem 1 chamado aberto com esse protocolo e a fila do aparelho fica vazia",
+      "servidor": "api-node",
+      "obtido": "Tela: \"Salvo sem sinal\", protocolo IC-261112-QA65K (formato válido). Registros no servidor: 0. Fila do aparelho: 1. Envio feito como \"application/x-www-form-urlencoded;charset=UTF-8\".",
+      "resultado": "Reprovado",
+      "observacao": "",
+      "duracaoMs": 2434,
+      "resultadosPorRodada": [
+        "Reprovado",
+        "Reprovado"
+      ],
+      "estavel": true,
+      "defeitos": [
+        "DEF-01"
+      ]
+    },
+    {
+      "id": "CP-04",
+      "titulo": "Reporte sem internet fica salvo no aparelho com protocolo",
+      "requisito": "UC01-A1; RF02",
+      "derivacao": "Fluxo alternativo",
+      "tecnica": "Baseado em requisito",
+      "dado": "o aparelho está sem internet e o formulário está completo",
+      "quando": "o cidadão toca em \"Enviar reporte\"",
+      "entao": "o app mostra o protocolo informando que o envio está pendente, guarda 1 item na fila e mostra o aviso de pendente",
+      "servidor": "api-node",
+      "obtido": "Tela: \"Salvo sem sinal\", protocolo IC-261112-Q95RP. Fila: 1. Aviso: \"📡 1 reporte pendente — será enviado quando houver sinal\".",
+      "resultado": "Aprovado",
+      "observacao": "",
+      "duracaoMs": 4013,
+      "resultadosPorRodada": [
+        "Aprovado",
+        "Aprovado"
+      ],
+      "estavel": true
+    },
+    {
+      "id": "CP-05",
+      "titulo": "Erro do servidor no envio guarda o reporte na fila",
+      "requisito": "UC01-A2",
+      "derivacao": "Fluxo alternativo",
+      "tecnica": "Baseado em requisito (falha do servidor)",
+      "dado": "o aparelho tem internet, mas o servidor responde com erro 500",
+      "quando": "o cidadão envia o reporte",
+      "entao": "o reporte vai para a fila e o cidadão recebe o protocolo",
+      "servidor": "api-node",
+      "obtido": "Tela: \"Salvo sem sinal\", protocolo IC-261112-JYYLU. Fila: 1.",
+      "resultado": "Aprovado",
+      "observacao": "A tela diz \"Salvo sem sinal\" mesmo com sinal: a causa foi o servidor, não a internet.",
+      "duracaoMs": 2198,
+      "resultadosPorRodada": [
+        "Aprovado",
+        "Aprovado"
+      ],
+      "estavel": true
+    },
+    {
+      "id": "CP-06",
+      "titulo": "Servidor sem resposta por 60 segundos: o reporte vai para a fila",
+      "requisito": "UC01-A2",
+      "derivacao": "Fluxo alternativo",
+      "tecnica": "Valor limite (tempo de espera de 60 s)",
+      "dado": "o servidor recebe o reporte mas não responde",
+      "quando": "o cidadão envia e espera",
+      "entao": "por volta de 60 s depois o reporte é guardado na fila e o protocolo aparece",
+      "servidor": "api-node",
+      "obtido": "Depois de 60 s a tela mostrou \"Salvo sem sinal\" com o protocolo IC-261112-IJB36. Fila: 1.",
+      "resultado": "Aprovado",
+      "observacao": "",
+      "duracaoMs": 64151,
+      "resultadosPorRodada": [
+        "Aprovado",
+        "Aprovado"
+      ],
+      "estavel": true
+    },
+    {
+      "id": "CP-07",
+      "titulo": "Falha ao gravar no aparelho mostra erro e mantém o formulário",
+      "requisito": "UC01-E1",
+      "derivacao": "Exceção",
+      "tecnica": "Injeção de falha (armazenamento do navegador cheio)",
+      "dado": "o aparelho está sem internet e o armazenamento do navegador recusa novas gravações",
+      "quando": "o cidadão envia o reporte",
+      "entao": "o app mostra mensagem de erro e o formulário continua preenchido para nova tentativa",
+      "servidor": "api-node",
+      "obtido": "Mensagem: \"✕ Erro ao salvar. Tente de novo.\". Continua no formulário: sim; descrição mantida: sim; botão de envio liberado: sim.",
+      "resultado": "Aprovado",
+      "observacao": "",
+      "duracaoMs": 2629,
+      "resultadosPorRodada": [
+        "Aprovado",
+        "Aprovado"
+      ],
+      "estavel": true
+    },
+    {
+      "id": "CP-08",
+      "titulo": "Internet cai durante o preenchimento e o reporte é concluído com os dados já informados",
+      "requisito": "CA02; UC01-A1",
+      "derivacao": "Critério de aceitação",
+      "tecnica": "Transição de estado (online → offline durante o uso)",
+      "dado": "o cidadão já marcou GPS, tipo e descrição com internet",
+      "quando": "a internet cai antes da foto e ele termina o reporte",
+      "entao": "nada do que foi preenchido se perde e o reporte é salvo com esses dados",
+      "servidor": "api-node",
+      "obtido": "Salvo com tipo \"piscando\", descrição \"Preenchido antes de cair\" e GPS presente.",
+      "resultado": "Aprovado",
+      "observacao": "",
+      "duracaoMs": 1946,
+      "resultadosPorRodada": [
+        "Aprovado",
+        "Aprovado"
+      ],
+      "estavel": true
+    },
+    {
+      "id": "CP-09",
+      "titulo": "Formulário preenchido sem internet sobrevive ao fechamento do app",
+      "requisito": "CA02",
+      "derivacao": "Critério de aceitação",
+      "tecnica": "Baseado em risco (perda do preenchimento)",
+      "dado": "o cidadão preencheu tipo, descrição e GPS e a internet caiu",
+      "quando": "o app é fechado e aberto de novo antes do envio",
+      "entao": "o que já tinha sido preenchido continua no formulário",
+      "servidor": "api-node",
+      "obtido": "Depois de reabrir: descrição \"\", tipo \"nenhum\", GPS perdido.",
+      "resultado": "Reprovado",
+      "observacao": "",
+      "duracaoMs": 3900,
+      "resultadosPorRodada": [
+        "Reprovado",
+        "Reprovado"
+      ],
+      "estavel": true,
+      "defeitos": [
+        "DEF-06"
+      ]
+    },
+    {
+      "id": "CP-10",
+      "titulo": "Reporte pendente é enviado sozinho quando a internet volta",
+      "requisito": "UC03 (fluxo principal); RF02; CA03",
+      "derivacao": "Fluxo principal",
+      "tecnica": "Transição de estado (offline → online)",
+      "dado": "há 1 reporte na fila do aparelho",
+      "quando": "a internet volta",
+      "entao": "o servidor passa a ter 1 registro do protocolo, a fila esvazia e o aviso de pendente some",
+      "servidor": "api-node",
+      "obtido": "Registros no servidor: 0 (envios recebidos: 1). Fila: 1, 1 tentativa(s), motivo: {\"codigo\":\"JSON_INVALIDO\",\"mensagem\":\"JSON inválido no corpo da requisição.\"}. Aviso: \"📡 1 reporte pendente — será enviado quando houver sinal\".",
+      "resultado": "Reprovado",
+      "observacao": "",
+      "duracaoMs": 23198,
+      "resultadosPorRodada": [
+        "Reprovado",
+        "Reprovado"
+      ],
+      "estavel": true,
+      "defeitos": [
+        "DEF-01"
+      ]
+    },
+    {
+      "id": "CP-11",
+      "titulo": "Três reportes offline são enviados um por vez, sem perda e sem duplicidade",
+      "requisito": "UC03 (passo 2); CA03",
+      "derivacao": "Critério de aceitação",
+      "tecnica": "Valor limite (vários itens na fila)",
+      "dado": "há 3 reportes na fila do aparelho",
+      "quando": "a internet volta",
+      "entao": "o servidor tem exatamente 1 registro de cada protocolo e a fila esvazia",
+      "servidor": "api-node",
+      "obtido": "Registros por protocolo: 0, 0, 0. Fila: 3.",
+      "resultado": "Reprovado",
+      "observacao": "",
+      "duracaoMs": 28603,
+      "resultadosPorRodada": [
+        "Reprovado",
+        "Reprovado"
+      ],
+      "estavel": true,
+      "defeitos": [
+        "DEF-01"
+      ]
+    },
+    {
+      "id": "CP-12",
+      "titulo": "Falha de rede durante a sincronização mantém o reporte e tenta de novo na próxima conexão",
+      "requisito": "UC03-A1",
+      "derivacao": "Fluxo alternativo",
+      "tecnica": "Baseado em requisito (falha de rede)",
+      "dado": "há 1 reporte na fila e a conexão cai no meio do envio",
+      "quando": "a internet volta depois",
+      "entao": "o reporte continua na fila com 1 tentativa a mais e, na reconexão seguinte, chega ao servidor",
+      "servidor": "api-node",
+      "obtido": "Após a falha: na fila, 1 tentativa(s). Após a nova conexão: 0 registro(s) no servidor.",
+      "resultado": "Reprovado",
+      "observacao": "",
+      "duracaoMs": 21658,
+      "resultadosPorRodada": [
+        "Reprovado",
+        "Reprovado"
+      ],
+      "estavel": true,
+      "defeitos": [
+        "DEF-01"
+      ]
+    },
+    {
+      "id": "CP-13",
+      "titulo": "Reporte recusado pelo servidor fica na fila com o motivo e o cidadão é avisado",
+      "requisito": "UC03-A2",
+      "derivacao": "Fluxo alternativo",
+      "tecnica": "Baseado em requisito (recusa do servidor)",
+      "dado": "há 1 reporte na fila e o servidor recusa os dados",
+      "quando": "a internet volta",
+      "entao": "o reporte continua na fila com o motivo registrado e a tela avisa que há reporte com problema",
+      "servidor": "api-node",
+      "obtido": "Fila: 1, motivo guardado: {\"codigo\":\"DADO_INVALIDO\",\"mensagem\":\"Reporte recusado pelo servidor (teste).\"}. Aviso na tela: \"📡 1 reporte pendente — será enviado quando houver sinal\". Recebidos pelo servidor: 1.",
+      "resultado": "Reprovado",
+      "observacao": "",
+      "duracaoMs": 2218,
+      "resultadosPorRodada": [
+        "Reprovado",
+        "Reprovado"
+      ],
+      "estavel": true,
+      "defeitos": [
+        "DEF-05"
+      ]
+    },
+    {
+      "id": "CP-14",
+      "titulo": "Reporte recusado várias vezes não pode sumir sem avisar o cidadão",
+      "requisito": "UC03 (regra: nenhum reporte descartado sem informar o cidadão)",
+      "derivacao": "Regra de negócio",
+      "tecnica": "Baseado em risco (perda de dados)",
+      "dado": "há 1 reporte na fila e o servidor sempre o recusa",
+      "quando": "a internet cai e volta 6 vezes",
+      "entao": "o reporte continua no aparelho, ou o cidadão vê um aviso de que ele foi descartado",
+      "servidor": "api-node",
+      "obtido": "O reporte IC-261112-6FARG foi apagado do aparelho depois de 5 envios recusados. Aviso na tela: \"ℹ Processando foto…\".",
+      "resultado": "Reprovado",
+      "observacao": "",
+      "duracaoMs": 3392,
+      "resultadosPorRodada": [
+        "Reprovado",
+        "Reprovado"
+      ],
+      "estavel": true,
+      "defeitos": [
+        "DEF-03"
+      ]
+    },
+    {
+      "id": "CP-15",
+      "titulo": "Fila sobrevive ao fechamento do app e é enviada na próxima abertura com internet",
+      "requisito": "UC03-A3",
+      "derivacao": "Fluxo alternativo",
+      "tecnica": "Transição de estado (app fechado)",
+      "dado": "há 1 reporte na fila e o app é fechado sem internet",
+      "quando": "o app é aberto de novo, primeiro sem e depois com internet",
+      "entao": "o reporte continua na fila enquanto não há internet e chega ao servidor na abertura com internet",
+      "servidor": "api-node",
+      "obtido": "Reaberto sem internet: 1 item na fila. Reaberto com internet: 0 registro(s) no servidor.",
+      "resultado": "Reprovado",
+      "observacao": "",
+      "duracaoMs": 22486,
+      "resultadosPorRodada": [
+        "Reprovado",
+        "Reprovado"
+      ],
+      "estavel": true,
+      "defeitos": [
+        "DEF-01"
+      ]
+    },
+    {
+      "id": "CP-16",
+      "titulo": "Resposta perdida: o mesmo protocolo não pode virar dois registros",
+      "requisito": "UC03 (regra: mesmo protocolo não gera dois registros); CA03",
+      "derivacao": "Regra de negócio",
+      "tecnica": "Baseado em risco (duplicidade)",
+      "dado": "o servidor grava o reporte, mas a resposta não chega ao aparelho",
+      "quando": "o app reenvia o reporte na reconexão",
+      "entao": "o servidor tem exatamente 1 registro do protocolo e a fila esvazia",
+      "servidor": "api-node",
+      "obtido": "Tela após a resposta perdida: \"Salvo sem sinal\". Envios recebidos: 2. Registros no servidor: 0. Fila: 1.",
+      "resultado": "Reprovado",
+      "observacao": "",
+      "duracaoMs": 23181,
+      "resultadosPorRodada": [
+        "Reprovado",
+        "Reprovado"
+      ],
+      "estavel": true,
+      "defeitos": [
+        "DEF-01"
+      ]
+    },
+    {
+      "id": "CP-17",
+      "titulo": "Gatilhos de sincronização ao mesmo tempo não criam registros repetidos",
+      "requisito": "UC03 (gatilho e regra de duplicidade); CA03",
+      "derivacao": "Regra de negócio",
+      "tecnica": "Baseado em risco (concorrência)",
+      "dado": "há 1 reporte na fila e a rede está lenta (resposta em 1,5 s)",
+      "quando": "a internet volta e o app volta ao primeiro plano no mesmo instante",
+      "entao": "o servidor tem exatamente 1 registro do protocolo",
+      "servidor": "api-node",
+      "obtido": "Envios recebidos do mesmo protocolo: 3. Registros no servidor: 0.",
+      "resultado": "Reprovado",
+      "observacao": "",
+      "duracaoMs": 22076,
+      "resultadosPorRodada": [
+        "Reprovado",
+        "Reprovado"
+      ],
+      "estavel": true,
+      "defeitos": [
+        "DEF-01",
+        "DEF-04"
+      ]
+    },
+    {
+      "id": "CP-18",
+      "titulo": "Indicador de conexão mostra \"Sem sinal\" e \"Online\"",
+      "requisito": "RNF01; RNF04",
+      "derivacao": "Requisito não funcional",
+      "tecnica": "Partição de equivalência (online/offline)",
+      "dado": "o app está aberto",
+      "quando": "a internet cai e depois volta",
+      "entao": "o indicador mostra \"Sem sinal\" e depois \"Online\"",
+      "servidor": "api-node",
+      "obtido": "Sem internet: \"Sem sinal\"; com internet: \"Online\".",
+      "resultado": "Aprovado",
+      "observacao": "",
+      "duracaoMs": 1130,
+      "resultadosPorRodada": [
+        "Aprovado",
+        "Aprovado"
+      ],
+      "estavel": true
+    },
+    {
+      "id": "CP-19",
+      "titulo": "Link com parâmetros (ex.: compartilhado no WhatsApp) abre sem internet",
+      "requisito": "RNF01",
+      "derivacao": "Requisito não funcional",
+      "tecnica": "Partição de equivalência (endereço com/sem parâmetros)",
+      "dado": "o app já foi aberto uma vez",
+      "quando": "o cidadão abre /?utm_source=whatsapp sem internet",
+      "entao": "o app abre normalmente",
+      "servidor": "api-node",
+      "obtido": "Abriu normalmente.",
+      "resultado": "Aprovado",
+      "observacao": "",
+      "duracaoMs": 1819,
+      "resultadosPorRodada": [
+        "Aprovado",
+        "Aprovado"
+      ],
+      "estavel": true
+    },
+    {
+      "id": "CP-20",
+      "titulo": "QR Code do poste lido sem internet segue o reporte com o poste vinculado",
+      "requisito": "UC02-A3",
+      "derivacao": "Fluxo alternativo",
+      "tecnica": "Baseado em requisito",
+      "dado": "o app já foi aberto uma vez",
+      "quando": "o cidadão lê o QR do poste P-0007 sem internet e faz o reporte",
+      "entao": "o app segue o reporte sem a verificação de duplicidade e o reporte fica na fila vinculado ao poste P-0007",
+      "servidor": "api-node",
+      "obtido": "Tela: \"Salvo sem sinal\". Item na fila: sim, poste \"P-0007\".",
+      "resultado": "Aprovado",
+      "observacao": "",
+      "duracaoMs": 3901,
+      "resultadosPorRodada": [
+        "Aprovado",
+        "Aprovado"
+      ],
+      "estavel": true
+    },
+    {
+      "id": "CT-01",
+      "titulo": "Login sem internet informa que não há conexão",
+      "requisito": "UC04-A4",
+      "derivacao": "Fluxo alternativo",
+      "tecnica": "Baseado em requisito",
+      "dado": "o painel já foi aberto uma vez e o aparelho está sem internet",
+      "quando": "o técnico digita o PIN",
+      "entao": "o login não acontece e aparece mensagem de falta de conexão",
+      "servidor": "api-node",
+      "obtido": "Mensagem: \"Sem conexão. Verifique a internet.\". Entrou no painel: não.",
+      "resultado": "Aprovado",
+      "observacao": "",
+      "duracaoMs": 1601,
+      "resultadosPorRodada": [
+        "Aprovado",
+        "Aprovado"
+      ],
+      "estavel": true
+    },
+    {
+      "id": "CT-02",
+      "titulo": "Login com internet abre a lista de chamados",
+      "requisito": "UC04 (fluxo principal); RF03",
+      "derivacao": "Fluxo principal",
+      "tecnica": "Baseado em requisito (caso positivo)",
+      "dado": "o técnico tem PIN cadastrado e há 20 chamados abertos",
+      "quando": "ele digita o PIN com internet",
+      "entao": "o painel mostra a lista com os 20 chamados",
+      "servidor": "api-node",
+      "obtido": "Entrou no painel: sim. Chamados na lista: 20. Mensagem: \"-\".",
+      "resultado": "Aprovado",
+      "observacao": "",
+      "duracaoMs": 2507,
+      "resultadosPorRodada": [
+        "Aprovado",
+        "Aprovado"
+      ],
+      "estavel": true
+    },
+    {
+      "id": "CT-03",
+      "titulo": "Sessão salva abre a lista sem internet e sem pedir PIN",
+      "requisito": "UC04-A1; RNF01 (uso em campo)",
+      "derivacao": "Fluxo alternativo",
+      "tecnica": "Transição de estado (online → offline)",
+      "dado": "o técnico entrou com internet e a lista foi carregada",
+      "quando": "ele reabre o painel sem internet",
+      "entao": "o painel abre direto na lista, com os 20 chamados guardados, sem pedir PIN",
+      "servidor": "api-node",
+      "obtido": "Abriu na lista: sim. Pediu PIN: não. Chamados visíveis: 20.",
+      "resultado": "Aprovado",
+      "observacao": "",
+      "duracaoMs": 2112,
+      "resultadosPorRodada": [
+        "Aprovado",
+        "Aprovado"
+      ],
+      "estavel": true
+    },
+    {
+      "id": "CT-04",
+      "titulo": "Fechamento com internet é registrado no servidor",
+      "requisito": "UC05 (passos 6 e 7); RF04",
+      "derivacao": "Fluxo principal",
+      "tecnica": "Baseado em requisito (caso positivo)",
+      "dado": "o técnico está no painel com internet",
+      "quando": "ele preenche e confirma o fechamento do chamado T01",
+      "entao": "a tela mostra \"Chamado fechado!\" e o servidor registra o fechamento do T01",
+      "servidor": "api-node",
+      "obtido": "Resultado na tela: aviso \"Falha ao registrar. [object Object]\". Fechado no servidor: não. Endereço usado: /api.",
+      "resultado": "Reprovado",
+      "observacao": "",
+      "duracaoMs": 3683,
+      "resultadosPorRodada": [
+        "Reprovado",
+        "Reprovado"
+      ],
+      "estavel": true,
+      "defeitos": [
+        "DEF-02",
+        "DEF-12"
+      ]
+    },
+    {
+      "id": "CT-05",
+      "titulo": "Fechamento sem internet vai para a fila do aparelho",
+      "requisito": "UC05-A5",
+      "derivacao": "Fluxo alternativo",
+      "tecnica": "Baseado em requisito",
+      "dado": "o técnico está no painel e perde a internet",
+      "quando": "ele confirma o fechamento do T01",
+      "entao": "a tela mostra \"Salvo no aparelho\" e há 1 fechamento na fila",
+      "servidor": "api-node",
+      "obtido": "Tela: \"Salvo no aparelho\". Fila: 1.",
+      "resultado": "Aprovado",
+      "observacao": "",
+      "duracaoMs": 3493,
+      "resultadosPorRodada": [
+        "Aprovado",
+        "Aprovado"
+      ],
+      "estavel": true
+    },
+    {
+      "id": "CT-06",
+      "titulo": "Fechamento pendente é enviado quando a internet volta",
+      "requisito": "UC05-A5; UC05 (pós-condição)",
+      "derivacao": "Fluxo alternativo",
+      "tecnica": "Transição de estado (offline → online)",
+      "dado": "há 1 fechamento na fila do aparelho",
+      "quando": "a internet volta",
+      "entao": "o servidor registra o fechamento uma vez e a fila esvazia",
+      "servidor": "api-node",
+      "obtido": "Fechamentos registrados no servidor: 0. Tentativas recebidas: 1 (em /api). Fila: 1.",
+      "resultado": "Reprovado",
+      "observacao": "",
+      "duracaoMs": 23546,
+      "resultadosPorRodada": [
+        "Reprovado",
+        "Reprovado"
+      ],
+      "estavel": true,
+      "defeitos": [
+        "DEF-02"
+      ]
+    },
+    {
+      "id": "CT-07",
+      "titulo": "Com 10 fechamentos na fila, o 11º é bloqueado",
+      "requisito": "UC05-A6",
+      "derivacao": "Fluxo alternativo",
+      "tecnica": "Análise de valor limite (10 e 11)",
+      "dado": "o técnico está sem internet",
+      "quando": "ele fecha 10 chamados e tenta fechar o 11º",
+      "entao": "os 10 primeiros entram na fila; o 11º mostra aviso e não entra",
+      "servidor": "api-node",
+      "obtido": "Erro ao executar o teste: page.waitForFunction: Timeout 15000ms exceeded.",
+      "resultado": "Erro de execução",
+      "observacao": "",
+      "duracaoMs": 46154,
+      "resultadosPorRodada": [
+        "Erro de execução",
+        "Aprovado"
+      ],
+      "estavel": false
+    },
+    {
+      "id": "CT-08",
+      "titulo": "Um fechamento recusado não pode travar o envio dos outros",
+      "requisito": "UC05-A5; atributo Confiabilidade",
+      "derivacao": "Fluxo alternativo (risco)",
+      "tecnica": "Baseado em risco (fila travada)",
+      "dado": "há 3 fechamentos na fila e o servidor recusa o primeiro",
+      "quando": "a internet volta",
+      "entao": "o 2º e o 3º são registrados no servidor",
+      "servidor": "api-node",
+      "obtido": "Fechamentos 2 e 3 registrados: 0. Itens que continuam na fila: 3. Envios recebidos: 1.",
+      "resultado": "Reprovado",
+      "observacao": "",
+      "duracaoMs": 18698,
+      "resultadosPorRodada": [
+        "Reprovado",
+        "Reprovado"
+      ],
+      "estavel": true,
+      "defeitos": [
+        "DEF-02",
+        "DEF-07"
+      ]
+    },
+    {
+      "id": "CT-09",
+      "titulo": "Resposta perdida no fechamento: o reenvio não trava a fila nem fecha duas vezes",
+      "requisito": "UC05-A5; UC05 (pós-condição: materiais abatidos uma única vez)",
+      "derivacao": "Fluxo alternativo (risco)",
+      "tecnica": "Baseado em risco (resposta perdida)",
+      "dado": "o servidor grava o fechamento, mas a resposta não chega",
+      "quando": "o app reenvia o fechamento na reconexão",
+      "entao": "o servidor tem 1 fechamento do chamado e a fila do aparelho esvazia",
+      "servidor": "api-node",
+      "obtido": "Tela após a resposta perdida: \"Salvo no aparelho\". Fechamentos no servidor: 0. Envios recebidos: 2. Itens presos na fila: 1.",
+      "resultado": "Reprovado",
+      "observacao": "",
+      "duracaoMs": 13318,
+      "resultadosPorRodada": [
+        "Reprovado",
+        "Reprovado"
+      ],
+      "estavel": true,
+      "defeitos": [
+        "DEF-02"
+      ]
+    },
+    {
+      "id": "CT-10",
+      "titulo": "Sessão expirada com fechamento na fila: nada se perde e o app pede o PIN",
+      "requisito": "UC04-A3; UC05-A5",
+      "derivacao": "Fluxo alternativo",
+      "tecnica": "Transição de estado (sessão válida → expirada)",
+      "dado": "há 1 fechamento na fila e a sessão expirou no servidor",
+      "quando": "a internet volta e o técnico reabre o painel",
+      "entao": "o fechamento continua na fila, o app volta a pedir o PIN e, depois do novo login, o fechamento é registrado",
+      "servidor": "api-node",
+      "obtido": "Depois da recusa por sessão expirada: 1 item na fila; pediu PIN na hora: não. Ao reabrir, pediu PIN: sim. Depois do novo login: 0 fechamento(s) no servidor e 1 item(ns) na fila.",
+      "resultado": "Reprovado",
+      "observacao": "",
+      "duracaoMs": 14218,
+      "resultadosPorRodada": [
+        "Reprovado",
+        "Reprovado"
+      ],
+      "estavel": true,
+      "defeitos": [
+        "DEF-02",
+        "DEF-09"
+      ]
+    },
+    {
+      "id": "CT-11",
+      "titulo": "Chamado fechado sem internet não pode ser fechado de novo",
+      "requisito": "UC05 (pré-condição: chamado \"Aguardando atendimento\"); CA03",
+      "derivacao": "Violação de pré-condição",
+      "tecnica": "Baseado em risco (fechamento em dobro)",
+      "dado": "o técnico fechou o T06 sem internet",
+      "quando": "ele volta à lista e tenta fechar o T06 outra vez",
+      "entao": "o app não deixa abrir o fechamento de novo e a fila tem só 1 fechamento do T06",
+      "servidor": "api-node",
+      "obtido": "Segunda tentativa: fechamento concluído de novo (\"Salvo no aparelho\"). Fechamentos do T06 na fila: 2.",
+      "resultado": "Reprovado",
+      "observacao": "",
+      "duracaoMs": 4119,
+      "resultadosPorRodada": [
+        "Reprovado",
+        "Reprovado"
+      ],
+      "estavel": true,
+      "defeitos": [
+        "DEF-10"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,152 @@
+Comando: node --test "server/tests/testes-offline/apps-script/caixa-branca/*.test.js"  (Node.js v24.16.0, win32)
+Testes marcados com ⚠ são "todo": exigem o comportamento correto e falham hoje, confirmando um defeito.
+
+✔ CBA-01 flushQueue (cidadão): sem internet não lê a fila nem envia (8.1794ms)
+✔ CBA-02 flushQueue (cidadão): endereço do servidor não configurado ("__...") não envia (6.4904ms)
+✔ CBA-03 flushQueue (cidadão): erro ao ler o banco do aparelho encerra sem enviar e sem lançar erro (6.2713ms)
+✔ CBA-04 flushQueue (cidadão): fila vazia encerra sem enviar (6.1986ms)
+✔ CBA-05 flushQueue (cidadão): envio aceito (Apps Script) apaga o item e atualiza o aviso (6.7088ms)
+✔ CBA-06 flushQueue (cidadão): recusa do servidor (Apps Script) mantém o item e soma 1 tentativa com o motivo (6.3967ms)
+✔ CBA-07 flushQueue (cidadão): resposta vazia conta como recusa ("server error") (4.1295ms)
+✔ CBA-08 flushQueue (cidadão): erro de rede mantém o item, soma 1 tentativa e guarda a mensagem do erro (2.9614ms)
+✔ CBA-09 flushQueue (cidadão): erro de rede sem mensagem é guardado como "network error" (2.449ms)
+✔ CBA-10 flushQueue (cidadão): valor limite — com 4 tentativas ainda envia; com 5 descarta sem enviar (2.4939ms)
+✔ CBA-11 flushQueue (cidadão): falha ao apagar um item descartado não interrompe a fila (5.318ms)
+✔ CBA-12 flushQueue (cidadão): falha ao gravar a tentativa depois de um erro de rede não interrompe a fila (3.1306ms)
+✔ CBA-13 flushQueue (cidadão): falha no 1º item não impede o envio do 2º (4.1412ms)
+⚠ CBA-14 flushQueue (cidadão): reporte descartado após 5 tentativas deve avisar o cidadão (8.2992ms) # Defeito DEF-03 — descarte silencioso (UC03 regra de negócio)
+⚠ CBA-15 flushQueue (cidadão): três sincronizações ao mesmo tempo enviam o reporte uma única vez (6.5905ms) # Defeito DEF-04 — falta trava contra execução simultânea
+✔ CBA-16 updatePendingBanner: esconde com 0; singular com 1; plural com 3 (26.8029ms)
+✔ CBA-17 updatePendingBanner: erro no banco ou tela sem o aviso não quebram o app (8.4003ms)
+✔ CBA-18 submitReport: segundo toque durante o envio é ignorado (11.4604ms)
+✔ CBA-19 submitReport: com internet e envio aceito (Apps Script), mostra "enviado" sem gravar na fila (135.613ms)
+✔ CBA-20 submitReport: com internet e recusa (Apps Script), guarda na fila (13.4437ms)
+✔ CBA-21 submitReport: com internet e erro de rede, guarda na fila (17.53ms)
+✔ CBA-22 submitReport: envio e gravação falham — mensagem de erro e botão liberado (UC01-E1) (5.162ms)
+✔ CBA-23 submitReport: sem internet grava direto na fila, sem tentar enviar (10.3095ms)
+✔ CBA-24 submitReport: sem internet e sem conseguir gravar — mensagem de erro (UC01-E1) (18.6246ms)
+✔ CBA-47 submitReport: durante o envio o botão fica travado e marcado "Enviando…" (13.9577ms)
+✔ CBA-25 submitReport: com internet e servidor não configurado ("__..."), guarda na fila (6.7988ms)
+✔ CBA-46 submitReport: recusa sem motivo é registrada como "server error" e guardada na fila (16.9815ms)
+✔ CBA-26 postReport: envia ao endereço do Apps Script no formato que ele aceita (10.5394ms)
+✔ CBA-27 postReport: limite de 60 s, timer limpo e resposta lida (3.1274ms)
+✔ CBA-28 postReport: resposta que não é JSON vira recusa ("resposta inválida do servidor") (10.9435ms)
+✔ CBA-29 postReport: erro de rede é repassado e o timer é limpo (8.403ms)
+✔ CBA-30 postReport: depois de 60 s sem resposta a requisição é cancelada (180.5402ms)
+✔ CBA-31 generateProtocol: formato IC-AAMMDD-XXXXX com zero à esquerda no mês e no dia (8.0927ms)
+✔ CBA-32 buildPayload: a mensagem do reporte leva protocolo, tipo, GPS, foto, poste e textos limpos (6.3284ms)
+✔ CBA-33 flushQueue (técnico): sem internet não envia e não atualiza o aviso (9.79ms)
+✔ CBA-34 flushQueue (técnico): sem sessão (sem PIN) não envia (4.4715ms)
+✔ CBA-35 flushQueue (técnico): fila vazia libera a trava e atualiza o aviso (6.4303ms)
+✔ CBA-36 flushQueue (técnico): todos aceitos (Apps Script) são apagados na ordem da fila (6.7456ms)
+✔ CBA-37 flushQueue (técnico): sessão expirada (Apps Script) interrompe e mantém a fila (4.6266ms)
+✔ CBA-38 flushQueue (técnico): erro de rede interrompe e mantém a fila (3.6595ms)
+✔ CBA-39 flushQueue (técnico): três sincronizações ao mesmo tempo enviam cada fechamento uma vez (trava) (8.4073ms)
+✔ CBA-40 flushQueue (técnico): erro ao ler a fila libera a trava, mas o erro escapa da função (4.503ms)
+⚠ CBA-41 flushQueue (técnico): erro do servidor em um fechamento não trava os seguintes (7.3355ms) # Defeito DEF-07 — a fila do técnico para no primeiro erro
+✔ CBA-42 apiFetchTO: fechamento vai ao endereço e formato do Apps Script (5.4623ms)
+✔ CBA-43 apiFetchTO: usa 15 s por padrão, limpa o timer e cancela ao fim do tempo (6.81ms)
+✔ CBA-44 renderPendingBanner: esconde com 0; singular/plural; "enviando…" e "sem sinal"; tela sem aviso (18.108ms)
+✔ CBA-45 queueCount: conta a fila e devolve 0 se o banco falhar (o limite de 10 deixa de valer) (4.6469ms)
+⚠ CBA-50 flushQueue (técnico): reenvio que o script responde "ja_fechado" deve sair da fila (3.6614ms) # Defeito DEF-08 — fechamento já registrado trava a fila para sempre
+✔ CBA-51 integração (cidadão ↔ dublê do Apps Script): flushQueue e postReport reais esvaziam a fila (663.8396ms)
+⚠ CBA-52 integração (cidadão ↔ dublê): resposta perdida e reenvio geram um único registro (128.4106ms) # Defeito DEF-11 — sem identificador único, a duplicidade depende de o script descartar protocolo repetido
+✔ CBA-53 integração (técnico ↔ dublê): fechamento na fila é registrado e sai da fila (58.8218ms)
+ℹ tests 51
+ℹ suites 0
+ℹ pass 46
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 5
+ℹ duration_ms 2141.2839
+
+✖ failing tests:
+
+test at server\tests\testes-offline\apoio\casos-cliente.js:163:3
+⚠ CBA-14 flushQueue (cidadão): reporte descartado após 5 tentativas deve avisar o cidadão (8.2992ms) # Defeito DEF-03 — descarte silencioso (UC03 regra de negócio)
+  AssertionError [ERR_ASSERTION]: o reporte foi apagado e só houve console.warn, que o cidadão não vê
+      at TestContext.<anonymous> (C:\Users\davi_\OneDrive\Documents\UNIFACS\2026.2\Garantia da Qualidade de Software\Projeto A3\Ilumina Cururipe\projetoa3qa\server\tests\testes-offline\apoio\casos-cliente.js:167:12)
+      at async Test.run (node:internal/test_runner/test:1313:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at server\tests\testes-offline\apoio\casos-cliente.js:170:3
+⚠ CBA-15 flushQueue (cidadão): três sincronizações ao mesmo tempo enviam o reporte uma única vez (6.5905ms) # Defeito DEF-04 — falta trava contra execução simultânea
+  AssertionError [ERR_ASSERTION]: o mesmo protocolo foi enviado 3 vezes
+  
+  3 !== 1
+  
+      at TestContext.<anonymous> (C:\Users\davi_\OneDrive\Documents\UNIFACS\2026.2\Garantia da Qualidade de Software\Projeto A3\Ilumina Cururipe\projetoa3qa\server\tests\testes-offline\apoio\casos-cliente.js:173:12)
+      at async Test.run (node:internal/test_runner/test:1313:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at server\tests\testes-offline\apoio\casos-cliente.js:417:3
+⚠ CBA-41 flushQueue (técnico): erro do servidor em um fechamento não trava os seguintes (7.3355ms) # Defeito DEF-07 — a fila do técnico para no primeiro erro
+  AssertionError [ERR_ASSERTION]: enviados: IC-RUIM
+  + actual - expected
+  
+    [
+      'IC-RUIM',
+  -   'IC-2',
+  -   'IC-3'
+    ]
+  
+      at TestContext.<anonymous> (C:\Users\davi_\OneDrive\Documents\UNIFACS\2026.2\Garantia da Qualidade de Software\Projeto A3\Ilumina Cururipe\projetoa3qa\server\tests\testes-offline\apoio\casos-cliente.js:423:12)
+      at async Test.run (node:internal/test_runner/test:1313:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [ 'IC-RUIM' ],
+    expected: [ 'IC-RUIM', 'IC-2', 'IC-3' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at server\tests\testes-offline\apps-script\caixa-branca\cliente.test.js:18:1
+⚠ CBA-50 flushQueue (técnico): reenvio que o script responde "ja_fechado" deve sair da fila (3.6614ms) # Defeito DEF-08 — fechamento já registrado trava a fila para sempre
+  AssertionError [ERR_ASSERTION]: itens presos na fila: 2
+  
+  2 !== 0
+  
+      at TestContext.<anonymous> (C:\Users\davi_\OneDrive\Documents\UNIFACS\2026.2\Garantia da Qualidade de Software\Projeto A3\Ilumina Cururipe\projetoa3qa\server\tests\testes-offline\apps-script\caixa-branca\cliente.test.js:27:10)
+      at async Test.run (node:internal/test_runner/test:1313:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at server\tests\testes-offline\apps-script\caixa-branca\cliente.test.js:45:1
+⚠ CBA-52 integração (cidadão ↔ dublê): resposta perdida e reenvio geram um único registro (128.4106ms) # Defeito DEF-11 — sem identificador único, a duplicidade depende de o script descartar protocolo repetido
+  AssertionError [ERR_ASSERTION]: linhas na planilha com o mesmo protocolo: 2
+  
+  2 !== 1
+  
+      at TestContext.<anonymous> (C:\Users\davi_\OneDrive\Documents\UNIFACS\2026.2\Garantia da Qualidade de Software\Projeto A3\Ilumina Cururipe\projetoa3qa\server\tests\testes-offline\apps-script\caixa-branca\cliente.test.js:59:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1313:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

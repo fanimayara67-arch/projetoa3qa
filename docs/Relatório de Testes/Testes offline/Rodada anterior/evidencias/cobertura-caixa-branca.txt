@@ -1,0 +1,38 @@
+Cobertura das funções offline (testes de caixa-branca)
+Gerado em: 2026-11-13T01:18:41.415Z
+
+public/index.html:1271  flushQueue
+  linhas executadas: 23/23 (100.0%)
+  blocos (ramos) executados: 27/27 (100.0%)
+
+public/index.html:1460  generateProtocol
+  linhas executadas: 5/5 (100.0%)
+  blocos (ramos) executados: 1/1 (100.0%)
+
+public/index.html:1481  postReport
+  linhas executadas: 17/17 (100.0%)
+  blocos (ramos) executados: 4/4 (100.0%)
+
+public/index.html:1502  submitReport
+  linhas executadas: 26/26 (100.0%)
+  blocos (ramos) executados: 15/15 (100.0%)
+
+public/index.html:1259  updatePendingBanner
+  linhas executadas: 11/11 (100.0%)
+  blocos (ramos) executados: 13/13 (100.0%)
+
+public/tecnico/index.html:1651  apiFetchTO
+  linhas executadas: 10/10 (100.0%)
+  blocos (ramos) executados: 5/5 (100.0%)
+
+public/tecnico/index.html:1868  flushQueue
+  linhas executadas: 21/21 (100.0%)
+  blocos (ramos) executados: 16/16 (100.0%)
+
+public/tecnico/index.html:1717  queueCount
+  linhas executadas: 2/2 (100.0%)
+  blocos (ramos) executados: 2/2 (100.0%)
+
+public/tecnico/index.html:1852  renderPendingBanner
+  linhas executadas: 11/11 (100.0%)
+  blocos (ramos) executados: 9/9 (100.0%)

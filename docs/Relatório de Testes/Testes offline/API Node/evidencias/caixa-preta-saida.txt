@@ -1,0 +1,101 @@
+
+── api-node · rodada 1 de 2 ──
+✔ CP-01 App do cidadão abre sem internet depois do primeiro acesso — Aprovado
+✔ CP-02 Primeiro acesso sem internet não abre o app (violação da pré-condição) — Aprovado
+✘ CP-03 Reporte com internet chega ao servidor (fluxo principal) — Reprovado
+   obtido: Tela: "Salvo sem sinal", protocolo IC-261112-QA65K (formato válido). Registros no servidor: 0. Fila do aparelho: 1. Envio feito como "application/x-www-form-urlencoded;charset=UTF-8".
+✔ CP-04 Reporte sem internet fica salvo no aparelho com protocolo — Aprovado
+✔ CP-05 Erro do servidor no envio guarda o reporte na fila — Aprovado
+✔ CP-06 Servidor sem resposta por 60 segundos: o reporte vai para a fila — Aprovado
+✔ CP-07 Falha ao gravar no aparelho mostra erro e mantém o formulário — Aprovado
+✔ CP-08 Internet cai durante o preenchimento e o reporte é concluído com os dados já informados — Aprovado
+✘ CP-09 Formulário preenchido sem internet sobrevive ao fechamento do app — Reprovado
+   obtido: Depois de reabrir: descrição "", tipo "nenhum", GPS perdido.
+✘ CP-10 Reporte pendente é enviado sozinho quando a internet volta — Reprovado
+   obtido: Registros no servidor: 0 (envios recebidos: 1). Fila: 1, 1 tentativa(s), motivo: {"codigo":"JSON_INVALIDO","mensagem":"JSON inválido no corpo da requisição."}. Aviso: "📡 1 reporte pendente — será enviado quando houver sinal".
+✘ CP-11 Três reportes offline são enviados um por vez, sem perda e sem duplicidade — Reprovado
+   obtido: Registros por protocolo: 0, 0, 0. Fila: 3.
+✘ CP-12 Falha de rede durante a sincronização mantém o reporte e tenta de novo na próxima conexão — Reprovado
+   obtido: Após a falha: na fila, 1 tentativa(s). Após a nova conexão: 0 registro(s) no servidor.
+✘ CP-13 Reporte recusado pelo servidor fica na fila com o motivo e o cidadão é avisado — Reprovado
+   obtido: Fila: 1, motivo guardado: {"codigo":"DADO_INVALIDO","mensagem":"Reporte recusado pelo servidor (teste)."}. Aviso na tela: "📡 1 reporte pendente — será enviado quando houver sinal". Recebidos pelo servidor: 1.
+✘ CP-14 Reporte recusado várias vezes não pode sumir sem avisar o cidadão — Reprovado
+   obtido: O reporte IC-261112-6FARG foi apagado do aparelho depois de 5 envios recusados. Aviso na tela: "ℹ Processando foto…".
+✘ CP-15 Fila sobrevive ao fechamento do app e é enviada na próxima abertura com internet — Reprovado
+   obtido: Reaberto sem internet: 1 item na fila. Reaberto com internet: 0 registro(s) no servidor.
+✘ CP-16 Resposta perdida: o mesmo protocolo não pode virar dois registros — Reprovado
+   obtido: Tela após a resposta perdida: "Salvo sem sinal". Envios recebidos: 2. Registros no servidor: 0. Fila: 1.
+✘ CP-17 Gatilhos de sincronização ao mesmo tempo não criam registros repetidos — Reprovado
+   obtido: Envios recebidos do mesmo protocolo: 3. Registros no servidor: 0.
+✔ CP-18 Indicador de conexão mostra "Sem sinal" e "Online" — Aprovado
+✔ CP-19 Link com parâmetros (ex.: compartilhado no WhatsApp) abre sem internet — Aprovado
+✔ CP-20 QR Code do poste lido sem internet segue o reporte com o poste vinculado — Aprovado
+✔ CT-01 Login sem internet informa que não há conexão — Aprovado
+✔ CT-02 Login com internet abre a lista de chamados — Aprovado
+✔ CT-03 Sessão salva abre a lista sem internet e sem pedir PIN — Aprovado
+✘ CT-04 Fechamento com internet é registrado no servidor — Reprovado
+   obtido: Resultado na tela: aviso "Falha ao registrar. [object Object]". Fechado no servidor: não. Endereço usado: /api.
+✔ CT-05 Fechamento sem internet vai para a fila do aparelho — Aprovado
+✘ CT-06 Fechamento pendente é enviado quando a internet volta — Reprovado
+   obtido: Fechamentos registrados no servidor: 0. Tentativas recebidas: 1 (em /api). Fila: 1.
+✘ CT-07 Com 10 fechamentos na fila, o 11º é bloqueado — Erro de execução
+   obtido: Erro ao executar o teste: page.waitForFunction: Timeout 15000ms exceeded.
+✘ CT-08 Um fechamento recusado não pode travar o envio dos outros — Reprovado
+   obtido: Fechamentos 2 e 3 registrados: 0. Itens que continuam na fila: 3. Envios recebidos: 1.
+✘ CT-09 Resposta perdida no fechamento: o reenvio não trava a fila nem fecha duas vezes — Reprovado
+   obtido: Tela após a resposta perdida: "Salvo no aparelho". Fechamentos no servidor: 0. Envios recebidos: 2. Itens presos na fila: 1.
+✘ CT-10 Sessão expirada com fechamento na fila: nada se perde e o app pede o PIN — Reprovado
+   obtido: Depois da recusa por sessão expirada: 1 item na fila; pediu PIN na hora: não. Ao reabrir, pediu PIN: sim. Depois do novo login: 0 fechamento(s) no servidor e 1 item(ns) na fila.
+✘ CT-11 Chamado fechado sem internet não pode ser fechado de novo — Reprovado
+   obtido: Segunda tentativa: fechamento concluído de novo ("Salvo no aparelho"). Fechamentos do T06 na fila: 2.
+
+── api-node · rodada 2 de 2 ──
+✔ CP-01 App do cidadão abre sem internet depois do primeiro acesso — Aprovado
+✔ CP-02 Primeiro acesso sem internet não abre o app (violação da pré-condição) — Aprovado
+✘ CP-03 Reporte com internet chega ao servidor (fluxo principal) — Reprovado
+   obtido: Tela: "Salvo sem sinal", protocolo IC-261112-4EIM6 (formato válido). Registros no servidor: 0. Fila do aparelho: 1. Envio feito como "application/x-www-form-urlencoded;charset=UTF-8".
+✔ CP-04 Reporte sem internet fica salvo no aparelho com protocolo — Aprovado
+✔ CP-05 Erro do servidor no envio guarda o reporte na fila — Aprovado
+✔ CP-06 Servidor sem resposta por 60 segundos: o reporte vai para a fila — Aprovado
+✔ CP-07 Falha ao gravar no aparelho mostra erro e mantém o formulário — Aprovado
+✔ CP-08 Internet cai durante o preenchimento e o reporte é concluído com os dados já informados — Aprovado
+✘ CP-09 Formulário preenchido sem internet sobrevive ao fechamento do app — Reprovado
+   obtido: Depois de reabrir: descrição "", tipo "nenhum", GPS perdido.
+✘ CP-10 Reporte pendente é enviado sozinho quando a internet volta — Reprovado
+   obtido: Registros no servidor: 0 (envios recebidos: 1). Fila: 1, 1 tentativa(s), motivo: {"codigo":"JSON_INVALIDO","mensagem":"JSON inválido no corpo da requisição."}. Aviso: "📡 1 reporte pendente — será enviado quando houver sinal".
+✘ CP-11 Três reportes offline são enviados um por vez, sem perda e sem duplicidade — Reprovado
+   obtido: Registros por protocolo: 0, 0, 0. Fila: 3.
+✘ CP-12 Falha de rede durante a sincronização mantém o reporte e tenta de novo na próxima conexão — Reprovado
+   obtido: Após a falha: na fila, 1 tentativa(s). Após a nova conexão: 0 registro(s) no servidor.
+✘ CP-13 Reporte recusado pelo servidor fica na fila com o motivo e o cidadão é avisado — Reprovado
+   obtido: Fila: 1, motivo guardado: {"codigo":"DADO_INVALIDO","mensagem":"Reporte recusado pelo servidor (teste)."}. Aviso na tela: "📡 1 reporte pendente — será enviado quando houver sinal". Recebidos pelo servidor: 1.
+✘ CP-14 Reporte recusado várias vezes não pode sumir sem avisar o cidadão — Reprovado
+   obtido: O reporte IC-261112-GB5Z1 foi apagado do aparelho depois de 5 envios recusados. Aviso na tela: "ℹ Processando foto…".
+✘ CP-15 Fila sobrevive ao fechamento do app e é enviada na próxima abertura com internet — Reprovado
+   obtido: Reaberto sem internet: 1 item na fila. Reaberto com internet: 0 registro(s) no servidor.
+✘ CP-16 Resposta perdida: o mesmo protocolo não pode virar dois registros — Reprovado
+   obtido: Tela após a resposta perdida: "Salvo sem sinal". Envios recebidos: 2. Registros no servidor: 0. Fila: 1.
+✘ CP-17 Gatilhos de sincronização ao mesmo tempo não criam registros repetidos — Reprovado
+   obtido: Envios recebidos do mesmo protocolo: 3. Registros no servidor: 0.
+✔ CP-18 Indicador de conexão mostra "Sem sinal" e "Online" — Aprovado
+✔ CP-19 Link com parâmetros (ex.: compartilhado no WhatsApp) abre sem internet — Aprovado
+✔ CP-20 QR Code do poste lido sem internet segue o reporte com o poste vinculado — Aprovado
+✔ CT-01 Login sem internet informa que não há conexão — Aprovado
+✔ CT-02 Login com internet abre a lista de chamados — Aprovado
+✔ CT-03 Sessão salva abre a lista sem internet e sem pedir PIN — Aprovado
+✘ CT-04 Fechamento com internet é registrado no servidor — Reprovado
+   obtido: Resultado na tela: aviso "Falha ao registrar. [object Object]". Fechado no servidor: não. Endereço usado: /api.
+✔ CT-05 Fechamento sem internet vai para a fila do aparelho — Aprovado
+✘ CT-06 Fechamento pendente é enviado quando a internet volta — Reprovado
+   obtido: Fechamentos registrados no servidor: 0. Tentativas recebidas: 1 (em /api). Fila: 1.
+✔ CT-07 Com 10 fechamentos na fila, o 11º é bloqueado — Aprovado
+✘ CT-08 Um fechamento recusado não pode travar o envio dos outros — Reprovado
+   obtido: Fechamentos 2 e 3 registrados: 0. Itens que continuam na fila: 3. Envios recebidos: 1.
+✘ CT-09 Resposta perdida no fechamento: o reenvio não trava a fila nem fecha duas vezes — Reprovado
+   obtido: Tela após a resposta perdida: "Salvo no aparelho". Fechamentos no servidor: 0. Envios recebidos: 2. Itens presos na fila: 1.
+✘ CT-10 Sessão expirada com fechamento na fila: nada se perde e o app pede o PIN — Reprovado
+   obtido: Depois da recusa por sessão expirada: 1 item na fila; pediu PIN na hora: não. Ao reabrir, pediu PIN: sim. Depois do novo login: 0 fechamento(s) no servidor e 1 item(ns) na fila.
+✘ CT-11 Chamado fechado sem internet não pode ser fechado de novo — Reprovado
+   obtido: Segunda tentativa: fechamento concluído de novo ("Salvo no aparelho"). Fechamentos do T06 na fila: 2.
+
+Total 31 | aprovados 14 | reprovados 16 | erros 1 | instáveis 1
