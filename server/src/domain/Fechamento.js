@@ -3,6 +3,17 @@
  * Regras puras para validação de baixa em campo (técnico) e baixa administrativa (gestor).
  */
 
+const { coordenadasValidas } = require('./Chamado');
+
+/**
+ * Cerca geográfica do fechamento (fluxo A4 do UC05). É a mesma da tela do técnico
+ * (buildValidMapsUrl): Nordeste do Brasil, com margem. Fora dela o GPS deu falso positivo.
+ */
+const REGIAO = Object.freeze({ latMin: -20, latMax: -2, lngMin: -50, lngMax: -33 });
+
+/** Precisão máxima do GPS do técnico, em metros (passo 6 do UC05). */
+const PRECISAO_MAXIMA_M = 100;
+
 /** Status de resolução do passo 3 do UC05 (mesmos valores do projeto de banco do grupo). */
 const STATUS_CAMPO = Object.freeze(['Concluído', 'Parcialmente resolvido', 'Requer material', 'Ponto não localizado']);
 
@@ -31,6 +42,7 @@ function validarFechamentoCampo(dados) {
   if (!textoPreenchido(dados.foto_reparo_base64) && !textoPreenchido(dados.fotoUrl)) {
     erros.push('Foto do reparo é obrigatória.');
   }
+  erros.push(...errosDeLocalizacao(dados));
   if (Array.isArray(dados.materiais_os)) {
     for (const mat of dados.materiais_os) {
       if (!mat.nome && !mat.item_id) {
@@ -46,6 +58,26 @@ function validarFechamentoCampo(dados) {
     valido: erros.length === 0,
     erros
   };
+}
+
+/** Passo 6 e fluxo A4 do UC05: GPS válido, dentro da região e com precisão de até 100 m. */
+function errosDeLocalizacao(dados) {
+  const lat = dados.lat ?? dados.latitude;
+  const lng = dados.lng ?? dados.longitude;
+  if (!coordenadasValidas(lat, lng)) return ['Localização GPS válida é obrigatória.'];
+
+  const erros = [];
+  const la = Number(lat);
+  const ln = Number(lng);
+  if (la < REGIAO.latMin || la > REGIAO.latMax || ln < REGIAO.lngMin || ln > REGIAO.lngMax) {
+    erros.push('Localização fora da região atendida. Recapture o GPS.');
+  }
+  const precisao = dados.precisao_m ?? dados.acc;
+  const p = precisao === '' || precisao === null || precisao === undefined ? NaN : Number(precisao);
+  if (!Number.isFinite(p) || p < 0 || p > PRECISAO_MAXIMA_M) {
+    erros.push(`Precisão do GPS deve ser informada e ser de até ${PRECISAO_MAXIMA_M} m.`);
+  }
+  return erros;
 }
 
 /**
@@ -88,6 +120,8 @@ function validarFechamentoAdmin(dados = {}) {
 
 module.exports = {
   STATUS_CAMPO,
+  REGIAO,
+  PRECISAO_MAXIMA_M,
   validarFechamentoCampo,
   validarFechamentoAdmin,
   normalizarFechamentoAdmin
