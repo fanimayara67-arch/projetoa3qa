@@ -3,6 +3,9 @@
  * Regras puras para validação de baixa em campo (técnico) e baixa administrativa (gestor).
  */
 
+/** Status de resolução do passo 3 do UC05 (mesmos valores do projeto de banco do grupo). */
+const STATUS_CAMPO = Object.freeze(['Concluído', 'Parcialmente resolvido', 'Requer material', 'Ponto não localizado']);
+
 const textoPreenchido = (valor) => typeof valor === 'string' && valor.trim() !== '';
 
 /**
@@ -18,6 +21,8 @@ function validarFechamentoCampo(dados) {
   }
   if (!dados.status || typeof dados.status !== 'string' || !dados.status.trim()) {
     erros.push('Status de resolução é obrigatório.');
+  } else if (!STATUS_CAMPO.includes(dados.status)) {
+    erros.push(`Status de resolução inválido. Use: ${STATUS_CAMPO.join(', ')}.`);
   }
   if (!dados.servico || typeof dados.servico !== 'string' || !dados.servico.trim()) {
     erros.push('Descrição do serviço executado é obrigatória.');
@@ -82,6 +87,7 @@ function validarFechamentoAdmin(dados = {}) {
 }
 
 module.exports = {
+  STATUS_CAMPO,
   validarFechamentoCampo,
   validarFechamentoAdmin,
   normalizarFechamentoAdmin
