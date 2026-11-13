@@ -21,8 +21,8 @@ async function autenticarPorPin({ pin, ip, perfisPermitidos = ['tecnico', 'gesto
   const gerarToken = deps.gerarToken || defaultGerarToken;
 
   const pinLimpo = String(pin || '').trim();
-  if (!/^\d{4,8}$/.test(pinLimpo)) {
-    throw new DadoInvalido('PIN deve conter de 4 a 8 dígitos numéricos.');
+  if (!/^\d{4}$/.test(pinLimpo)) {
+    throw new DadoInvalido('PIN deve conter exatamente 4 dígitos numéricos.');
   }
 
   const falhasRecentes = await SessaoRepo.contarFalhasRecentesPorIp(ip, JANELA_MINUTOS);
