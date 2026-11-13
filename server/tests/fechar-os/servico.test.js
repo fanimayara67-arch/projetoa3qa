@@ -132,3 +132,19 @@ test('FO-20 [caixa-branca | cobertura de ramos] dados inválidos não abrem tran
   assert.equal(fotos, 0);
   assert.deepEqual(banco.eventos, []);
 });
+
+test('FO-33 [caixa-branca | cobertura de ramos] campos alternativos e opcionais: latitude/longitude, sem config, sem materiais e sem data', async () => {
+  const banco = criarBancoSimulado();
+  const antes = Date.now();
+  const { lat, lng, config, materiais_os, data_fechamento, ...resto } = fechamentoValido();
+  const f = await fecharChamado({
+    protocolo: PROTOCOLO, tecnicoId: TECNICO,
+    dados: { ...resto, latitude: '-10.125300', longitude: '-36.175600' }
+  }, deps(banco));
+
+  assert.equal(f.latitude, '-10.125300', 'a tela antiga envia latitude/longitude como texto');
+  assert.equal(banco.tabelas.postes[0].latitude, '-10.125300');
+  assert.equal(banco.tabelas.postes[0].braco, null, 'sem config, a ficha do poste não recebe equipamento');
+  assert.equal(banco.tabelas.materiaisOS.length, 0);
+  assert.ok(Date.parse(f.data_fechamento) >= antes - 1000, 'sem data, vale a hora do servidor');
+});
