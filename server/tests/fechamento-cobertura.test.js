@@ -56,7 +56,8 @@ function bancoFalso({ fechamentoExistente = null, chamado = { id: 10, protocolo:
   };
 }
 
-const fechamentoValido = (extra = {}) => ({ operacao_id: OPERACAO, status: 'Resolvido', servico: 'Troca de lâmpada', ...extra });
+// Fechamento completo do UC05 (status da lista, foto do reparo e GPS com precisão).
+const fechamentoValido = (extra = {}) => ({ operacao_id: OPERACAO, status: 'Concluído', servico: 'Troca de lâmpada', foto_reparo_base64: 'data:image/jpeg;base64,AAAA', lat: -10.1253, lng: -36.1756, precisao_m: 8, ...extra });
 
 /** fetch falso: devolve o texto e o status pedidos e guarda o que recebeu. */
 function fetchFalso({ status = 200, texto = '{"ok":true,"data":{}}' } = {}) {
@@ -128,13 +129,15 @@ describe('UC03 - Caixa-branca: FechamentoService.fecharChamado', () => {
   });
 
   test('FA-CB05: reenvio da mesma operacao_id devolve o fechamento existente sem inserir nem baixar estoque', async () => {
-    const existente = { id: 1, operacao_id: OPERACAO, status: 'Resolvido' };
+    // chamado_id 10 = o chamado do bancoFalso. Desde o UC05 (F-08) a trava do chamado vem antes
+    // da consulta da operação, para conferir se a operação é deste chamado.
+    const existente = { id: 1, operacao_id: OPERACAO, chamado_id: 10, status: 'Concluído' };
     const banco = bancoFalso({ fechamentoExistente: existente });
 
     const resultado = await FechamentoService.fecharChamado({ protocolo: 'IC-1', tecnicoId: 3, dados: fechamentoValido() }, banco.deps);
 
     assert.equal(resultado, existente);
-    assert.deepEqual(banco.chamadas, [['buscarPorOperacaoId', OPERACAO]]);
+    assert.deepEqual(banco.chamadas, [['buscarParaAtualizar'], ['buscarPorOperacaoId', OPERACAO]]);
   });
 
   test('FA-CB06: chamado inexistente gera NaoEncontrado (404) e chamado já fechado gera Conflito (409)', async () => {

@@ -48,14 +48,23 @@ test('CBN-51 integração (cidadão ↔ API Node): a causa da recusa é o format
   } finally { await srv.fechar(); }
 });
 
-test('CBN-52 integração (técnico ↔ API Node): o fechamento na fila deve ser registrado', { todo: 'Defeito DEF-02 — o app envia { action: "close" } para /api, rota que não existe' }, async () => {
+// Fechamento como a tela monta (fecharChamado), com os campos que o UC05 exige.
+const FECHAMENTO_DA_TELA = {
+  status: 'Concluído', servico: 'Troca de lâmpada', referencia: 'Em frente à escola',
+  latitude: '-10.125100', longitude: '-36.175200', precisao_m: 6,
+  foto_reparo_base64: 'data:image/jpeg;base64,AAAA', materiais_os: [],
+  data_fechamento: '12/11/2026, 10:30', data_fechamento_iso: '2026-11-12T13:30:00.000Z'
+};
+
+// Revisado no UC05: DEF-02 corrigido (o fechamento vai para POST /api/chamados/:protocolo/fechamento).
+test('CBN-52 integração (técnico ↔ API Node): o fechamento na fila deve ser registrado', async () => {
   const srv = await criarServidorTeste({ servidor: 'api-node' });
   try {
     const login = await fetch(srv.url + '/api/auth/login', {
       method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ pin: PIN_TESTE })
     }).then((r) => r.json());
     const { ctx, banco } = d.montarFilaTecnico({
-      itens: ['IC-261112-T01'], token: login.data.token,
+      itens: ['IC-261112-T01'], token: login.data.token, dadosFechamento: FECHAMENTO_DA_TELA,
       url: srv.url + '/api', rede: (u, o) => fetch(u, o)
     });
     await ctx.flushQueue();
@@ -65,16 +74,18 @@ test('CBN-52 integração (técnico ↔ API Node): o fechamento na fila deve ser
   } finally { await srv.fechar(); }
 });
 
-test('CBN-53 integração (técnico ↔ API Node): a API responde 404 ROTA_NAO_ENCONTRADA e a fila fica presa', async () => {
+// Revisado no UC05: antes registrava o DEF-02 (404 em /api e fila presa). Com o envio corrigido,
+// o fechamento vai à rota certa; com sessão inválida a API responde 401 e a fila espera o novo PIN.
+test('CBN-53 integração (técnico ↔ API Node): com sessão inválida a API responde 401 e a fila fica guardada', async () => {
   const srv = await criarServidorTeste({ servidor: 'api-node' });
   try {
     const { ctx, banco } = d.montarFilaTecnico({
-      itens: ['IC-261112-T01', 'IC-261112-T02'], token: 'qualquer',
+      itens: ['IC-261112-T01', 'IC-261112-T02'], token: 'qualquer', dadosFechamento: FECHAMENTO_DA_TELA,
       url: srv.url + '/api', rede: (u, o) => fetch(u, o)
     });
     await ctx.flushQueue();
     assert.equal(banco.size, 2, 'nenhum item saiu da fila');
-    assert.deepEqual(srv.estado.requisicoes.map((q) => q.caminho), ['/api'], 'parou no primeiro item');
+    assert.deepEqual(srv.estado.requisicoes.map((q) => q.caminho), ['/api/chamados/IC-261112-T01/fechamento'], 'parou no primeiro item');
   } finally { await srv.fechar(); }
 });
 

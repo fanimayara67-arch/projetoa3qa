@@ -19,6 +19,7 @@
     },
     {
       "id": "DEF-02", "severidade": "Crítica", "servidores": ["api-node"],
+      "situacao": "Corrigido em 13/11/2026 no UC05 (fechar OS): apiFetchTO envia o fechamento para POST /api/chamados/:protocolo/fechamento quando a API Node está configurada. Ver docs/Relatório de Testes/Fechar ordem de serviço.",
       "titulo": "Painel do técnico envia o fechamento no formato do Apps Script para /api",
       "requisitos": ["UC05 passos 6 e 7", "UC05-A5", "RF04"],
       "defeito": "fecharChamado e flushQueue usam apiFetchTO, que manda { action: \"close\" } para o endereço base; a API Node espera POST /api/chamados/{protocolo}/fechamento com Bearer e operacao_id.",
@@ -69,6 +70,7 @@
     },
     {
       "id": "DEF-07", "severidade": "Alta", "servidores": ["api-node", "apps-script"],
+      "situacao": "Corrigido em 13/11/2026 no UC05 (fechar OS): o fechamento recusado fica na fila e os seguintes são enviados.",
       "titulo": "Fila do técnico para no primeiro fechamento recusado",
       "requisitos": ["UC05-A5", "Atributo Confiabilidade"],
       "defeito": "Em flushQueue do técnico, toda resposta que não é sucesso termina em break.",
@@ -79,6 +81,7 @@
     },
     {
       "id": "DEF-08", "severidade": "Alta", "servidores": ["apps-script"],
+      "situacao": "Corrigido em 13/11/2026 no UC05 (fechar OS): a resposta \"ja_fechado\" tira o item da fila.",
       "titulo": "Fechamento reenviado depois de resposta perdida fica preso na fila para sempre",
       "requisitos": ["UC05-A5", "UC05 pós-condição"],
       "defeito": "Quando o script responde \"ja_fechado\" a um reenvio, flushQueue trata como erro e para (DEF-07). O item nunca sai.",

@@ -49,6 +49,13 @@ const CONTRATOS = {
       aceito: { success: true, ok: true, data: {} },
       sessaoExpirada: { success: false, ok: false, error: { codigo: 'NAO_AUTENTICADO', mensagem: 'Sessão expirada ou inválida.' } },
       erro: { success: false, ok: false, error: { codigo: 'ERRO_INTERNO', mensagem: 'Erro interno no servidor.' } }
+    },
+    // O que apiFetchTO devolve à fila depois de traduzir a resposta da API (UC05, DEF-02):
+    // a fila do técnico continua tratando { success, error } como no Apps Script.
+    tecnicoNaFila: {
+      aceito: { success: true },
+      sessaoExpirada: { success: false, error: 'sessao_expirada' },
+      erro: { success: false, error: 'Erro interno no servidor.' }
     }
   }
 };
@@ -58,6 +65,8 @@ function registrarCasosCliente(test, servidor) {
   const P = servidor === 'api-node' ? 'CBN' : 'CBA';
   const id = (n) => `${P}-${String(n).padStart(2, '0')}`;
   const ehNode = servidor === 'api-node';
+  // Resposta que a fila recebe de apiFetchTO (no Apps Script é a própria resposta do script).
+  const fila = c.tecnicoNaFila || c.tecnico;
 
   /* ═══════════ flushQueue do cidadão (V(G) = 11) ═══════════ */
 
@@ -377,14 +386,14 @@ function registrarCasosCliente(test, servidor) {
   });
 
   test(`${id(36)} flushQueue (técnico): todos aceitos (${c.nome}) são apagados na ordem da fila`, async () => {
-    const { ctx, banco, registro } = filaT({ itens: ['IC-1', 'IC-2', 'IC-3'], responder: () => c.tecnico.aceito });
+    const { ctx, banco, registro } = filaT({ itens: ['IC-1', 'IC-2', 'IC-3'], responder: () => fila.aceito });
     await ctx.flushQueue();
     assert.deepEqual(registro.envios, ['IC-1', 'IC-2', 'IC-3']);
     assert.equal(banco.size, 0);
   });
 
   test(`${id(37)} flushQueue (técnico): sessão expirada (${c.nome}) interrompe e mantém a fila`, async () => {
-    const { ctx, banco, registro } = filaT({ itens: ['IC-1', 'IC-2'], responder: () => c.tecnico.sessaoExpirada });
+    const { ctx, banco, registro } = filaT({ itens: ['IC-1', 'IC-2'], responder: () => fila.sessaoExpirada });
     await ctx.flushQueue();
     assert.deepEqual(registro.envios, ['IC-1']);
     assert.equal(banco.size, 2);
@@ -414,10 +423,11 @@ function registrarCasosCliente(test, servidor) {
     assert.deepEqual(registro.envios, ['IC-1'], 'a trava foi liberada');
   });
 
-  test(`${id(41)} flushQueue (técnico): erro do servidor em um fechamento não trava os seguintes`, { todo: 'Defeito DEF-07 — a fila do técnico para no primeiro erro' }, async () => {
+  // DEF-07 corrigido no UC05.
+  test(`${id(41)} flushQueue (técnico): erro do servidor em um fechamento não trava os seguintes`, async () => {
     const { ctx, registro } = filaT({
       itens: ['IC-RUIM', 'IC-2', 'IC-3'],
-      responder: (p) => (p.protocolo === 'IC-RUIM' ? c.tecnico.erro : c.tecnico.aceito)
+      responder: (p) => (p.protocolo === 'IC-RUIM' ? fila.erro : fila.aceito)
     });
     await ctx.flushQueue();
     assert.deepEqual(registro.envios, ['IC-RUIM', 'IC-2', 'IC-3'], `enviados: ${registro.envios.join(', ')}`);
@@ -425,8 +435,8 @@ function registrarCasosCliente(test, servidor) {
 
   /* ═══════════ apiFetchTO, aviso e contagem do técnico ═══════════ */
 
+  // DEF-02 corrigido no UC05.
   test(`${id(42)} apiFetchTO: fechamento vai ao endereço e formato do ${c.nome}`,
-    ehNode ? { todo: 'Defeito DEF-02 — o app manda o formato do Apps Script para /api' } : {},
     async () => {
       const { ctx, registro } = d.montarRequisicaoTecnico({ url: c.endpointTecnico, resposta: c.tecnico.aceito });
       await ctx.apiFetchTO({ action: 'close', protocolo: 'IC-1', token: 'tok' }, 40000);

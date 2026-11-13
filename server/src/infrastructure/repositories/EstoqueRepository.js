@@ -63,36 +63,46 @@ async function debitarSaldo(tx, itemId, quantidade) {
  * Debita materiais utilizados no fechamento de um chamado dentro da mesma transação ACID.
  * Usa `SELECT ... FOR UPDATE` no item do estoque e valida saldo antes de debitar.
  */
+/**
+ * Soma as quantidades por item do almoxarifado (travando cada item). O mesmo item listado duas
+ * vezes, ou uma vez pelo id e outra pelo nome, vira uma linha só com o total (CA04).
+ */
+async function somarPorItem(tx, materiais) {
+  const totais = new Map();
+  for (const mat of materiais) {
+    const qtd = Number(mat && mat.quantidade);
+    if (!Number.isFinite(qtd) || qtd <= 0) continue;
+
+    const item = await buscarItemParaAtualizar(tx, mat.item_id, mat.nome);
+    if (!item) {
+      throw new NaoEncontrado(`Material '${mat.item_id || mat.nome}' não encontrado no almoxarifado.`);
+    }
+    const total = totais.get(item.id) || { item, quantidade: 0 };
+    total.quantidade += qtd;
+    totais.set(item.id, total);
+  }
+  return [...totais.values()];
+}
+
 async function baixarMateriais(tx, fechamentoId, materiais = []) {
   if (!Array.isArray(materiais) || materiais.length === 0) return [];
 
   const baixados = [];
-  for (const mat of materiais) {
-    const qtd = Number(mat.quantidade);
-    if (!Number.isFinite(qtd) || qtd <= 0) continue;
-
-    const chave = mat.item_id || mat.nome;
-    const item = await buscarItemParaAtualizar(tx, mat.item_id, mat.nome);
-    if (!item) {
-      throw new NaoEncontrado(`Material '${chave}' não encontrado no almoxarifado.`);
-    }
-    if (Number(item.saldo) < qtd) {
+  for (const { item, quantidade } of await somarPorItem(tx, materiais)) {
+    if (Number(item.saldo) < quantidade) {
       throw new Conflito(
-        `Saldo insuficiente para '${item.nome}': disponível ${item.saldo} ${item.unidade}, solicitado ${qtd}.`
+        `Saldo insuficiente para '${item.nome}': disponível ${item.saldo} ${item.unidade}, solicitado ${quantidade}.`
       );
     }
-
-    await debitarSaldo(tx, item.id, qtd);
+    await debitarSaldo(tx, item.id, quantidade);
     await tx.query(
       `INSERT INTO fechamento_materiais (fechamento_id, item_id, quantidade)
        VALUES (?, ?, ?) AS novo
        ON DUPLICATE KEY UPDATE quantidade = novo.quantidade`,
-      [fechamentoId, item.id, qtd]
+      [fechamentoId, item.id, quantidade]
     );
-
-    baixados.push({ item_id: item.id, nome: item.nome, quantidade: qtd });
+    baixados.push({ item_id: item.id, nome: item.nome, quantidade });
   }
-
   return baixados;
 }
 

@@ -1,0 +1,38 @@
+# Complexidade ciclomática depois (ESLint 8, regra complexity; RNF05: no máximo 10 por função)
+# tecnico-index.js = funções fecharChamado, flushQueue e apiFetchTO recortadas de public/tecnico/index.html
+EstoqueRepository.js
+   19:1   warning  Async function 'salvarItem' has a complexity of 4. Maximum allowed is 1               complexity
+   38:1   warning  Async function 'removerItem' has a complexity of 3. Maximum allowed is 1              complexity
+   48:1   warning  Async function 'buscarItemParaAtualizar' has a complexity of 3. Maximum allowed is 1  complexity
+   70:1   warning  Async function 'somarPorItem' has a complexity of 8. Maximum allowed is 1             complexity
+   87:1   warning  Async function 'baixarMateriais' has a complexity of 5. Maximum allowed is 1          complexity
+  109:1   warning  Async function 'criarMissaoComItens' has a complexity of 7. Maximum allowed is 1      complexity
+  159:19  warning  Arrow function has a complexity of 3. Maximum allowed is 1                            complexity
+Fechamento.js
+   22:25  warning  Arrow function has a complexity of 2. Maximum allowed is 1                        complexity
+   27:1   warning  Function 'validarIdentificacao' has a complexity of 3. Maximum allowed is 1       complexity
+   33:1   warning  Function 'validarStatus' has a complexity of 3. Maximum allowed is 1              complexity
+   40:1   warning  Function 'validarTextos' has a complexity of 4. Maximum allowed is 1              complexity
+   50:1   warning  Function 'validarFoto' has a complexity of 3. Maximum allowed is 1                complexity
+   55:1   warning  Function 'dentroDaRegiao' has a complexity of 4. Maximum allowed is 1             complexity
+   61:1   warning  Function 'precisaoAceita' has a complexity of 6. Maximum allowed is 1             complexity
+   68:1   warning  Function 'validarLocalizacao' has a complexity of 7. Maximum allowed is 1         complexity
+   83:1   warning  Function 'validarData' has a complexity of 7. Maximum allowed is 1                complexity
+   90:1   warning  Function 'errosDoMaterial' has a complexity of 8. Maximum allowed is 1            complexity
+  100:1   warning  Function 'validarMateriais' has a complexity of 2. Maximum allowed is 1           complexity
+  119:1   warning  Function 'validarFechamentoCampo' has a complexity of 2. Maximum allowed is 1     complexity
+  133:1   warning  Function 'normalizarFechamentoAdmin' has a complexity of 2. Maximum allowed is 1  complexity
+  134:17  warning  Arrow function has a complexity of 2. Maximum allowed is 1                        complexity
+  143:1   warning  Function 'validarFechamentoAdmin' has a complexity of 6. Maximum allowed is 1     complexity
+FechamentoService.js
+   24:1   warning  Async function 'fecharChamado' has a complexity of 9. Maximum allowed is 1            complexity
+   39:22  warning  Async arrow function has a complexity of 8. Maximum allowed is 1                      complexity
+   75:1   warning  Async function 'buscarOperacaoDoChamado' has a complexity of 3. Maximum allowed is 1  complexity
+   84:1   warning  Function 'configuracaoDoPoste' has a complexity of 5. Maximum allowed is 1            complexity
+   93:1   warning  Function 'montarRegistroFechamento' has a complexity of 4. Maximum allowed is 1       complexity
+  112:1   warning  Async function 'fecharChamadoAdmin' has a complexity of 5. Maximum allowed is 1       complexity
+  122:22  warning  Async arrow function has a complexity of 11. Maximum allowed is 1                     complexity
+tecnico-index.js
+    1:1  warning  Async function 'fecharChamado' has a complexity of 55. Maximum allowed is 1  complexity
+  177:1  warning  Async function 'flushQueue' has a complexity of 9. Maximum allowed is 1      complexity
+  205:1  warning  Function 'apiFetchTO' has a complexity of 6. Maximum allowed is 1            complexity

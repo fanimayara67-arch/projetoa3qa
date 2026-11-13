@@ -96,8 +96,9 @@ test('Aplicação FechamentoService: fecha chamado, debita estoque e atualiza po
       tecnicoId: 7,
       dados: {
         operacao_id: 'op-uuid-123',
-        status: 'Resolvido',
+        status: 'Concluído',
         servico: 'Troca de reator e lâmpada',
+        foto_reparo_base64: 'data:image/jpeg;base64,AAAA', lat: -10.1253, lng: -36.1756, precisao_m: 8,
         materiais_os: [{ nome: 'Reator 100W', quantidade: 1 }],
         config: { luminaria: 'LED 100W' }
       }
@@ -138,8 +139,9 @@ test('Aplicação FechamentoService: bloqueia segundo técnico com 409 Conflito 
           tecnicoId: 8,
           dados: {
             operacao_id: 'op-uuid-segundo-tecnico',
-            status: 'Resolvido',
-            servico: 'Tentativa duplicada'
+            status: 'Concluído',
+            servico: 'Tentativa duplicada',
+            foto_reparo_base64: 'data:image/jpeg;base64,AAAA', lat: -10.1253, lng: -36.1756, precisao_m: 8
           }
         },
         deps

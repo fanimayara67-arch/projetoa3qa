@@ -1,0 +1,83 @@
+# TDD — fase vermelha do UC05 (testes escritos antes das correções)
+# comando: npm run test:uc05
+ok 1 - FO-21 [caixa-preta | integração | RNF03 e CA05] sem sessão válida: 401; perfil sem acesso: 403
+ok 2 - FO-22 [caixa-preta | integração] fechamento válido: 201 com o fechamento; reenvio devolve o mesmo registro
+not ok 3 - FO-23 [caixa-preta | integração | passo 6] sem foto, sem GPS ou com status fora do UC05: 400 e nada gravado
+  error: |-
+  expected: 400
+  actual: 201
+not ok 4 - FO-24 [suposição de erro | integração] data no formato da tela antiga gera 400, não erro interno (500)
+  error: |-
+  expected: 400
+  actual: 500
+not ok 5 - FO-25 [caixa-branca | DEF-02] com a API Node, o fechamento vai para POST /api/chamados/:protocolo/fechamento em JSON com o token no cabeçalho
+  error: 'Função fechamentoParaApiNode não encontrada em /home/claude/repo-novo/projetoa3qa/public/tecnico/index.html'
+not ok 6 - FO-26 [caixa-branca | DEF-02] o corpo segue o contrato da API: operacao_id, materiais {nome, quantidade}, data ISO, poste e precisão
+  error: 'Função fechamentoParaApiNode não encontrada em /home/claude/repo-novo/projetoa3qa/public/tecnico/index.html'
+not ok 7 - FO-27 [suposição de erro | DEF-02] fechamento antigo da fila, sem operacao_id nem data ISO, ainda é enviado
+  error: 'Função fechamentoParaApiNode não encontrada em /home/claude/repo-novo/projetoa3qa/public/tecnico/index.html'
+not ok 8 - FO-28 [caixa-branca | DEF-02] as respostas da API viram as respostas que a tela já sabe tratar
+  error: 'Função fechamentoParaApiNode não encontrada em /home/claude/repo-novo/projetoa3qa/public/tecnico/index.html'
+not ok 9 - FO-29 [caixa-preta | regressão] com o Apps Script o envio continua igual (text/plain, corpo inalterado)
+  error: 'Função fechamentoParaApiNode não encontrada em /home/claude/repo-novo/projetoa3qa/public/tecnico/index.html'
+not ok 10 - FO-30 [baseada em risco | DEF-07 | A5] um fechamento recusado não trava os seguintes e continua na fila
+  error: |-
+  expected:
+  actual:
+not ok 11 - FO-31 [baseada em risco | DEF-08 | A5] chamado já fechado (resposta "ja_fechado") sai da fila e não trava os outros
+  error: |-
+  expected:
+  actual:
+ok 12 - FO-32 [caixa-branca | cobertura de ramos] sessão expirada e falta de rede interrompem a fila sem apagar nada
+ok 13 - FO-01 [caixa-preta | partição válida] fechamento completo do passo 6 é aceito
+ok 14 - FO-02 [caixa-preta | partição inválida] sem operacao_id, status ou serviço o fechamento é recusado
+not ok 15 - FO-03 [caixa-preta | partição inválida | passo 6] sem foto do reparo o fechamento é recusado
+  error: |-
+  expected: false
+  actual: true
+not ok 16 - FO-04 [caixa-preta | tabela de decisão | passo 3] só os quatro status do UC05 são aceitos
+  error: |-
+  expected: false
+  actual: true
+not ok 17 - FO-05 [caixa-preta | partição inválida | passo 6 e A4] sem GPS válido o fechamento é recusado
+  error: |-
+  expected: false
+  actual: true
+not ok 18 - FO-06 [caixa-preta | valor-limite | A4] região: bordas aceitas, um passo fora recusado
+  error: |-
+  expected: false
+  actual: true
+not ok 19 - FO-07 [caixa-preta | valor-limite | passo 6 e A4] precisão do GPS até 100 m
+  error: |-
+  expected: false
+  actual: true
+ok 20 - FO-08 [caixa-preta | tabela de decisão | passo 4 e CA04] materiais da OS
+not ok 21 - FO-09 [suposição de erro] item nulo na lista de materiais é recusado, sem erro interno
+  error: |-
+  actual:
+  error: "Cannot read properties of null (reading 'nome')"
+not ok 22 - FO-10 [suposição de erro | valor-limite] data do fechamento: ISO aceita; formato brasileiro e texto recusados
+  error: |-
+  expected: false
+  actual: true
+not ok 23 - FO-11 [caixa-preta | valor-limite] referência do local: 255 caracteres aceitos, 256 recusados
+  error: |-
+  expected: false
+  actual: true
+ok 24 - FO-12 [caixa-preta | partição válida | passo 7] grava o fechamento, fecha o chamado, baixa o estoque e atualiza o poste
+ok 25 - FO-13 [baseada em risco | CA04 "uma única vez"] reenvio da mesma operação devolve o mesmo fechamento sem baixar o estoque de novo
+ok 26 - FO-14 [baseada em risco | concorrência] chamado já fechado gera 409; chamado inexistente gera 404
+not ok 27 - FO-15 [baseada em risco | idempotência] operacao_id já usada em outro chamado não fecha este nem finge sucesso
+  error: 'Missing expected rejection.'
+  expected:
+not ok 28 - FO-16 [baseada em risco | CA04] material repetido na lista: o estoque e a OS registram a mesma quantidade
+  error: |-
+  expected: 5
+  actual: 3
+ok 29 - FO-17 [baseada em risco | atomicidade] saldo insuficiente: 409 e nada fica gravado
+ok 30 - FO-18 [baseada em risco | atomicidade] material que não existe no almoxarifado: 404 e nada fica gravado
+ok 31 - FO-19 [caixa-branca | cobertura de ramos] poste: o informado pelo técnico, o do chamado ou nenhum
+ok 32 - FO-20 [caixa-branca | cobertura de ramos] dados inválidos não abrem transação nem gravam a foto
+# tests 32
+# pass 13
+# fail 19
