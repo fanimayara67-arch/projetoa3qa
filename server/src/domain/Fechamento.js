@@ -43,6 +43,13 @@ function validarFechamentoCampo(dados) {
     erros.push('Foto do reparo é obrigatória.');
   }
   erros.push(...errosDeLocalizacao(dados));
+  // A data é opcional (sem ela vale a hora do servidor), mas se vier precisa ser uma data ISO válida.
+  // A tela antiga mandava "13/11/2026, 10:30", que o MySQL recusa com erro interno.
+  if (dados.data_fechamento !== undefined && dados.data_fechamento !== null && dados.data_fechamento !== ''
+      && (typeof dados.data_fechamento !== 'string' || !/^\d{4}-\d{2}-\d{2}T/.test(dados.data_fechamento)
+        || Number.isNaN(Date.parse(dados.data_fechamento)))) {
+    erros.push('Data do fechamento inválida (use o formato ISO, ex.: 2026-11-13T12:00:00.000Z).');
+  }
   if (Array.isArray(dados.materiais_os)) {
     for (const mat of dados.materiais_os) {
       if (!mat || typeof mat !== 'object') {
