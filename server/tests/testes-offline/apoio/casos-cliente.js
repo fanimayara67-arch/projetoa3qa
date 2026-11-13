@@ -423,7 +423,8 @@ function registrarCasosCliente(test, servidor) {
     assert.deepEqual(registro.envios, ['IC-1'], 'a trava foi liberada');
   });
 
-  test(`${id(41)} flushQueue (técnico): erro do servidor em um fechamento não trava os seguintes`, { todo: 'Defeito DEF-07 — a fila do técnico para no primeiro erro' }, async () => {
+  // DEF-07 corrigido no UC05.
+  test(`${id(41)} flushQueue (técnico): erro do servidor em um fechamento não trava os seguintes`, async () => {
     const { ctx, registro } = filaT({
       itens: ['IC-RUIM', 'IC-2', 'IC-3'],
       responder: (p) => (p.protocolo === 'IC-RUIM' ? fila.erro : fila.aceito)

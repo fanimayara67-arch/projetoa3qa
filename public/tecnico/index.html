@@ -1228,15 +1228,15 @@
         for (const rec of all) {
           try {
             const resp = await apiFetchTO(rec.payload, 40000);
-            if (resp && resp.success) {
+            if (resp && (resp.success || resp.error === 'ja_fechado')) {
+              // "ja_fechado": um envio anterior cuja resposta se perdeu (ou outro técnico) já fechou
+              // o chamado; não há o que reenviar (DEF-08).
               await queueDelete(rec.id);
             } else if (resp && resp.error === 'sessao_expirada') {
               // Não adianta insistir — vai precisar de PIN novo online
               break;
-            } else {
-              // Erro do servidor — tenta de novo na próxima rodada
-              break;
             }
+            // Outro erro do servidor: o item fica na fila, mas não impede o envio dos próximos (DEF-07).
           } catch (e) {
             // Erro de rede — interrompe (volta quando voltar conexão)
             break;

@@ -15,7 +15,8 @@ const { criarServidorTeste } = require('../../apoio/servidor-teste');
 
 registrarCasosCliente(test, 'apps-script');
 
-test('CBA-50 flushQueue (técnico): reenvio que o script responde "ja_fechado" deve sair da fila', { todo: 'Defeito DEF-08 — fechamento já registrado trava a fila para sempre' }, async () => {
+// DEF-08 corrigido no UC05.
+test('CBA-50 flushQueue (técnico): reenvio que o script responde "ja_fechado" deve sair da fila', async () => {
   // Preparação: o fechamento chegou ao servidor, mas a resposta se perdeu; o item ficou na fila.
   const { ctx, banco } = d.montarFilaTecnico({
     itens: ['IC-JA-FECHADO', 'IC-2'],
