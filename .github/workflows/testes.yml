@@ -37,10 +37,10 @@ jobs:
 
     steps:
       - name: Baixar o código
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Instalar o Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: 22
           cache: npm
@@ -55,6 +55,13 @@ jobs:
       # como UUID), por isso não é aplicada aqui.
       - name: Preparar o banco de teste
         run: node server/scripts/setup-auth-mysql.js
+
+      # O public/shared/config.js não fica no git: é gerado pelo build a partir das variáveis.
+      # Os testes CT-07 a CT-09 verificam esse arquivo.
+      - name: Gerar o config.js do front
+        run: npm run build
+        env:
+          ILUMINA_API_URL: http://localhost:3001
 
       - name: Rodar os testes
         run: npm test
