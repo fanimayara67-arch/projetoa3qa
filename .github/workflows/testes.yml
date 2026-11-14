@@ -1,0 +1,60 @@
+# Roda toda a suíte de testes a cada push no main e a cada PR para o main.
+# O resultado aparece no PR como um check (✅ passou / ❌ falhou).
+name: Testes
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  testes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    # MySQL temporário, criado vazio a cada execução e apagado no fim.
+    # Usado pelos testes que fazem login e consultas no banco de verdade.
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: 123456   # banco descartável do CI, não é um segredo real
+          MYSQL_DATABASE: db_iluminacao
+        ports: ["3306:3306"]
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -p123456"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=20
+
+    env:
+      DB_HOST: 127.0.0.1
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: 123456
+      DB_NAME: db_iluminacao
+
+    steps:
+      - name: Baixar o código
+        uses: actions/checkout@v4
+
+      - name: Instalar o Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: server/package-lock.json
+
+      - name: Instalar dependências do servidor
+        run: npm ci --prefix server
+
+      # Cria as tabelas de login (usuarios, sessoes, tentativas_login) e o técnico de teste com PIN 0123,
+      # que é o que os testes com banco de verdade usam.
+      # Obs.: a migration 001_inicial_mysql.sql ainda não roda num MySQL vazio (tem tipos do PostgreSQL,
+      # como UUID), por isso não é aplicada aqui.
+      - name: Preparar o banco de teste
+        run: node server/scripts/setup-auth-mysql.js
+
+      - name: Rodar os testes
+        run: npm test
