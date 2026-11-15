@@ -3786,6 +3786,8 @@
     }
 function logoutTecnico() {
       limparSessao();
+      pinBuffer = '';
+      updateDots();
       showScreen('pin');
       showToast('Logout efetuado. Faça login novamente.', 'err');
     }
