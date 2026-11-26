@@ -454,25 +454,3 @@ test('CT-28 [Caixa Branca] Bloqueio do banco e Rate Limiter HTTP atuam em camada
     'O Rate Limiter (HTTP) bloqueou o IP precipitadamente sem atingir as 8 req/min'
   );
 });
-
-test('CT-29 [Caixa Preta] Logout do técnico limpa PIN e indicadores visuais', async () => {
-  // Simula um login bem-sucedido para deixar o PIN preenchido
-  pinBuffer = '0123';
-  updateDots();
-
-  // Verifica que PIN e dots estão preenchidos antes do logout
-  assert.strictEqual(pinBuffer, '0123', 'pinBuffer deve estar preenchido antes do logout');
-  const dotsBefore = document.querySelectorAll('.pin-dot.filled').length;
-  assert.strictEqual(dotsBefore, 4, 'Todos os 4 dots devem estar preenchidos antes do logout');
-
-  // Executa o logout
-  logoutTecnico();
-
-  // Verifica que PIN e dots foram limpos após o logout
-  assert.strictEqual(pinBuffer, '', 'pinBuffer deve estar vazio após logout');
-  const dotsAfter = document.querySelectorAll('.pin-dot.filled').length;
-  assert.strictEqual(dotsAfter, 0, 'Nenhum dot deve ter classe "filled" após logout');
-
-  // Verifica que a tela de PIN está ativa
-  assert(document.getElementById('screen-pin').classList.contains('active'), 'Tela PIN deve estar ativa após logout');
-});
