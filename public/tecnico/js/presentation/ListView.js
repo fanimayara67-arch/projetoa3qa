@@ -3,6 +3,8 @@
  * Renderiza a lista de chamados abertos e contadores estatísticos no painel técnico.
  */
 
+import { registroParaTela } from '../domain/Ticket.js';
+
 export class ListView {
   constructor(doc = typeof document !== 'undefined' ? document : null) {
     this.doc = doc;
@@ -13,14 +15,8 @@ export class ListView {
   }
 
   prepararRegistros(registros) {
-    return registros.map(registro => ({
-      ...registro,
-      status: ['aberto', 'em_atendimento'].includes(registro.status) ? 'Aguardando atendimento'
-        : registro.status === 'fechado' ? 'Concluído' : registro.status,
-      data: registro.criadoEm ? new Date(registro.criadoEm).toLocaleString('pt-BR') : '',
-      foto_thumb: registro.fotoUrl || '',
-      foto: registro.fotoUrl || ''
-    }));
+    // A mesma conversão serve à busca por protocolo (AcoesApiNode.js).
+    return registros.map(registroParaTela);
   }
 
   atualizarEstatisticas({ total = '—', atendidos = '—', abertos = '—' } = {}) {
