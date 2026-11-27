@@ -1,0 +1,11 @@
+▶ App do cidadão → API Node → MySQL
+  ✔ SEL-03 Link com parâmetros (ex.: compartilhado no WhatsApp) abre o app sem internet (16848.9203ms)
+✔ App do cidadão → API Node → MySQL (80163.4066ms)
+ℹ tests 1
+ℹ suites 1
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 81230.6719

@@ -12,7 +12,8 @@
     "test": "node --test --experimental-test-coverage",
     "test:coverage": "node --test --experimental-test-coverage",
     "test:uc01": "node --test \"server/tests/reportar-defeito/*.test.js\"",
-    "test:uc05": "node --test \"server/tests/fechar-os/*.test.js\""
+    "test:uc05": "node --test \"server/tests/fechar-os/*.test.js\"",
+    "test:selenium": "node --test --test-concurrency=1 --test-reporter=spec server/tests/integracao-selenium/integracao.selenium.js"
   },
   "engines": {
     "node": ">=18"

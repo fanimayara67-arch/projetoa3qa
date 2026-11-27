@@ -1,0 +1,96 @@
+
+> ilumina-coruripe@2.0.0 test:selenium
+> node --test --test-concurrency=1 --test-reporter=spec server/tests/integracao-selenium/integracao.selenium.js
+
+▶ App do cidadão → API Node → MySQL
+  ✖ SEL-01 Reporte feito com internet é gravado no MySQL (28037.4191ms)
+  ✖ SEL-02 Reporte feito sem internet fica no aparelho e chega ao MySQL quando a internet volta (39596.462ms)
+  ✖ SEL-03 Link com parâmetros (ex.: compartilhado no WhatsApp) abre o app sem internet (19311.2528ms)
+✖ App do cidadão → API Node → MySQL (172380.5245ms)
+▶ Painel do técnico → API Node → MySQL
+  ✔ SEL-04 Login do técnico pelo PIN abre o painel e grava a sessão no MySQL (3445.3313ms)
+  ✔ SEL-05 A lista do painel mostra exatamente os chamados abertos do MySQL (196.9819ms)
+  ✔ SEL-06 Fechamento feito com internet é gravado no MySQL e fecha o chamado (7399.091ms)
+  ✔ SEL-07 Fechamento feito sem internet fica no aparelho e é gravado uma vez quando a internet volta (8107.4115ms)
+  ✔ SEL-08 Técnico comum não consegue fazer fechamento administrativo (2472.7259ms)
+  ✔ SEL-09 Logout limpa o PIN e o técnico consegue entrar de novo sem recarregar (5282.982ms)
+✔ Painel do técnico → API Node → MySQL (38133.3589ms)
+▶ Gestor e almoxarifado → API Node → MySQL
+  ✔ SEL-10 PIN errado é recusado e a tentativa fica registrada no MySQL (6912.9143ms)
+  ✔ SEL-11 Gestor fecha um chamado administrativamente e o MySQL registra o fechamento sem baixa de estoque (8803.3087ms)
+  ✖ SEL-12 Relatório de postes mostra os postes cadastrados no MySQL (15812.7932ms)
+  ✖ SEL-13 Almoxarife entra com o PIN e vê o estoque do MySQL (12920.0057ms)
+✖ Gestor e almoxarifado → API Node → MySQL (64445.9155ms)
+ℹ tests 13
+ℹ suites 3
+ℹ pass 8
+ℹ fail 5
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 277554.7592
+
+✖ failing tests:
+
+test at server\tests\integracao-selenium\integracao.selenium.js:44:3
+✖ SEL-01 Reporte feito com internet é gravado no MySQL (28037.4191ms)
+  AssertionError [ERR_ASSERTION]: a tela mostrou "Salvo sem sinal"
+  + actual - expected
+  
+  + 'Salvo sem sinal'
+  - 'Reporte enviado'
+  
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'Salvo sem sinal',
+    expected: 'Reporte enviado',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at server\tests\integracao-selenium\integracao.selenium.js:44:3
+✖ SEL-02 Reporte feito sem internet fica no aparelho e chega ao MySQL quando a internet volta (39596.462ms)
+  AssertionError [ERR_ASSERTION]: com a internet de volta o protocolo deveria estar 1 vez no MySQL (está 0)
+  
+  0 !== 1
+  
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at server\tests\integracao-selenium\integracao.selenium.js:44:3
+✖ SEL-03 Link com parâmetros (ex.: compartilhado no WhatsApp) abre o app sem internet (19311.2528ms)
+  AssertionError [ERR_ASSERTION]: sem internet o link com parâmetros mostrou a página de erro do navegador
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at server\tests\integracao-selenium\integracao.selenium.js:44:3
+✖ SEL-12 Relatório de postes mostra os postes cadastrados no MySQL (15812.7932ms)
+  AssertionError [ERR_ASSERTION]: o relatório não abriu; aviso na tela: "Não foi possível carregar."
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at server\tests\integracao-selenium\integracao.selenium.js:44:3
+✖ SEL-13 Almoxarife entra com o PIN e vê o estoque do MySQL (12920.0057ms)
+  AssertionError [ERR_ASSERTION]: a área do almoxarifado não abriu; aviso na tela: "PIN incorreto."
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

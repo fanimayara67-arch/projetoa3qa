@@ -1,0 +1,565 @@
+{
+  "ferramenta": "Selenium WebDriver 4.51.0 (Node.js v24.16.0) + Google Chrome sem janela",
+  "executadoEm": "2026-11-27T03:31:39.636Z",
+  "ambiente": {
+    "chamadosSemeados": [
+      "IC-261127-SEL01",
+      "IC-261127-SEL02",
+      "IC-261127-SEL03",
+      "IC-261127-SEL04"
+    ],
+    "inicio": "2026-11-27T03:31:39.636Z",
+    "servidor": "http://localhost:53659",
+    "banco": "db_iluminacao_selenium em 127.0.0.1:3307"
+  },
+  "total": 13,
+  "aprovados": 8,
+  "reprovados": 5,
+  "casos": [
+    {
+      "id": "SEL-01",
+      "titulo": "Reporte feito com internet é gravado no MySQL",
+      "requisito": "UC01 fluxo principal; RF01",
+      "dado": "o cidadão abriu o app com internet",
+      "quando": "preenche GPS, tipo, foto e descrição e toca em Enviar",
+      "entao": "vê \"Reporte enviado\" e o chamado aparece na tabela chamados com status aberto",
+      "obtido": {
+        "tela": "Salvo sem sinal",
+        "protocolo": "IC-261127-CR161",
+        "filaDoAparelho": 1,
+        "pedidoApi": {
+          "metodo": "POST",
+          "caminho": "/api/chamados",
+          "tipo": "application/x-www-form-urlencoded;charset=UTF-8"
+        }
+      },
+      "banco": {
+        "chamado": null
+      },
+      "capturas": [
+        "SEL-01-formulario.png",
+        "SEL-01-depois-de-enviar.png"
+      ],
+      "resultado": "Reprovado",
+      "erro": "a tela mostrou \"Salvo sem sinal\"",
+      "duracaoMs": 28040
+    },
+    {
+      "id": "SEL-02",
+      "titulo": "Reporte feito sem internet fica no aparelho e chega ao MySQL quando a internet volta",
+      "requisito": "UC01-A1; UC03 fluxo principal; RF02; CA03",
+      "dado": "o app já foi aberto uma vez e o cidadão está sem internet",
+      "quando": "faz o reporte e depois a internet volta",
+      "entao": "o reporte fica na fila do aparelho e, com internet, é gravado uma única vez no MySQL e sai da fila",
+      "obtido": {
+        "tela": "Salvo sem sinal",
+        "protocolo": "IC-261127-HNLS5",
+        "filaSemInternet": 1,
+        "noBancoSemInternet": 0,
+        "filaDepois": 1,
+        "tentativasNaFila": 1
+      },
+      "banco": {
+        "registrosDoProtocolo": 0
+      },
+      "capturas": [
+        "SEL-02-salvo-sem-internet.png",
+        "SEL-02-depois-da-internet-voltar.png"
+      ],
+      "resultado": "Reprovado",
+      "erro": "com a internet de volta o protocolo deveria estar 1 vez no MySQL (está 0)",
+      "duracaoMs": 39596
+    },
+    {
+      "id": "SEL-03",
+      "titulo": "Link com parâmetros (ex.: compartilhado no WhatsApp) abre o app sem internet",
+      "requisito": "RNF01 (DEF-14)",
+      "dado": "o app já foi aberto uma vez",
+      "quando": "o cidadão, sem internet, abre /?utm_source=whatsapp",
+      "entao": "o formulário de reporte aparece",
+      "obtido": {
+        "abriuOApp": false,
+        "erroDoNavegador": null
+      },
+      "banco": {},
+      "capturas": [
+        "SEL-03-link-sem-internet.png"
+      ],
+      "resultado": "Reprovado",
+      "erro": "sem internet o link com parâmetros mostrou a página de erro do navegador",
+      "duracaoMs": 19311
+    },
+    {
+      "id": "SEL-04",
+      "titulo": "Login do técnico pelo PIN abre o painel e grava a sessão no MySQL",
+      "requisito": "UC04 fluxo principal; RF03",
+      "dado": "existe um técnico ativo com PIN 0123",
+      "quando": "ele digita o PIN no teclado do painel",
+      "entao": "o painel abre e uma nova sessão é gravada na tabela sessoes",
+      "obtido": {
+        "telaAtiva": "screen-home"
+      },
+      "banco": {
+        "sessoesAntes": 0,
+        "sessoesDepois": 1
+      },
+      "capturas": [
+        "SEL-04-painel.png"
+      ],
+      "resultado": "Aprovado",
+      "erro": null,
+      "duracaoMs": 3445
+    },
+    {
+      "id": "SEL-05",
+      "titulo": "A lista do painel mostra exatamente os chamados abertos do MySQL",
+      "requisito": "UC05 pré-condição; RF04",
+      "dado": "há chamados abertos na tabela chamados",
+      "quando": "o técnico está no painel",
+      "entao": "cada chamado aberto do banco aparece na lista, e nenhum outro",
+      "obtido": {
+        "naTela": [
+          "IC-261127-SEL01",
+          "IC-261127-SEL02",
+          "IC-261127-SEL03",
+          "IC-261127-SEL04"
+        ]
+      },
+      "banco": {
+        "abertos": [
+          "IC-261127-SEL01",
+          "IC-261127-SEL02",
+          "IC-261127-SEL03",
+          "IC-261127-SEL04"
+        ]
+      },
+      "capturas": [
+        "SEL-05-lista.png"
+      ],
+      "resultado": "Aprovado",
+      "erro": null,
+      "duracaoMs": 197
+    },
+    {
+      "id": "SEL-06",
+      "titulo": "Fechamento feito com internet é gravado no MySQL e fecha o chamado",
+      "requisito": "UC05 fluxo principal; RF04; CA04",
+      "dado": "o chamado IC-261127-SEL01 está aberto",
+      "quando": "o técnico preenche o fechamento (serviço, configuração do poste, GPS e foto) e confirma",
+      "entao": "aparece a tela de sucesso, existe 1 fechamento no MySQL e o chamado deixa de estar aberto",
+      "obtido": {
+        "fim": "tela-sucesso",
+        "titulo": "Chamado fechado!",
+        "toast": ""
+      },
+      "banco": {
+        "fechamentos": [
+          {
+            "status": "Concluído",
+            "administrativo": 0
+          }
+        ],
+        "statusDoChamado": "fechado"
+      },
+      "capturas": [
+        "SEL-06-formulario-preenchido.png",
+        "SEL-06-resultado.png"
+      ],
+      "resultado": "Aprovado",
+      "erro": null,
+      "duracaoMs": 7398
+    },
+    {
+      "id": "SEL-07",
+      "titulo": "Fechamento feito sem internet fica no aparelho e é gravado uma vez quando a internet volta",
+      "requisito": "UC05-A5; CA03; CA04",
+      "dado": "o técnico está no painel e perde a internet",
+      "quando": "fecha o IC-261127-SEL02 e depois a internet volta",
+      "entao": "o fechamento fica na fila do aparelho e, com internet, é gravado uma única vez no MySQL",
+      "obtido": {
+        "tela": "Salvo no aparelho",
+        "filaSemInternet": 1,
+        "noBancoSemInternet": 0,
+        "filaDepois": 0
+      },
+      "banco": {
+        "fechamentosDoChamado": 1
+      },
+      "capturas": [
+        "SEL-07-formulario-preenchido.png",
+        "SEL-07-salvo-sem-internet.png",
+        "SEL-07-depois-da-internet-voltar.png"
+      ],
+      "resultado": "Aprovado",
+      "erro": null,
+      "duracaoMs": 8107
+    },
+    {
+      "id": "SEL-08",
+      "titulo": "Técnico comum não consegue fazer fechamento administrativo",
+      "requisito": "Regra de perfil: só o gestor fecha administrativamente",
+      "dado": "o técnico (perfil tecnico) está logado",
+      "quando": "abre o Ambiente Gestor e toca em fechar administrativamente",
+      "entao": "o painel recusa e nenhum fechamento administrativo é gravado",
+      "obtido": {
+        "aviso": "Somente o gestor pode fechar administrativamente.",
+        "modalAberto": false
+      },
+      "banco": {
+        "administrativosAntes": 0,
+        "administrativosDepois": 0
+      },
+      "capturas": [
+        "SEL-08-recusado.png"
+      ],
+      "resultado": "Aprovado",
+      "erro": null,
+      "duracaoMs": 2472
+    },
+    {
+      "id": "SEL-09",
+      "titulo": "Logout limpa o PIN e o técnico consegue entrar de novo sem recarregar",
+      "requisito": "UC04; correção do PR #14 (CT-29)",
+      "dado": "o técnico está logado",
+      "quando": "toca em Sair e digita o PIN de novo",
+      "entao": "a tela do PIN aparece com os pontos vazios e o novo login abre o painel e grava outra sessão",
+      "obtido": {
+        "pontosPreenchidosAposLogout": 0,
+        "entrouDeNovo": true
+      },
+      "banco": {
+        "sessoesAntes": 1,
+        "sessoesDepois": 2
+      },
+      "capturas": [
+        "SEL-09-pin-depois-do-logout.png"
+      ],
+      "resultado": "Aprovado",
+      "erro": null,
+      "duracaoMs": 5282
+    },
+    {
+      "id": "SEL-10",
+      "titulo": "PIN errado é recusado e a tentativa fica registrada no MySQL",
+      "requisito": "UC04-A2; proteção contra força bruta",
+      "dado": "o painel está na tela do PIN",
+      "quando": "alguém digita o PIN 9999",
+      "entao": "aparece \"PIN incorreto\", o painel não abre e a tentativa é gravada em tentativas_login",
+      "obtido": {
+        "mensagem": "PIN incorreto.",
+        "painelAbriu": false
+      },
+      "banco": {
+        "tentativasAntes": 2,
+        "tentativasDepois": 3
+      },
+      "capturas": [
+        "SEL-10-pin-incorreto.png"
+      ],
+      "resultado": "Aprovado",
+      "erro": null,
+      "duracaoMs": 6913
+    },
+    {
+      "id": "SEL-11",
+      "titulo": "Gestor fecha um chamado administrativamente e o MySQL registra o fechamento sem baixa de estoque",
+      "requisito": "Fechamento administrativo (Sprint 2); CA04",
+      "dado": "o gestor (PIN 0456) está logado e o IC-261127-SEL03 está aberto",
+      "quando": "abre o fechamento administrativo, escolhe o chamado, informa quem avisou e a justificativa e confirma",
+      "entao": "aparece a confirmação, o MySQL tem 1 fechamento administrativo do chamado e o estoque não muda",
+      "obtido": {
+        "confirmacao": "Fechar o chamado IC-261127-SEL03 administrativamente?",
+        "aviso": "Chamado IC-261127-SEL03 fechado administrativamente."
+      },
+      "banco": {
+        "fechamentos": [
+          {
+            "status": "Concluído",
+            "administrativo": 1,
+            "informante": "Morador da rua (telefone)"
+          }
+        ],
+        "statusDoChamado": "fechado",
+        "saldoAntes": 50,
+        "saldoDepois": 50
+      },
+      "capturas": [
+        "SEL-11-formulario.png",
+        "SEL-11-resultado.png"
+      ],
+      "resultado": "Aprovado",
+      "erro": null,
+      "duracaoMs": 8803
+    },
+    {
+      "id": "SEL-12",
+      "titulo": "Relatório de postes mostra os postes cadastrados no MySQL",
+      "requisito": "Relatórios do gestor",
+      "dado": "há 3 postes cadastrados no MySQL e o gestor está no Ambiente Gestor",
+      "quando": "toca em \"Gerar relatório\" de postes",
+      "entao": "abre o relatório com os 3 postes",
+      "obtido": {
+        "abriuRelatorio": false,
+        "postesNoRelatorio": [],
+        "aviso": "Não foi possível carregar."
+      },
+      "banco": {
+        "postes": [
+          "P-0101",
+          "P-0102",
+          "P-0103"
+        ]
+      },
+      "capturas": [
+        "SEL-12-sem-relatorio.png"
+      ],
+      "resultado": "Reprovado",
+      "erro": "o relatório não abriu; aviso na tela: \"Não foi possível carregar.\"",
+      "duracaoMs": 15812
+    },
+    {
+      "id": "SEL-13",
+      "titulo": "Almoxarife entra com o PIN e vê o estoque do MySQL",
+      "requisito": "Gestão de material (almoxarifado)",
+      "dado": "existe um almoxarife com PIN 0789 e o item \"Lâmpada LED 100W (teste)\" no estoque",
+      "quando": "abre Gestão de Material e entra com o PIN",
+      "entao": "a área do almoxarifado abre e lista o item do MySQL",
+      "obtido": {
+        "entrou": false,
+        "listaItem": false,
+        "aviso": "PIN incorreto.",
+        "pedidosDoLogin": [
+          {
+            "metodo": "POST",
+            "caminho": "/api",
+            "tipo": "text/plain;charset=utf-8"
+          },
+          {
+            "metodo": "POST",
+            "caminho": "/api",
+            "tipo": "text/plain;charset=utf-8"
+          }
+        ]
+      },
+      "banco": {
+        "itens": [
+          {
+            "nome": "Lâmpada LED 100W (teste)",
+            "saldo": "50.00"
+          }
+        ]
+      },
+      "capturas": [
+        "SEL-13-almoxarifado.png"
+      ],
+      "resultado": "Reprovado",
+      "erro": "a área do almoxarifado não abriu; aviso na tela: \"PIN incorreto.\"",
+      "duracaoMs": 12920
+    }
+  ],
+  "bancoAoFinal": {
+    "chamados": [
+      {
+        "protocolo": "IC-261127-SEL01",
+        "tipo": "apagado",
+        "status": "fechado",
+        "poste_id": null
+      },
+      {
+        "protocolo": "IC-261127-SEL02",
+        "tipo": "piscando",
+        "status": "fechado",
+        "poste_id": null
+      },
+      {
+        "protocolo": "IC-261127-SEL03",
+        "tipo": "queimada",
+        "status": "fechado",
+        "poste_id": null
+      },
+      {
+        "protocolo": "IC-261127-SEL04",
+        "tipo": "apagado",
+        "status": "aberto",
+        "poste_id": null
+      }
+    ],
+    "fechamentos": [
+      {
+        "status": "Concluído",
+        "administrativo": 0,
+        "informante": null,
+        "protocolo": "IC-261127-SEL01"
+      },
+      {
+        "status": "Concluído",
+        "administrativo": 0,
+        "informante": null,
+        "protocolo": "IC-261127-SEL02"
+      },
+      {
+        "status": "Concluído",
+        "administrativo": 1,
+        "informante": "Morador da rua (telefone)",
+        "protocolo": "IC-261127-SEL03"
+      }
+    ],
+    "sessoes": 3,
+    "tentativas_login": [
+      {
+        "perfil": "tecnico",
+        "sucesso": 1,
+        "ip": "127.0.0.1"
+      },
+      {
+        "perfil": "tecnico",
+        "sucesso": 1,
+        "ip": "127.0.0.1"
+      },
+      {
+        "perfil": "tecnico",
+        "sucesso": 0,
+        "ip": "127.0.0.1"
+      },
+      {
+        "perfil": "gestor",
+        "sucesso": 1,
+        "ip": "127.0.0.1"
+      }
+    ],
+    "itens_estoque": [
+      {
+        "nome": "Lâmpada LED 100W (teste)",
+        "saldo": "50.00",
+        "minimo": "5.00"
+      }
+    ]
+  },
+  "pedidosApi": [
+    {
+      "metodo": "POST",
+      "caminho": "/api/chamados",
+      "tipo": "application/json"
+    },
+    {
+      "metodo": "POST",
+      "caminho": "/api/chamados",
+      "tipo": "application/json"
+    },
+    {
+      "metodo": "POST",
+      "caminho": "/api/chamados",
+      "tipo": "application/json"
+    },
+    {
+      "metodo": "POST",
+      "caminho": "/api/chamados",
+      "tipo": "application/json"
+    },
+    {
+      "metodo": "POST",
+      "caminho": "/api/chamados",
+      "tipo": "application/x-www-form-urlencoded;charset=UTF-8"
+    },
+    {
+      "metodo": "POST",
+      "caminho": "/api/chamados",
+      "tipo": "application/x-www-form-urlencoded;charset=UTF-8"
+    },
+    {
+      "metodo": "POST",
+      "caminho": "/api/auth/login",
+      "tipo": "application/json"
+    },
+    {
+      "metodo": "GET",
+      "caminho": "/api/chamados",
+      "tipo": "application/json"
+    },
+    {
+      "metodo": "GET",
+      "caminho": "/api/chamados",
+      "tipo": "application/json"
+    },
+    {
+      "metodo": "POST",
+      "caminho": "/api/chamados/IC-261127-SEL01/fechamento",
+      "tipo": "application/json"
+    },
+    {
+      "metodo": "GET",
+      "caminho": "/api/chamados",
+      "tipo": "application/json"
+    },
+    {
+      "metodo": "GET",
+      "caminho": "/api/chamados",
+      "tipo": "application/json"
+    },
+    {
+      "metodo": "POST",
+      "caminho": "/api/chamados/IC-261127-SEL02/fechamento",
+      "tipo": "application/json"
+    },
+    {
+      "metodo": "GET",
+      "caminho": "/api/chamados",
+      "tipo": "application/json"
+    },
+    {
+      "metodo": "GET",
+      "caminho": "/api/chamados",
+      "tipo": "application/json"
+    },
+    {
+      "metodo": "POST",
+      "caminho": "/api/auth/login",
+      "tipo": "application/json"
+    },
+    {
+      "metodo": "GET",
+      "caminho": "/api/chamados",
+      "tipo": "application/json"
+    },
+    {
+      "metodo": "POST",
+      "caminho": "/api/auth/login",
+      "tipo": "application/json"
+    },
+    {
+      "metodo": "POST",
+      "caminho": "/api/auth/login",
+      "tipo": "application/json"
+    },
+    {
+      "metodo": "GET",
+      "caminho": "/api/chamados",
+      "tipo": "application/json"
+    },
+    {
+      "metodo": "POST",
+      "caminho": "/api/chamados/IC-261127-SEL03/fechamento-admin",
+      "tipo": "application/json"
+    },
+    {
+      "metodo": "GET",
+      "caminho": "/api/chamados",
+      "tipo": "application/json"
+    },
+    {
+      "metodo": "POST",
+      "caminho": "/api",
+      "tipo": "text/plain;charset=utf-8"
+    },
+    {
+      "metodo": "GET",
+      "caminho": "/api/chamados",
+      "tipo": "application/json"
+    },
+    {
+      "metodo": "POST",
+      "caminho": "/api",
+      "tipo": "text/plain;charset=utf-8"
+    }
+  ]
+}
