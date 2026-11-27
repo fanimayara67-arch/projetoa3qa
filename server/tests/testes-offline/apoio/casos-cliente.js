@@ -288,8 +288,8 @@ function registrarCasosCliente(test, servidor) {
 
   const req = (o) => d.montarRequisicaoCidadao({ endpoint: c.endpointCidadao, ...o });
 
+  // DEF-01 (corrigido): era `todo` na API Node — o app enviava formulário sem id.
   test(`${id(26)} postReport: envia ao endereço do ${c.nome} no formato que ele aceita`,
-    ehNode ? { todo: 'Defeito DEF-01 — o app envia formulário sem id; a API Node só aceita JSON com id' } : {},
     async () => {
       const { ctx, registro } = req();
       await ctx.postReport({ protocolo: 'IC-1', tipo: 'apagado' });
