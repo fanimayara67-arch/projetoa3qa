@@ -134,7 +134,9 @@ O código e o Chrome são os mesmos nas duas linhas; só a versão do Playwright
 | CP-19 | ✅ Aprovado |
 | CP-20 | ✅ Aprovado |
 
-A correção foi aplicada só numa cópia descartável, para comprovar a causa. **Ela não está neste PR** e precisa de um PR próprio.
+A correção foi aplicada só numa cópia descartável, para comprovar a causa. **Ela não está neste PR.**
+
+**Atualização (26/11):** a correção foi para o PR da branch `refactor/remove-qr-code`, junto com a remoção do QR Code. Lá o CP-19 passou nos dois cenários: 18 de 30 com a API Node e 25 de 32 com o Apps Script ([relatório da remoção do QR Code](<../../Remoção do QR Code/README.md>), disponível depois do merge daquele PR). Quando aquele PR entrar na `main`, o DEF-14 passa a corrigido.
 
 **Lição para o projeto:** um caso que passava pode virar falso positivo quando a ferramenta muda. Vale registrar a versão do Playwright em toda evidência (os JSON já registram) e repetir a caixa-preta depois de atualizar a ferramenta.
 
