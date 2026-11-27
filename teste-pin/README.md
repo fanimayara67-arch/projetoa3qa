@@ -8,7 +8,7 @@ Este documento registra todos os testes executados ao longo das 6 tarefas de est
 
 | Total Planejado | Total Executado | Status |
 |-----------------|-----------------|-----------|
-| 28              | 28              | Concluído |
+| 29              | 29              | Concluído |
 
 ---
 
@@ -82,7 +82,7 @@ Este documento registra todos os testes executados ao longo das 6 tarefas de est
 | **CT-26** | Liberação do rate limit após janela de tempo | Aprovado | Requisições liberadas após 1 minuto |
 | **CT-27** | Tempo de espera (Lockout) de 15 minutos | Aprovado | Usuário impedido de logar durante a punição |
 | **CT-28** | Recuperação de acesso após bloqueio | Aprovado | Acesso concedido após expirado o tempo de bloqueio |
-
+| **CT-29** | Logout do técnico limpa PIN e indicadores visuais | Aprovado | Logout zera o pinBuffer e remove a classe filled dos pontos d0-d3 |
 ---
 
 ## Tarefa 6 - Validar o fluxo completo e atualizar o PWA

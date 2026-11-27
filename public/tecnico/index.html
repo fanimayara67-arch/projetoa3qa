@@ -41,9 +41,11 @@
       <div class="header-info">
         <h1>Ilumina <em>Coruripe</em></h1>
         <p>Painel do Técnico</p>
-        <button onclick="logoutTecnico()" class="u-background-transparent u-border-1px-solid-line u-color-ink-2 u-font-size-11_5px u-font-weight-600 u-padding-6px-11px u-border-radius-99px u-cursor-pointer u-gap-5px" style="margin-left: 12px;">Sair</button>
       </div>
-      <div class="header-tag" id="tech-name-tag" style="display:none">Técnico</div>
+<div class="header-actions" style="margin-left: auto; display: flex; flex-direction: column; align-items: flex-end; gap: 6px;">
+        <div class="header-tag" id="tech-name-tag" style="display:none">Técnico</div>
+        <button id="btn-logout" onclick="logoutTecnico()" class="u-background-transparent u-border-1px-solid-line u-color-ink-2 u-font-size-11_5px u-font-weight-600 u-padding-6px-11px u-border-radius-99px u-cursor-pointer u-gap-5px">Sair</button>
+      </div>
     </div>
   </header>
 
@@ -1294,11 +1296,11 @@
         } else {
           updateDots(true);
           document.getElementById('pin-error').textContent = 'PIN incorreto. Tente novamente.';
-          setTimeout(() => { pinBuffer = ''; updateDots(); }, 900);
+          setTimeout(() => { pinBuffer = ''; updateDots(); }, 550);
         }
       } catch (e) {
         document.getElementById('pin-error').textContent = e.status ? e.message : 'Sem conexão. Verifique a internet.';
-        setTimeout(() => { pinBuffer = ''; updateDots(); }, 900);
+        setTimeout(() => { pinBuffer = ''; updateDots(); }, 550);
       } finally {
         pinChecking = false;
       }
@@ -3786,6 +3788,8 @@
     }
 function logoutTecnico() {
       limparSessao();
+      pinBuffer = '';
+      updateDots();
       showScreen('pin');
       showToast('Logout efetuado. Faça login novamente.', 'err');
     }
