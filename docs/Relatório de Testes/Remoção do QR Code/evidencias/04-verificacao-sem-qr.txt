@@ -1,0 +1,16 @@
+PASSOU  Q-01 Endereço antigo do QR (/?poste=P-0007) abre o formulário normal — obtido: true
+PASSOU  Q-02 Não existe mais a tela "poste identificado" — obtido: 0
+PASSOU  Q-03 Seção de GPS continua visível (não é escondida por poste) — obtido: true
+PASSOU  Q-04 DEF-14: sem internet, link com parâmetros abre o app — obtido: "abriu"
+PASSOU  Q-05 DEF-14: sem internet, endereço antigo do QR também abre o formulário — obtido: "abriu"
+PASSOU  Q-06 Cidadão não chama check_poste nem link_poste — obtido: 0
+PASSOU  Q-07 Cidadão sem erros de JavaScript — obtido: []
+PASSOU  Q-08 Botão "Ler QR" não existe mais — obtido: 0
+PASSOU  Q-09 Botão "Buscar poste" visível — obtido: true
+PASSOU  Q-10 Modal do leitor de QR não existe — obtido: 0
+PASSOU  Q-11 Card "Folha de QR codes" não existe — obtido: 0
+PASSOU  Q-12 Buscar poste com "p0007" abre a tela de histórico do poste — obtido: true
+PASSOU  Q-13 Nenhum pedido a jsQR.js, qr.css ou ao gerador externo de QR — obtido: []
+PASSOU  Q-14 Técnico sem erros de JavaScript — obtido: []
+
+14 de 14 verificações passaram.

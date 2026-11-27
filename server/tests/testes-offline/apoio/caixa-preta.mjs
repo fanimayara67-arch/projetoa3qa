@@ -83,11 +83,11 @@ async function temTelaDeReporte(page) {
 }
 
 async function passarAbertura(page) {
-  await page.waitForSelector('#screen-splash.active, #screen-report.active, #screen-poste-info.active', { timeout: 15000 });
+  await page.waitForSelector('#screen-splash.active, #screen-report.active', { timeout: 15000 });
   if (await page.locator('#screen-splash.active').count()) {
     // Toca em "Começar" assim que o botão aparece; se a abertura terminar sozinha antes, segue.
     await page.locator('#screen-splash.active .splash-btn').click({ timeout: 8000 }).catch(() => {});
-    await page.waitForSelector('#screen-report.active, #screen-poste-info.active', { timeout: 15000 });
+    await page.waitForSelector('#screen-report.active', { timeout: 15000 });
   }
 }
 
@@ -99,7 +99,6 @@ async function abrirCidadao(ctx, srv, caminho = '/') {
 }
 
 async function preencherReporte(page, { tipo = 'apagado', descricao = 'Teste offline' } = {}) {
-  // Pelo QR do poste a seção de GPS fica escondida (o cidadão está no poste).
   if (await page.isVisible('#gps-btn')) {
     await page.click('#gps-btn');
     await page.waitForSelector('#gps-result.show', { timeout: 15000 });
@@ -136,7 +135,7 @@ async function filaCidadao(page) {
     req.onsuccess = () => {
       const g = req.result.transaction('reports', 'readonly').objectStore('reports').getAll();
       g.onsuccess = () => ok(g.result.map((r) => ({
-        protocolo: r.payload && r.payload.protocolo, poste: r.payload && r.payload.poste_id,
+        protocolo: r.payload && r.payload.protocolo,
         tipo: r.payload && r.payload.tipo, descricao: r.payload && r.payload.descricao, lat: r.payload && r.payload.lat,
         tentativas: r.attempts || 0,
         motivo: r.lastError == null ? null : (typeof r.lastError === 'string' ? r.lastError : JSON.stringify(r.lastError))
@@ -653,33 +652,6 @@ caso({
     try { await page.goto(srv.url + '/?utm_source=whatsapp', { timeout: 10000 }); } catch (e) { erro = e.message.split('\n')[0]; }
     const abriu = await temTelaDeReporte(page);
     return { aprovado: abriu, obtido: abriu ? 'Abriu normalmente.' : `Não abriu: ${erro || 'página de erro do navegador'}.` };
-  }
-});
-
-caso({
-  id: 'CP-20', titulo: 'QR Code do poste lido sem internet segue o reporte com o poste vinculado',
-  requisito: 'UC02-A3', derivacao: 'Fluxo alternativo', tecnica: 'Baseado em requisito',
-  dado: 'o app já foi aberto uma vez', quando: 'o cidadão lê o QR do poste P-0007 sem internet e faz o reporte',
-  entao: 'o app segue o reporte sem a verificação de duplicidade e o reporte fica na fila vinculado ao poste P-0007',
-  async executar({ ctx, srv }) {
-    await abrirCidadao(ctx, srv);
-    await ctx.setOffline(true);
-    const page = await ctx.newPage();
-    await page.goto(srv.url + '/?poste=P-0007');
-    await passarAbertura(page);
-    const telas = await page.evaluate(() => [...document.querySelectorAll('.screen.active')].map((s) => s.id).join(', '));
-    if (await page.locator('#screen-poste-info.active').count()) {
-      await page.locator('#screen-poste-info.active button', { hasText: 'Continuar' }).click({ timeout: 10000 });
-    }
-    const chegou = await page.waitForSelector('#screen-report.active', { timeout: 8000 }).then(() => true, () => false);
-    if (!chegou) return { aprovado: false, obtido: `Depois de ler o QR sem internet o app ficou na tela "${telas}" e não chegou ao formulário.` };
-    await preencherReporte(page);
-    const r = await enviar(page);
-    const [item] = await filaCidadao(page);
-    return {
-      aprovado: Boolean(item) && item.poste === 'P-0007',
-      obtido: `Tela: "${r.titulo}". Item na fila: ${item ? `sim, poste "${item.poste || 'nenhum'}"` : 'não'}.`
-    };
   }
 });
 
