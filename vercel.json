@@ -8,11 +8,6 @@
       "source": "/tecnico",
       "destination": "/tecnico/",
       "permanent": true
-    },
-    {
-      "source": "/p/:id",
-      "destination": "/?poste=:id",
-      "permanent": false
     }
   ],
   "rewrites": [

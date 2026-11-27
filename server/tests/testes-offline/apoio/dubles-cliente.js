@@ -104,11 +104,11 @@ function montarAvisoCidadao(qtd) {
 }
 
 /** buildPayload do cidadão com formulário Stub (para o contrato da mensagem). */
-function montarPayloadCidadao({ poste = '', navegador = 'Teste' } = {}) {
+function montarPayloadCidadao({ navegador = 'Teste' } = {}) {
   const campos = { descricao: '  poste apagado  ', nome: 'Ana', tel: '82999990000', endereco: 'Rua A' };
   return carregar('cidadao', ['buildPayload'], {
     $: (id) => ({ value: campos[id] || '' }),
-    state: { tipo: 'apagado', gps: { lat: -10.12, lng: -36.17, acc: 6.4 }, foto: 'data:image/jpeg;base64,AAAA', poste_id: poste },
+    state: { tipo: 'apagado', gps: { lat: -10.12, lng: -36.17, acc: 6.4 }, foto: 'data:image/jpeg;base64,AAAA' },
     generateProtocol: () => 'IC-261112-ABCDE',
     navigator: { userAgent: navegador }
   });

@@ -1,5 +1,5 @@
 // ILUMINA CORURIPE TÉCNICO — Service Worker
-const CACHE_NAME = 'ilumina-tec-v20-login-pin-e-relatorios-2026-11-13';
+const CACHE_NAME = 'ilumina-tec-v21-sem-qr-2026-11-26';
 const APP_SHELL = [
   './',
   './index.html',
@@ -11,7 +11,6 @@ const APP_SHELL = [
   './print/relatorio.css',
   './print/tentativas.css',
   './print/postes.css',
-  './print/qr.css',
   './print/material.css',
   '../shared/config.js',
   '../shared/infrastructure/config.js',
@@ -43,8 +42,7 @@ const APP_SHELL = [
   './apple-touch-icon.png',
   './favicon.png',
   './leaflet.css',
-  './leaflet.js',
-  './jsQR.js'
+  './leaflet.js'
 ];
 
 async function precache() {

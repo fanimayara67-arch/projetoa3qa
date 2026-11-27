@@ -13,12 +13,6 @@
   to = "/tecnico/"
   status = 301
 
-# Atalho curto para QR impresso: /p/P-0001 → /?poste=P-0001
-[[redirects]]
-  from = "/p/:id"
-  to = "/?poste=:id"
-  status = 302
-
 # Proxy reverso da API REST para o servidor Node.js em Camadas (mesma origem, sem CORS)
 # Em produção, substitua https://api-ilumina-coruripe.onrender.com pela URL real do Node.js
 [[redirects]]

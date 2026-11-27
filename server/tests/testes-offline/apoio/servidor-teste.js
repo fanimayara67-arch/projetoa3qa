@@ -59,8 +59,7 @@ function configJs(cfg) {
     ENDPOINT_TECNICO: ${JSON.stringify(cfg.ENDPOINT_TECNICO)},
     APP_CIDADAO: origin + '/',
     APP_TECNICO: origin + '/tecnico/',
-    HUB_URL: 'https://example.invalid',
-    qrPoste: function (id) { return origin + '/?poste=' + encodeURIComponent(id); }
+    HUB_URL: 'https://example.invalid'
   };
 })(typeof window !== 'undefined' ? window : globalThis);
 `;
@@ -391,8 +390,7 @@ async function tratarAppsScript(req, res, url, estado) {
       if (modo === 'perde-resposta') return cortarResposta(res);
       return json(res, 200, { success: true, protocolo: payload.protocolo });
     }
-    // check_poste, link_poste e demais ações não fazem parte do escopo offline.
-    if (payload.action === 'check_poste') return json(res, 200, { success: true, existe: false });
+    // Demais ações não fazem parte do escopo offline.
     return json(res, 200, { success: true });
   }
 

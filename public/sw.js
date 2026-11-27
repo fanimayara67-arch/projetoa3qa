@@ -1,6 +1,6 @@
 // ILUMINA CORURIPE — CIDADÃO — Service Worker
 // Escopo: "/" — mas NUNCA intercepta "/tecnico/" nem "/api/", que são rotas dinâmicas/separadas.
-const CACHE_NAME = 'ilumina-cidadao-v7-css-separado-2026-11-06';
+const CACHE_NAME = 'ilumina-cidadao-v8-sem-qr-2026-11-26';
 const APP_SHELL = [
   './',
   './index.html',
@@ -57,8 +57,10 @@ self.addEventListener('fetch', (event) => {
   if (url.hostname === 'script.google.com' || url.hostname === 'script.googleusercontent.com') return;
   // App do técnico tem service worker próprio — deixa passar direto
   if (url.origin === self.location.origin && url.pathname.startsWith('/tecnico/')) return;
+  // DEF-14: na navegação, ignora os parâmetros (?utm_source=..., etc.) ao procurar no cache.
+  // Sem isso, /?x=1 não encontra a página salva como / e o app não abre sem internet.
   event.respondWith(
-    caches.match(req).then(cached => {
+    caches.match(req, { ignoreSearch: req.mode === 'navigate' }).then(cached => {
       const network = fetch(req).then(resp => {
         if (resp && resp.status === 200 && resp.type === 'basic') {
           const copy = resp.clone();

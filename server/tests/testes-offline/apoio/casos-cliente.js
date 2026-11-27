@@ -348,15 +348,14 @@ function registrarCasosCliente(test, servidor) {
     assert.equal(ctx.generateProtocol(), 'IC-260105-4FZZZ');
   });
 
-  test(`${id(32)} buildPayload: a mensagem do reporte leva protocolo, tipo, GPS, foto, poste e textos limpos`, () => {
+  test(`${id(32)} buildPayload: a mensagem do reporte leva protocolo, tipo, GPS, foto e textos limpos`, () => {
     const p = { ...d.montarPayloadCidadao().buildPayload() };
-    for (const campo of ['protocolo', 'tipo', 'lat', 'lng', 'acc', 'descricao', 'foto_base64', 'poste_id']) assert.ok(campo in p, `falta ${campo}`);
+    for (const campo of ['protocolo', 'tipo', 'lat', 'lng', 'acc', 'descricao', 'foto_base64']) assert.ok(campo in p, `falta ${campo}`);
     assert.equal(p.acc, 6, 'precisão arredondada');
     assert.equal(p.descricao, 'poste apagado', 'texto sem espaços nas pontas');
-    assert.equal(p.poste_id, '', 'sem QR, poste vazio');
-    const comQr = { ...d.montarPayloadCidadao({ poste: 'P-0007', navegador: 'x'.repeat(200) }).buildPayload() };
-    assert.equal(comQr.poste_id, 'P-0007');
-    assert.equal(comQr.user_agent.length, 180, 'identificação do navegador limitada a 180 caracteres');
+    assert.ok(!('poste_id' in p), 'o QR Code saiu do projeto: a mensagem não leva mais poste');
+    const longo = { ...d.montarPayloadCidadao({ navegador: 'x'.repeat(200) }).buildPayload() };
+    assert.equal(longo.user_agent.length, 180, 'identificação do navegador limitada a 180 caracteres');
   });
 
   /* ═══════════ flushQueue do técnico (V(G) = 8) ═══════════ */
