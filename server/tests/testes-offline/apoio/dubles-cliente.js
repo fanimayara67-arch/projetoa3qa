@@ -51,7 +51,7 @@ function montarFilaCidadao({ itens = [], online = true, endpoint = ENDPOINT_APPS
       return enviar ? enviar(payload) : { ok: true };
     };
   }
-  const ctx = carregar('cidadao', comPostReportReal ? ['flushQueue', 'postReport'] : ['flushQueue'], globais);
+  const ctx = carregar('cidadao', comPostReportReal ? ['flushQueue', 'novoIdReporte', 'postReport'] : ['flushQueue'], globais);
   return { ctx, banco, registro };
 }
 
@@ -77,7 +77,7 @@ function montarEnvioCidadao({ online = true, endpoint = ENDPOINT_APPS_SCRIPT, en
 /** postReport com a rede Stub e temporizador controlado pelo teste. */
 function montarRequisicaoCidadao({ endpoint = ENDPOINT_APPS_SCRIPT, responder } = {}) {
   const registro = { chamadas: [], timers: [], limpos: [] };
-  const ctx = carregar('cidadao', ['postReport'], {
+  const ctx = carregar('cidadao', ['novoIdReporte', 'postReport'], {
     ENDPOINT: endpoint,
     AbortController,
     URLSearchParams,
@@ -106,7 +106,7 @@ function montarAvisoCidadao(qtd) {
 /** buildPayload do cidadão com formulário Stub (para o contrato da mensagem). */
 function montarPayloadCidadao({ navegador = 'Teste' } = {}) {
   const campos = { descricao: '  poste apagado  ', nome: 'Ana', tel: '82999990000', endereco: 'Rua A' };
-  return carregar('cidadao', ['buildPayload'], {
+  return carregar('cidadao', ['novoIdReporte', 'buildPayload'], {
     $: (id) => ({ value: campos[id] || '' }),
     state: { tipo: 'apagado', gps: { lat: -10.12, lng: -36.17, acc: 6.4 }, foto: 'data:image/jpeg;base64,AAAA' },
     generateProtocol: () => 'IC-261112-ABCDE',
