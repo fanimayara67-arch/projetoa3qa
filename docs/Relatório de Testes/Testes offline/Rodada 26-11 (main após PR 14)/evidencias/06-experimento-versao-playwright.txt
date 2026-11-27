@@ -1,0 +1,8 @@
+===== playwright-core 1.56.1
+✔ CP-19 Link com parâmetros (ex.: compartilhado no WhatsApp) abre sem internet — Aprovado
+✔ CP-20 QR Code do poste lido sem internet segue o reporte com o poste vinculado — Aprovado
+===== playwright-core 1.65.1
+✘ CP-19 Link com parâmetros (ex.: compartilhado no WhatsApp) abre sem internet — Reprovado
+   obtido: Não abriu: page.goto: net::ERR_FAILED at http://localhost:49306/?utm_source=whatsapp.
+✘ CP-20 QR Code do poste lido sem internet segue o reporte com o poste vinculado — Erro de execução
+   obtido: Erro ao executar o teste: page.goto: net::ERR_FAILED at http://localhost:49324/?poste=P-0007

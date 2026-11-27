@@ -1,0 +1,9 @@
+Testes: 51 (código de saída 0)
+Mutação: 85 mutantes
+  20/85
+  40/85
+  60/85
+  80/85
+{"total":51,"aprovados":48,"defeitosConfirmados":3,"reprovados":0,"todoQuePassou":0,"codigoDeSaida":0}
+Mutação: 78/85 mortos (91.8%)
+exit=0

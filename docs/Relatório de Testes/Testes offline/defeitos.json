@@ -139,6 +139,16 @@
       "falha": "Sessão expirada é tratada como erro qualquer.",
       "casos": { "api-node": ["cobertura: ramo não executado em flushQueue (técnico)"] },
       "sugestao": "Reconhecer o status 401 / codigo NAO_AUTENTICADO."
+    },
+    {
+      "id": "DEF-14", "severidade": "Alta", "servidores": ["api-node", "apps-script"],
+      "titulo": "Sem internet, o app do cidadão não abre por QR Code do poste nem por link com parâmetros",
+      "requisitos": ["UC02-A3", "RNF01"],
+      "defeito": "O service worker do cidadão procura no cache o endereço exato, com os parâmetros (caches.match(req)). O cache guarda / e /index.html, não /?poste=P-0007; sem internet, respondWith recebe undefined.",
+      "onde": ["public/sw.js:61"],
+      "falha": "Página de erro do navegador (net::ERR_FAILED) no lugar do app. Encontrado na rodada de 26/11; em 12/11 o caso passava porque o Playwright 1.56 não aplicava o offline ao service worker (falso positivo).",
+      "casos": { "api-node": ["CP-19", "CP-20"], "apps-script": ["CP-19", "CP-20"] },
+      "sugestao": "Ignorar os parâmetros nas navegações: caches.match(req, { ignoreSearch: req.mode === \"navigate\" }). Comprovado na rodada de 26/11 (experimento 2)."
     }
   ],
   "observacoes": [

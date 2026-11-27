@@ -84,7 +84,8 @@ Severidade: **Crítica** — a funcionalidade não entrega o que promete; **Alta
 | DEF-10 | Média | ✘ | ✘ | Chamado fechado sem internet pode ser fechado de novo (2 na fila). |
 | DEF-11 | Alta (condicional) | — | ✘ | Sem identificador único, o reenvio vira linha repetida se o script não descartar protocolo repetido. |
 | DEF-12 | Baixa | ✘ | — | O erro da API aparece como "[object Object]". |
-| DEF-13 | Média | ✘ | — | Com a API Node, o técnico não reconhece a sessão expirada (401). |
+| DEF-13 | Média | ✘ | — | Com a API Node, o técnico não reconhece a sessão expirada (401). **Corrigido em 13/11 (UC05).** |
+| DEF-14 | Alta | ✘ | ✘ | Sem internet, o app do cidadão não abre por QR Code do poste nem por link com parâmetros. **Encontrado em 26/11** ([rodada de 26/11](<Rodada 26-11 (main após PR 14)/README.md>)). |
 
 O lugar exato no código, a falha observada e uma sugestão de correção de cada defeito estão em [defeitos.json](defeitos.json).
 
@@ -191,6 +192,10 @@ node server/tests/testes-offline/apoio/anotar-defeitos.mjs
 ```
 
 Os testes não alteram nenhum arquivo do app, não acessam banco real e usam só dados fictícios.
+
+## Rodada de 26/11
+
+Os testes foram repetidos sobre a `main` depois dos merges do UC01, do UC05 e do PR #14. Com a API Node, a caixa-preta subiu de 14 para 17 casos aprovados e a caixa-branca de 78 para 81. A rodada também encontrou o DEF-14 e duas lacunas nos próprios testes. Os números acima continuam sendo os de 12/11; o resultado novo está no [relatório da rodada de 26/11](<Rodada 26-11 (main após PR 14)/README.md>).
 
 ## Rodada anterior
 

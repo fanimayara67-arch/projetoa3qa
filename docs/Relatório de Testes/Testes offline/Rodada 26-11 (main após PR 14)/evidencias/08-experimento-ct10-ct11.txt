@@ -1,0 +1,34 @@
+===== playwright-core 1.56.1
+── api-node · rodada 1 de 3 ──
+✘ CT-10 Sessão expirada com fechamento na fila: nada se perde e o app pede o PIN — Reprovado
+   obtido: Depois da recusa por sessão expirada: 1 item na fila; pediu PIN na hora: não. Ao reabrir, pediu PIN: sim. Depois do novo login: 0 fechamento(s) no servidor e 1 item(ns) na fila.
+✘ CT-11 Chamado fechado sem internet não pode ser fechado de novo — Reprovado
+   obtido: Segunda tentativa: fechamento concluído de novo ("Salvo no aparelho"). Fechamentos do T06 na fila: 2.
+── api-node · rodada 2 de 3 ──
+✘ CT-10 Sessão expirada com fechamento na fila: nada se perde e o app pede o PIN — Reprovado
+   obtido: Depois da recusa por sessão expirada: 1 item na fila; pediu PIN na hora: não. Ao reabrir, pediu PIN: sim. Depois do novo login: 0 fechamento(s) no servidor e 1 item(ns) na fila.
+✘ CT-11 Chamado fechado sem internet não pode ser fechado de novo — Reprovado
+   obtido: Segunda tentativa: fechamento concluído de novo ("Salvo no aparelho"). Fechamentos do T06 na fila: 2.
+── api-node · rodada 3 de 3 ──
+✘ CT-10 Sessão expirada com fechamento na fila: nada se perde e o app pede o PIN — Reprovado
+   obtido: Depois da recusa por sessão expirada: 1 item na fila; pediu PIN na hora: não. Ao reabrir, pediu PIN: sim. Depois do novo login: 0 fechamento(s) no servidor e 1 item(ns) na fila.
+✘ CT-11 Chamado fechado sem internet não pode ser fechado de novo — Reprovado
+   obtido: Segunda tentativa: fechamento concluído de novo ("Salvo no aparelho"). Fechamentos do T06 na fila: 2.
+Total 2 | aprovados 0 | reprovados 2 | erros 0 | instáveis 0
+===== playwright-core 1.65.1
+── api-node · rodada 1 de 3 ──
+✘ CT-10 Sessão expirada com fechamento na fila: nada se perde e o app pede o PIN — Reprovado
+   obtido: Depois da recusa por sessão expirada: 1 item na fila; pediu PIN na hora: não. Ao reabrir, pediu PIN: sim. Depois do novo login: 0 fechamento(s) no servidor e 1 item(ns) na fila.
+✘ CT-11 Chamado fechado sem internet não pode ser fechado de novo — Reprovado
+   obtido: Segunda tentativa: fechamento concluído de novo ("Salvo no aparelho"). Fechamentos do T06 na fila: 2.
+── api-node · rodada 2 de 3 ──
+✘ CT-10 Sessão expirada com fechamento na fila: nada se perde e o app pede o PIN — Reprovado
+   obtido: Depois da recusa por sessão expirada: 1 item na fila; pediu PIN na hora: não. Ao reabrir, pediu PIN: sim. Depois do novo login: 0 fechamento(s) no servidor e 1 item(ns) na fila.
+✘ CT-11 Chamado fechado sem internet não pode ser fechado de novo — Reprovado
+   obtido: Segunda tentativa: fechamento concluído de novo ("Salvo no aparelho"). Fechamentos do T06 na fila: 2.
+── api-node · rodada 3 de 3 ──
+✘ CT-10 Sessão expirada com fechamento na fila: nada se perde e o app pede o PIN — Reprovado
+   obtido: Depois da recusa por sessão expirada: 1 item na fila; pediu PIN na hora: não. Ao reabrir, pediu PIN: sim. Depois do novo login: 0 fechamento(s) no servidor e 1 item(ns) na fila.
+✘ CT-11 Chamado fechado sem internet não pode ser fechado de novo — Erro de execução
+   obtido: Erro ao executar o teste: page.waitForSelector: Timeout 15000ms exceeded.
+Total 2 | aprovados 0 | reprovados 2 | erros 0 | instáveis 1
