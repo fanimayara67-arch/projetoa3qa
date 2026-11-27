@@ -1,0 +1,100 @@
+[
+  {
+    "id": "Q-01",
+    "descricao": "Endereço antigo do QR (/?poste=P-0007) abre o formulário normal",
+    "obtido": true,
+    "esperado": true,
+    "ok": true
+  },
+  {
+    "id": "Q-02",
+    "descricao": "Não existe mais a tela \"poste identificado\"",
+    "obtido": 0,
+    "esperado": 0,
+    "ok": true
+  },
+  {
+    "id": "Q-03",
+    "descricao": "Seção de GPS continua visível (não é escondida por poste)",
+    "obtido": true,
+    "esperado": true,
+    "ok": true
+  },
+  {
+    "id": "Q-04",
+    "descricao": "DEF-14: sem internet, link com parâmetros abre o app",
+    "obtido": "abriu",
+    "esperado": "abriu",
+    "ok": true
+  },
+  {
+    "id": "Q-05",
+    "descricao": "DEF-14: sem internet, endereço antigo do QR também abre o formulário",
+    "obtido": "abriu",
+    "esperado": "abriu",
+    "ok": true
+  },
+  {
+    "id": "Q-06",
+    "descricao": "Cidadão não chama check_poste nem link_poste",
+    "obtido": 0,
+    "esperado": 0,
+    "ok": true
+  },
+  {
+    "id": "Q-07",
+    "descricao": "Cidadão sem erros de JavaScript",
+    "obtido": [],
+    "esperado": [],
+    "ok": true
+  },
+  {
+    "id": "Q-08",
+    "descricao": "Botão \"Ler QR\" não existe mais",
+    "obtido": 0,
+    "esperado": 0,
+    "ok": true
+  },
+  {
+    "id": "Q-09",
+    "descricao": "Botão \"Buscar poste\" visível",
+    "obtido": true,
+    "esperado": true,
+    "ok": true
+  },
+  {
+    "id": "Q-10",
+    "descricao": "Modal do leitor de QR não existe",
+    "obtido": 0,
+    "esperado": 0,
+    "ok": true
+  },
+  {
+    "id": "Q-11",
+    "descricao": "Card \"Folha de QR codes\" não existe",
+    "obtido": 0,
+    "esperado": 0,
+    "ok": true
+  },
+  {
+    "id": "Q-12",
+    "descricao": "Buscar poste com \"p0007\" abre a tela de histórico do poste",
+    "obtido": true,
+    "esperado": true,
+    "ok": true
+  },
+  {
+    "id": "Q-13",
+    "descricao": "Nenhum pedido a jsQR.js, qr.css ou ao gerador externo de QR",
+    "obtido": [],
+    "esperado": [],
+    "ok": true
+  },
+  {
+    "id": "Q-14",
+    "descricao": "Técnico sem erros de JavaScript",
+    "obtido": [],
+    "esperado": [],
+    "ok": true
+  }
+]

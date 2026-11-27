@@ -1,0 +1,13 @@
+✔ BP-01 [caixa-preta | partição válida] normalizarIdPoste aceita P-0001, P0001 e p0001 e devolve P-0001 (61.9637ms)
+✔ BP-02 [caixa-preta | partição inválida] normalizarIdPoste recusa texto que não é ID de poste (15.3711ms)
+✔ BP-03 [caixa-preta | fluxo principal] buscarPoste abre o histórico do poste digitado (13.57ms)
+✔ BP-04 [caixa-preta | fluxo alternativo] buscarPoste avisa quando o ID é inválido e não abre nada (4.054ms)
+✔ BP-05 [caixa-preta | fluxo alternativo] buscarPoste cancelado não abre nada nem mostra erro (23.4638ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 654.0801
