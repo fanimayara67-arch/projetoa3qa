@@ -121,3 +121,35 @@ test('TN-26 [caixa-branca] o adaptador entra no cache do service worker do técn
   assert.match(sw, /'\.\/js\/infrastructure\/AcoesApiNode\.js'/);
   assert.match(sw, /'\.\.\/shared\/infrastructure\/ApiClient\.js'/);
 });
+
+/** Funções do almoxarifado com formulário, avisos e envio falsos (a API recusa com um motivo). */
+function montarAlmox(nomes, motivo) {
+  const avisos = [];
+  const campos = { 'mis-data': '27/11/2026', 'mis-equipe': '', 'mis-obs': '', 'saida-0': '2', 'ret-0': '1',
+    'est-item': 'Fita', 'est-unidade': 'pç', 'est-saldo': '1', 'est-minimo': '0' };
+  const ctx = carregar('tecnico', ['brToISO', ...nomes], {
+    document: { getElementById: (id) => (id in campos ? { value: campos[id] } : null) },
+    showToast: (msg, tipo) => avisos.push({ msg, tipo }),
+    apiFetchTO: async () => ({ success: false, error: motivo }),
+    confirm: () => true,
+    estoqueCache: [{ item: 'Reator', unidade: 'un', saldo: 8 }],
+    missoesCache: [{ id: 3, itens: [{ item: 'Reator', saida: 2 }] }],
+    almoxToken: 'tok-almox', estoqueEditando: null,
+    carregarEstoque: () => {}, carregarMissoes: () => {}, cancelarEdicaoEstoque: () => {}, _setModoEdicaoEstoque: () => {}
+  });
+  return { ctx, avisos };
+}
+
+test('TN-27 [caixa-preta | fluxo de exceção] almoxarifado mostra o motivo da recusa da API ao salvar, excluir, registrar saída e retorno', async () => {
+  const casos = [
+    ['criarMissao', (c) => c.criarMissao(), 'Identificação da equipe é obrigatória.'],
+    ['salvarEstoque', (c) => c.salvarEstoque(), 'Unidade inválida (pç). Use: un, m, cx, rolo, kg, par.'],
+    ['excluirEstoque', (c) => c.excluirEstoque('Fita'), 'Item de estoque não encontrado.'],
+    ['confirmarRetorno', (c) => c.confirmarRetorno(3, 0), "Retorno (5) não pode ser maior que a saída (2) do item Reator."]
+  ];
+  for (const [nome, agir, motivo] of casos) {
+    const { ctx, avisos } = montarAlmox([nome], motivo);
+    await agir(ctx);
+    assert.deepEqual(avisos.at(-1), { msg: motivo, tipo: 'err' }, nome);
+  }
+});
