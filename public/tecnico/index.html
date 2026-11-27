@@ -3737,7 +3737,7 @@ function logoutTecnico() {
       showToast('Excluindo…', 'info');
       try {
         const data = await apiFetchTO({ action: 'estoque_delete', token: almoxToken, item }, 25000);
-        if (!data || !data.success) return showToast('Erro ao excluir.', 'err');
+        if (!data || !data.success) return showToast((data && data.error) || 'Erro ao excluir.', 'err');
         showToast('Item excluído.', 'ok');
         if (estoqueEditando === item) cancelarEdicaoEstoque();
         else carregarEstoque();
@@ -3753,7 +3753,7 @@ function logoutTecnico() {
       showToast(estoqueEditando ? 'Salvando alterações…' : 'Salvando…', 'info');
       try {
         const data = await apiFetchTO({ action: 'estoque_upsert', token: almoxToken, item, unidade, saldo, minimo }, 25000);
-        if (!data || !data.success) return showToast('Erro ao salvar.', 'err');
+        if (!data || !data.success) return showToast((data && data.error) || 'Erro ao salvar.', 'err');
         showToast(estoqueEditando ? 'Alterações salvas.' : 'Item salvo.', 'ok');
         document.getElementById('est-item').value = '';
         document.getElementById('est-saldo').value = '';
@@ -3798,7 +3798,7 @@ function logoutTecnico() {
       showToast('Registrando saída…', 'info');
       try {
         const data = await apiFetchTO({ action: 'missao_create', token: almoxToken, data: dataFmt, equipe, obs, itens }, 30000);
-        if (!data || !data.success) return showToast('Erro ao registrar.', 'err');
+        if (!data || !data.success) return showToast((data && data.error) || 'Erro ao registrar.', 'err');
         showToast('Saída registrada. Estoque debitado.', 'ok');
         document.getElementById('mis-equipe').value = '';
         document.getElementById('mis-obs').value = '';
@@ -3865,7 +3865,7 @@ function logoutTecnico() {
       showToast('Registrando retorno…', 'info');
       try {
         const data = await apiFetchTO({ action: 'missao_return', token: almoxToken, id_missao: idMissao, retornos }, 30000);
-        if (!data || !data.success) return showToast('Erro ao registrar retorno.', 'err');
+        if (!data || !data.success) return showToast((data && data.error) || 'Erro ao registrar retorno.', 'err');
         const modal = document.getElementById('ret-modal'); if (modal) modal.remove();
         showToast('Retorno registrado. Estoque atualizado.', 'ok');
         carregarEstoque();
