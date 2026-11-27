@@ -1,0 +1,27 @@
+$ node --test server/tests/logout-tecnico.test.js   # código: main
+✖ CT-29 [Caixa Branca] Logout do técnico limpa PIN e indicadores visuais (330.5161ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2914.1589
+
+✖ failing tests:
+
+test at server\tests\logout-tecnico.test.js:28:1
+✖ CT-29 [Caixa Branca] Logout do técnico limpa PIN e indicadores visuais (330.5161ms)
+  AssertionError [ERR_ASSERTION]: pinBuffer deve ficar vazio após o logout
+  
+  '0123' !== ''
+  
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: '0123',
+    expected: '',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+exit=0

@@ -1,0 +1,5 @@
+$ node scripts/ci/verificar-arquivos-pr.mjs origin/main origin/fix/limpar-pin-logout
+M teste-pin/README.md: 5.3 KB -> 5.4 KB
+
+OK: 1 arquivo(s) .md/.txt verificados, nenhum suspeito.
+exit=0

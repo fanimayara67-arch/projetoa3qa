@@ -1,0 +1,621 @@
+### MAIN + PR14 (d812ce0) — e5e2212 Merge remote-tracking branch 'origin/fix/limpar-pin-logout' into HEAD
+## npm ci --prefix server
+exit=0
+## setup-auth-mysql
+◇ injected env (0) from .env // tip: ⌘ enable debugging { debug: true }
+OK: Tabelas criadas e tecnico ativo cadastrado com PIN 0123.
+## build
+  cidadao: /api/chamados
+  tecnico: /api
+## npm test
+
+> ilumina-coruripe@2.0.0 test
+> node --test --experimental-test-coverage
+
+✔ Almoxarifado: nenhuma consulta do estoque usa sintaxe do PostgreSQL (11.3928ms)
+✔ Almoxarifado: salvarItem faz upsert pelo nome e devolve a linha salva (4.0544ms)
+✔ Almoxarifado: removerItem devolve null quando o item não existe e não executa DELETE (0.8708ms)
+✔ Almoxarifado: baixa trava o item (FOR UPDATE) antes de debitar (1.0554ms)
+✔ Almoxarifado: saldo insuficiente gera Conflito sem debitar nada (2.1051ms)
+✔ Almoxarifado: material inexistente gera NaoEncontrado (2.6192ms)
+✔ Almoxarifado: missão usa o insertId e grava os itens debitados (1.4593ms)
+✔ Almoxarifado: listarMissoes devolve itens como array, mesmo se o driver mandar texto (0.7162ms)
+✔ MySQL: configuração incompleta informa somente as chaves ausentes (3.4525ms)
+✔ MySQL: rejeita portas inválidas antes de tentar uma conexão (0.763ms)
+✔ Domínio Chamado: permite fechar apenas chamados abertos ou em_atendimento (3.1912ms)
+✔ Domínio Chamado: rejeita coordenada (0,0) e exige GPS válido ou poste_id do QR (3.6026ms)
+✔ Domínio Poste: normaliza códigos de QR Code mantendo compatibilidade com placas físicas (3.4206ms)
+✔ Domínio ItemEstoque e Missao: valida saldo suficiente e impede retorno maior que saída (0.806ms)
+✔ Domínio Fechamento: exige operacao_id, status e serviço na baixa em campo (1.347ms)
+✔ Arquitetura: garante isolamento das camadas (Domínio sem banco/HTTP e Apresentação sem SQL) (68.6901ms)
+✔ Cliente administrativo: valida antes de enviar e exige identificador estável e sessão (6.2075ms)
+✔ Cliente administrativo: usa REST e mantém o UUID ao repetir depois de falha de rede (12.0795ms)
+✔ Cliente administrativo: preserva conflito e acesso negado como falha (1.0937ms)
+✔ Administrativo: exige UUID, informante, justificativa mínima e status permitido (2.8265ms)
+✔ Administrativo: registra gestor, motivo e data, sem movimentar estoque nem salvar foto (12.2472ms)
+✔ Administrativo: dois reenvios simultâneos da mesma operação retornam o mesmo fechamento (1.4087ms)
+✔ Administrativo: outro fechamento concorrente recebe conflito (1.2782ms)
+✔ Administrativo: não reutiliza identificador com dados ou gestor diferentes (3.0456ms)
+✔ Administrativo: chamado inexistente retorna 404 e falha após inserir reverte a transação (5.7825ms)
+✔ API administrativa: parâmetro de rota malformado retorna 400 sem interromper o servidor (243.456ms)
+✔ API administrativa: autenticação e perfil são aplicados antes da gravação (410.3013ms)
+▶ UC03 - Caixa-branca: FechamentoController
+  ✔ FA-CB01: fechar repassa protocolo, técnico e corpo ao serviço e responde 201 no formato padrão (3.2421ms)
+  ✔ FA-CB02: fechar entrega ao next o erro do serviço e não escreve resposta (0.8736ms)
+  ✔ FA-CB03: fecharAdmin repassa o gestor como gestorId e entrega o erro ao next (2.8098ms)
+✔ UC03 - Caixa-branca: FechamentoController (9.1555ms)
+▶ UC03 - Caixa-branca: FechamentoService.fecharChamado
+  ✔ FA-CB04: dados de fechamento nulos ou incompletos geram DadoInvalido (400) antes de abrir a transação (2.4151ms)
+  ✔ FA-CB05: reenvio da mesma operacao_id devolve o fechamento existente sem inserir nem baixar estoque (1.5226ms)
+  ✔ FA-CB06: chamado inexistente gera NaoEncontrado (404) e chamado já fechado gera Conflito (409) (0.9537ms)
+✔ UC03 - Caixa-branca: FechamentoService.fecharChamado (5.3235ms)
+▶ UC03 - Caixa-branca: ApiClient (envio do fechamento pelo aparelho)
+  ✔ FA-CB07: com token, envia Authorization Bearer; o corpo vai em JSON e o método é respeitado (96.714ms)
+  ✔ FA-CB08: sem token não envia Authorization e sem corpo não envia body (1.0927ms)
+  ✔ FA-CB09: resposta que não é JSON vira erro RESPOSTA_INVALIDA com ok=false (0.9067ms)
+  ✔ FA-CB10: HTTP 200 com ok=false ou success=false no corpo não é tratado como sucesso; corpo vazio vira {} (0.884ms)
+  ✔ FA-CB11: usa window.ILUMINA.API_URL como base (sem barra dupla) e mantém endereço absoluto como está (1.6781ms)
+  ✔ FA-CB12: sem resposta dentro do timeout, a requisição é abortada (25.7615ms)
+✔ UC03 - Caixa-branca: ApiClient (envio do fechamento pelo aparelho) (128.0812ms)
+✔ FO-21 [caixa-preta | integração | RNF03 e CA05] sem sessão válida: 401; perfil sem acesso: 403 (213.9818ms)
+✔ FO-22 [caixa-preta | integração] fechamento válido: 201 com o fechamento; reenvio devolve o mesmo registro (12.6839ms)
+✔ FO-23 [caixa-preta | integração | passo 6] sem foto, sem GPS ou com status fora do UC05: 400 e nada gravado (2.34ms)
+✔ FO-24 [suposição de erro | integração] data no formato da tela antiga gera 400, não erro interno (500) (1.0939ms)
+✔ FO-25 [caixa-branca | DEF-02] com a API Node, o fechamento vai para POST /api/chamados/:protocolo/fechamento em JSON com o token no cabeçalho (20.434ms)
+✔ FO-26 [caixa-branca | DEF-02] o corpo segue o contrato da API: operacao_id, materiais {nome, quantidade}, data ISO, poste e precisão (9.3162ms)
+✔ FO-27 [suposição de erro | DEF-02] fechamento antigo da fila, sem operacao_id nem data ISO, ainda é enviado (9.439ms)
+✔ FO-28 [caixa-branca | DEF-02] as respostas da API viram as respostas que a tela já sabe tratar (22.4552ms)
+✔ FO-29 [caixa-preta | regressão] com o Apps Script o envio continua igual (text/plain, corpo inalterado) (5.4464ms)
+✔ FO-30 [baseada em risco | DEF-07 | A5] um fechamento recusado não trava os seguintes e continua na fila (7.4614ms)
+✔ FO-31 [baseada em risco | DEF-08 | A5] chamado já fechado (resposta "ja_fechado") sai da fila e não trava os outros (5.9881ms)
+✔ FO-32 [caixa-branca | cobertura de ramos] sessão expirada e falta de rede interrompem a fila sem apagar nada (7.1946ms)
+✔ FO-01 [caixa-preta | partição válida] fechamento completo do passo 6 é aceito (13.3899ms)
+✔ FO-02 [caixa-preta | partição inválida] sem operacao_id, status ou serviço o fechamento é recusado (0.864ms)
+✔ FO-03 [caixa-preta | partição inválida | passo 6] sem foto do reparo o fechamento é recusado (0.954ms)
+✔ FO-04 [caixa-preta | tabela de decisão | passo 3] só os quatro status do UC05 são aceitos (1.3525ms)
+✔ FO-05 [caixa-preta | partição inválida | passo 6 e A4] sem GPS válido o fechamento é recusado (1.0591ms)
+✔ FO-06 [caixa-preta | valor-limite | A4] região: bordas aceitas, um passo fora recusado (1.1482ms)
+✔ FO-07 [caixa-preta | valor-limite | passo 6 e A4] precisão do GPS até 100 m (1.1947ms)
+✔ FO-08 [caixa-preta | tabela de decisão | passo 4 e CA04] materiais da OS (0.7027ms)
+✔ FO-09 [suposição de erro] item nulo na lista de materiais é recusado, sem erro interno (3.2021ms)
+✔ FO-10 [suposição de erro | valor-limite] data do fechamento: ISO aceita; formato brasileiro e texto recusados (0.8622ms)
+✔ FO-11 [caixa-preta | valor-limite] referência do local: 255 caracteres aceitos, 256 recusados (0.8037ms)
+✔ FO-12 [caixa-preta | partição válida | passo 7] grava o fechamento, fecha o chamado, baixa o estoque e atualiza o poste (23.85ms)
+✔ FO-13 [baseada em risco | CA04 "uma única vez"] reenvio da mesma operação devolve o mesmo fechamento sem baixar o estoque de novo (3.6248ms)
+✔ FO-14 [baseada em risco | concorrência] chamado já fechado gera 409; chamado inexistente gera 404 (5.8825ms)
+✔ FO-15 [baseada em risco | idempotência] operacao_id já usada em outro chamado não fecha este nem finge sucesso (1.6504ms)
+✔ FO-16 [baseada em risco | CA04] material repetido na lista: o estoque e a OS registram a mesma quantidade (3.518ms)
+✔ FO-17 [baseada em risco | atomicidade] saldo insuficiente: 409 e nada fica gravado (1.7012ms)
+✔ FO-18 [baseada em risco | atomicidade] material que não existe no almoxarifado: 404 e nada fica gravado (1.5615ms)
+✔ FO-19 [caixa-branca | cobertura de ramos] poste: o informado pelo técnico, o do chamado ou nenhum (4.8379ms)
+✔ FO-20 [caixa-branca | cobertura de ramos] dados inválidos não abrem transação nem gravam a foto (1.3926ms)
+✔ FO-33 [caixa-branca | cobertura de ramos] campos alternativos e opcionais: latitude/longitude, sem config, sem materiais e sem data (1.7615ms)
+◇ injected env (0) from .env // tip: ⌘ enable debugging { debug: true }
+▶ Suíte de Integração Ponta a Ponta (HTTP + Serviços + MySQL Real)
+  ✔ INT-01 [Auth | MySQL] Login HTTP de técnico e gestor gera tokens Bearer válidos na tabela sessoes (2512.6466ms)
+  ✔ INT-02 [Auth | RBAC] Login do almoxarifado aceita almoxarife e bloqueia técnico comum (1422.4236ms)
+  ✔ INT-03 [Segurança | RBAC] Rotas protegidas exigem sessão (401) e respeitam hierarquia de perfil (403) (30.7667ms)
+  ✔ INT-04 [Chamados | Cidadão -> MySQL] Abertura pública cria chamado e aparece na listagem e busca por protocolo (652.4229ms)
+  ✔ INT-05 [Chamados | Idempotência] Reenvio do mesmo UUID pelo cidadão retorna o chamado existente sem duplicar (27.7132ms)
+  ✔ INT-06 [Postes | QR Code Público] Consulta pública da situação do poste detecta chamado aberto vinculado (19.5891ms)
+  ✔ INT-07 [Tentativas | Campo -> Relatório] Técnico registra tentativa frustrada e rota de relatório lista o evento (860.9952ms)
+  ✔ INT-08 [Almoxarifado | CRUD] Almoxarife cadastra, consulta e remove material no estoque real (2281.8683ms)
+  ✔ INT-09 [Fechamento Campo | Transação ACID] Encerra chamado, debita estoque e atualiza ficha técnica do poste (1235.9711ms)
+  ✔ INT-10 [Fechamento Campo | Idempotência e Conflito] Reenvio não duplica baixa; nova operação no mesmo chamado retorna 409 (45.6449ms)
+  ✔ INT-11 [Atomicidade | Rollback] Saldo insuficiente no fechamento retorna 409 e reverte totalmente a transação (1183.1097ms)
+  ✔ INT-12 [Relatórios e Postes] Listagem de fechados, lista de postes e histórico do poste refletem o ciclo completo (30.0893ms)
+  ⚠ INT-13 [Almoxarifado | Miss?es] Sa?da de miss?o debita estoque, ativa alerta de m?nimo e lista itens agregados (12.8094ms) # Defeito DEF-13 - EstoqueRepository usa coluna data em vez de data_missao na tabela missoes
+  ✔ INT-14 [Fechamento Administrativo] Gestor encerra chamado administrativamente sem movimentar estoque (729.3083ms)
+  ✔ INT-15 [Apresentação | Robustez HTTP] Rota inexistente (404) e JSON inválido (400) respondem de forma controlada (16.6712ms)
+✔ Suíte de Integração Ponta a Ponta (HTTP + Serviços + MySQL Real) (65156.6823ms)
+✔ CT-29 [Caixa Branca] Logout do técnico limpa PIN e indicadores visuais (22.8326ms)
+✔ Persistência MySQL: fechamento vincula os valores e devolve a linha inserida (7.4206ms)
+✔ Persistência MySQL: colisão de protocolo não é confundida com reenvio do mesmo chamado (1.6026ms)
+✔ Persistência MySQL: estatísticas numéricas e vínculo de poste mantêm o contrato (2.3114ms)
+✔ Persistência MySQL: login e sessão usam parâmetros, inclusive listas de perfis (3.248ms)
+✔ ApiClient: o corpo não pode transformar HTTP 403 em sucesso nem alterar seu status (6.3577ms)
+✔ Apresentação: chamados da API mantêm os campos usados pela tela e seus filtros (94.8617ms)
+✔ Postes: nenhuma consulta usa sintaxe do PostgreSQL (6.4221ms)
+✔ Postes: garantirExistencia não sobrescreve poste existente e devolve a linha (0.913ms)
+✔ Postes: atualizarConfiguracao preserva campos não informados (COALESCE) e devolve a linha (4.6214ms)
+✔ Postes: atualizarConfiguracao sem poste não executa nada (2.5629ms)
+✔ Postes: filtro por bairro usa LIKE com curingas (7.54ms)
+✔ Relatório: escopo "fechados" junta fechamento e técnico, só de chamados fechados (4.2384ms)
+✔ Relatório: a view inclui o fechamento só quando a consulta trouxe esses campos (7.4043ms)
+✔ Relatório: carregarFechados devolve registros no formato da tela, com data em pt-BR (97.6228ms)
+✔ Relatório: carregarFechados propaga o status HTTP quando a API recusa (sessão expirada) (2.6717ms)
+✔ Relatório: rotuloTipo traduz códigos conhecidos e preserva textos livres (0.903ms)
+✔ Tentativas: inserir usa SQL do MySQL (placeholders ?) e devolve a linha salva (10.1797ms)
+✔ Tentativas: reenvio com a mesma operacao_id devolve o registro existente sem erro (1.0395ms)
+✔ Tentativas: outros erros do banco não são engolidos (3.3144ms)
+✔ Tentativas: listagem do relatório junta chamado e técnico (1.0877ms)
+✔ Tentativas: a view expõe só os campos usados pelo relatório (0.8963ms)
+✔ Tentativas: carregarTentativas converte para o formato da tela (182.1354ms)
+✔ Tentativas: rotuloStatusChamado traduz os status do banco (0.6792ms)
+✔ RP-11 [caixa-preta | integração] POST /api/chamados: 201 para reporte válido e 400 para inválido (138.8364ms)
+✔ RP-02 (cliente) [caixa-preta | tabela de decisão] envio só é liberado com GPS, tipo e foto (passo 6, A4, A5) (100.3743ms)
+✔ RP-12 [caixa-preta | partição válida] protocolo no formato IC-AAMMDD-XXXXX com a data do aparelho (8.4794ms)
+✔ RP-13 [baseada em risco | perda de reporte] grava na fila antes de enviar; sem rede fica pendente (A1) (63.3341ms)
+✔ RP-16 [caixa-preta | valor-limite] classificação da precisão do GPS: 10 m e 25 m (passo 2) (182.9287ms)
+✔ RP-16 [suposição de erro] precisão desconhecida ou negativa não é exibida como "Excelente" (passo 2, A3) (0.7587ms)
+✔ RP-01 [caixa-preta | partição válida] reporte completo é aceito (6.2552ms)
+✔ RP-04 [caixa-preta | partição válida] os seis tipos do UC01 são aceitos (0.7242ms)
+✔ RP-05 [caixa-preta | valor-limite] limites de latitude e longitude e o ponto (0,0) (3.7955ms)
+✔ RP-08 [caixa-preta | partição válida] nome, telefone, endereço e descrição são opcionais (1.0517ms)
+✔ RP-02 (servidor) [caixa-preta | tabela de decisão] só aceita com GPS, tipo e foto (passo 6, CA01) (0.8826ms)
+✔ RP-03 [caixa-preta | partição inválida] tipo fora da lista do UC01 é rejeitado (0.6327ms)
+✔ RP-06 [caixa-preta | valor-limite] descrição: 500 caracteres aceita, 501 rejeita (passo 5) (1.0003ms)
+✔ RP-07 [caixa-preta | valor-limite] foto: 2 MB aceita, 2 MB + 1 byte rejeita (RNF02) (18.5206ms)
+✔ RP-14 [caixa-branca | cobertura de ramos] identificação: id e protocolo ausentes ou de tipo errado (0.8899ms)
+✔ RP-14 [caixa-branca | cobertura de ramos] foto: URL já enviada, campo fotoUrl e preenchimento do Base64 (20.2146ms)
+✔ RP-14 [caixa-branca | cobertura de ramos] coordenadas como texto vazio e como texto numérico (0.5368ms)
+✔ RP-09 [baseada em risco | duplicidade] reenvio do mesmo reporte devolve o mesmo chamado (CA03) (14.6351ms)
+✔ RP-09 [baseada em risco | duplicidade] outro reporte com protocolo já usado é recusado (8.0924ms)
+✔ RP-10 [caixa-branca | ramo de erro] falha ao salvar a foto não cria chamado (1.1188ms)
+✔ RP-15 [baseada em risco | chamado sem localização] QR de poste sem coordenadas e sem GPS é recusado (CA01) (3.4668ms)
+✔ RP-15 [caixa-preta | partição válida] QR de poste cadastrado dispensa o GPS e usa as coordenadas do poste (1.6634ms)
+✔ RP-14 [caixa-branca | cobertura de ramos] com GPS e QR, prevalece o GPS do aparelho e o endereço informado (1.4651ms)
+✔ RP-14 [caixa-branca | cobertura de ramos] poste sem retorno do cadastro: usa o GPS; sem endereço: usa o do poste (1.3961ms)
+✔ Rota: agrupa chamados a até 80 m e ordena as paradas a partir do GPS informado (4.516ms)
+✔ Rota: exclui fechados, cancelados, GPS ausente, zero e coordenadas fora dos limites (0.7535ms)
+✔ Rota: não inventa origem e aceita lista vazia com origem válida (1.0727ms)
+✔ Maps: divide a rota para navegadores móveis sem perder paradas e encadeia as origens (1.7403ms)
+✔ Infraestrutura SQL: emTransacao executa BEGIN e COMMIT quando a operação tem sucesso (4.6862ms)
+✔ Infraestrutura SQL: emTransacao executa ROLLBACK automaticamente se ocorrer qualquer falha (1.7139ms)
+✔ Aplicação FechamentoService: fecha chamado, debita estoque e atualiza poste na mesma transação (3.8001ms)
+✔ Aplicação FechamentoService: bloqueia segundo técnico com 409 Conflito se chamado já estiver fechado (0.8345ms)
+✔ Segurança e AuthService: gera hash scrypt de PIN e bloqueia força bruta com HTTP 429 (279.1106ms)
+✔ PWA Cidadão (Camada de Aplicação): SincronizarFila aplica backoff exponencial em falha de rede (135.8508ms)
+◇ injected env (0) from .env // tip: ⌁ auth for agents [www.vestauth.com]
+✔ CT-01 [Caixa Branca] Arquivo design-tokens.css existe e possui tokens CSS (21.5194ms)
+✔ CT-02 [Caixa Branca] Arquivo tecnico.css existe e possui estilos da tela (71.412ms)
+✔ CT-03 [Caixa Branca] Arquivo utilities.css existe e possui classes utilitarias (150.1419ms)
+✔ CT-04 [Caixa Preta] Tela tecnico/index.html renderiza os 4 indicadores visuais de PIN (d0 a d3) (6.21ms)
+✔ CT-05 [Caixa Preta] Tela tecnico/index.html possui teclado numerico (0-9) e preenchimento de 4 digitos (3.1221ms)
+✔ CT-06 [Caixa Preta] Tela tecnico/index.html possui botao apagar e funcao de limpeza do PIN (3.9946ms)
+✔ CT-07 [Caixa Branca] Arquivo public/shared/config.js existe e define namespace ILUMINA (3.2706ms)
+✔ CT-08 [Caixa Branca] config.js define propriedade API_URL (4.5125ms)
+✔ CT-09 [Caixa Branca] config.js define string valida para API_URL (3.2605ms)
+✔ CT-10 [Caixa Branca] Codigo protege acesso contra window.ILUMINA indefinido (optional chaining) (5.2766ms)
+✔ CT-11 [Caixa Preta] Fluxo de login dispara POST /api/auth/login quando USA_API_NODE esta ativo (2.7546ms)
+✔ CT-12 [Caixa Preta] Fluxo de login preserva fallback apiFetchTO quando USA_API_NODE esta falso (4.9115ms)
+✔ CT-13 [Caixa Preta] AuthService aceita formato de PIN valido com 4 digitos ("1234") (986.5175ms)
+✔ CT-14 [Caixa Preta] AuthService aceita PIN com zero a esquerda ("0123") preservando string (1140.0237ms)
+✔ CT-15 [Caixa Preta] AuthService rejeita PIN com 3 digitos ("123") com DadoInvalido (4.0965ms)
+✔ CT-16 [Caixa Preta] AuthService rejeita PIN com 5 digitos ("12345") com DadoInvalido (1.0135ms)
+✔ CT-17 [Caixa Preta] AuthService rejeita PIN contendo letra ("12a4") com DadoInvalido (0.6718ms)
+✔ CT-18 [Caixa Branca] Conexao ativa com MySQL executando SELECT 1 (19.9121ms)
+✔ CT-19 [Caixa Branca] Tabelas usuarios, sessoes e tentativas_login existem no MySQL (11.9988ms)
+✔ CT-20 [Caixa Branca] Existe tecnico ativo na tabela usuarios com pin_hash no formato scrypt$ (4.7449ms)
+✔ CT-21 [Caixa Preta] Login real no MySQL com PIN "0123" gera sessao valida na tabela sessoes (1316.8365ms)
+✔ CT-22 [Caixa Preta] Login real no MySQL rejeita "123" comprovando preservacao do zero a esquerda em "0123" (0.8814ms)
+✔ CT-23 [Caixa Preta] 5 tentativas incorretas de PIN geram bloqueio (MuitasTentativas) (11482.8091ms)
+✔ CT-24 [Caixa Preta] Retroceder o tempo em 16 min no MySQL libera o login bloqueado pelo CT-23 (1228.125ms)
+✔ CT-25 [Caixa Preta] 8 req/min consecutivas geram HTTP 429 no Rate Limiter (Middleware) (1.1215ms)
+✔ CT-26 [Caixa Preta] 7 req/min consecutivas nao bloqueiam a requisição HTTP (1.0064ms)
+✔ CT-27 [Caixa Preta] Rate limiter HTTP expira após janela de 1 minuto e libera requisição (1.0529ms)
+✔ CT-28 [Caixa Branca] Bloqueio do banco e Rate Limiter HTTP atuam em camadas independentes (4003.4504ms)
+✔ CBN-01 flushQueue (cidadão): sem internet não lê a fila nem envia (116.2882ms)
+✔ CBN-02 flushQueue (cidadão): endereço do servidor não configurado ("__...") não envia (3.0162ms)
+✔ CBN-03 flushQueue (cidadão): erro ao ler o banco do aparelho encerra sem enviar e sem lançar erro (5.353ms)
+✔ CBN-04 flushQueue (cidadão): fila vazia encerra sem enviar (2.9518ms)
+✔ CBN-05 flushQueue (cidadão): envio aceito (API Node) apaga o item e atualiza o aviso (10.6923ms)
+✔ CBN-06 flushQueue (cidadão): recusa do servidor (API Node) mantém o item e soma 1 tentativa com o motivo (3.768ms)
+✔ CBN-07 flushQueue (cidadão): resposta vazia conta como recusa ("server error") (4.8248ms)
+✔ CBN-08 flushQueue (cidadão): erro de rede mantém o item, soma 1 tentativa e guarda a mensagem do erro (3.0056ms)
+✔ CBN-09 flushQueue (cidadão): erro de rede sem mensagem é guardado como "network error" (4.1696ms)
+✔ CBN-10 flushQueue (cidadão): valor limite — com 4 tentativas ainda envia; com 5 descarta sem enviar (8.3132ms)
+✔ CBN-11 flushQueue (cidadão): falha ao apagar um item descartado não interrompe a fila (4.7539ms)
+✔ CBN-12 flushQueue (cidadão): falha ao gravar a tentativa depois de um erro de rede não interrompe a fila (3.3659ms)
+✔ CBN-13 flushQueue (cidadão): falha no 1º item não impede o envio do 2º (2.8546ms)
+⚠ CBN-14 flushQueue (cidadão): reporte descartado após 5 tentativas deve avisar o cidadão (9.2606ms) # Defeito DEF-03 — descarte silencioso (UC03 regra de negócio)
+⚠ CBN-15 flushQueue (cidadão): três sincronizações ao mesmo tempo enviam o reporte uma única vez (6.5247ms) # Defeito DEF-04 — falta trava contra execução simultânea
+✔ CBN-16 updatePendingBanner: esconde com 0; singular com 1; plural com 3 (14.234ms)
+✔ CBN-17 updatePendingBanner: erro no banco ou tela sem o aviso não quebram o app (5.1446ms)
+✔ CBN-18 submitReport: segundo toque durante o envio é ignorado (6.2385ms)
+✔ CBN-19 submitReport: com internet e envio aceito (API Node), mostra "enviado" sem gravar na fila (3.5308ms)
+✔ CBN-20 submitReport: com internet e recusa (API Node), guarda na fila (2.33ms)
+✔ CBN-21 submitReport: com internet e erro de rede, guarda na fila (2.2751ms)
+✔ CBN-22 submitReport: envio e gravação falham — mensagem de erro e botão liberado (UC01-E1) (2.0126ms)
+✔ CBN-23 submitReport: sem internet grava direto na fila, sem tentar enviar (3.2265ms)
+✔ CBN-24 submitReport: sem internet e sem conseguir gravar — mensagem de erro (UC01-E1) (2.1217ms)
+✔ CBN-47 submitReport: durante o envio o botão fica travado e marcado "Enviando…" (1.9929ms)
+✔ CBN-25 submitReport: com internet e servidor não configurado ("__..."), guarda na fila (1.7164ms)
+✔ CBN-46 submitReport: recusa sem motivo é registrada como "server error" e guardada na fila (2.0455ms)
+⚠ CBN-26 postReport: envia ao endereço do API Node no formato que ele aceita (3.7145ms) # Defeito DEF-01 — o app envia formulário sem id; a API Node só aceita JSON com id
+✔ CBN-27 postReport: limite de 60 s, timer limpo e resposta lida (4.2823ms)
+✔ CBN-28 postReport: resposta que não é JSON vira recusa ("resposta inválida do servidor") (4.6795ms)
+✔ CBN-29 postReport: erro de rede é repassado e o timer é limpo (3.4293ms)
+✔ CBN-30 postReport: depois de 60 s sem resposta a requisição é cancelada (82.675ms)
+✔ CBN-31 generateProtocol: formato IC-AAMMDD-XXXXX com zero à esquerda no mês e no dia (5.2034ms)
+✔ CBN-32 buildPayload: a mensagem do reporte leva protocolo, tipo, GPS, foto, poste e textos limpos (8.3008ms)
+✔ CBN-33 flushQueue (técnico): sem internet não envia e não atualiza o aviso (10.9619ms)
+✔ CBN-34 flushQueue (técnico): sem sessão (sem PIN) não envia (2.9773ms)
+✔ CBN-35 flushQueue (técnico): fila vazia libera a trava e atualiza o aviso (4.5648ms)
+✔ CBN-36 flushQueue (técnico): todos aceitos (API Node) são apagados na ordem da fila (3.9627ms)
+✔ CBN-37 flushQueue (técnico): sessão expirada (API Node) interrompe e mantém a fila (6.0603ms)
+✔ CBN-38 flushQueue (técnico): erro de rede interrompe e mantém a fila (7.5654ms)
+✔ CBN-39 flushQueue (técnico): três sincronizações ao mesmo tempo enviam cada fechamento uma vez (trava) (4.7829ms)
+✔ CBN-40 flushQueue (técnico): erro ao ler a fila libera a trava, mas o erro escapa da função (5.5349ms)
+✔ CBN-41 flushQueue (técnico): erro do servidor em um fechamento não trava os seguintes (3.2255ms)
+✔ CBN-42 apiFetchTO: fechamento vai ao endereço e formato do API Node (7.4645ms)
+✔ CBN-43 apiFetchTO: usa 15 s por padrão, limpa o timer e cancela ao fim do tempo (5.7077ms)
+✔ CBN-44 renderPendingBanner: esconde com 0; singular/plural; "enviando…" e "sem sinal"; tela sem aviso (7.2817ms)
+✔ CBN-45 queueCount: conta a fila e devolve 0 se o banco falhar (o limite de 10 deixa de valer) (3.3093ms)
+⚠ CBN-50 integração (cidadão ↔ API Node): a fila deve esvaziar quando a API está no ar (353.3587ms) # Defeito DEF-01 — a API recusa o formulário com 400 JSON_INVALIDO
+✔ CBN-51 integração (cidadão ↔ API Node): a causa da recusa é o formato da mensagem (54.289ms)
+✔ CBN-52 integração (técnico ↔ API Node): o fechamento na fila deve ser registrado (150.0431ms)
+✔ CBN-53 integração (técnico ↔ API Node): com sessão inválida a API responde 401 e a fila fica guardada (21.1114ms)
+⚠ CBN-55 buildPayload: a mensagem do reporte deve levar o id único exigido pela API Node (1.9632ms) # Defeito DEF-01 — a mensagem não tem o campo id
+⚠ CBN-54 submitReport: o motivo de uma recusa da API deve ser legível (1.7157ms) # Defeito DEF-12 — o objeto de erro da API vira "[object Object]"
+✔ CBN-60 coordenadasValidas: limites do globo (±90 e ±180) são aceitos; um passo além é recusado (2.162ms)
+✔ CBN-61 coordenadasValidas: o ponto (0,0) é recusado; 0,0001 já é aceito (0.2153ms)
+✔ CBN-62 coordenadasValidas: valores vazios, nulos ou não numéricos são recusados (0.385ms)
+✔ CBN-63 validarNovoChamado: reporte completo é válido (4.6595ms)
+✔ CBN-64 validarNovoChamado: sem id (como o app envia hoje) é inválido (0.5219ms)
+✔ CBN-65 validarNovoChamado: id que não é texto, sem protocolo e tipo em branco geram um erro cada (0.1884ms)
+✔ CBN-66 validarNovoChamado: sem GPS válido só é aceito com o poste do QR (0.2677ms)
+✔ CBN-67 criarChamado: dados inválidos são recusados antes de salvar foto ou gravar (1.4306ms)
+✔ CBN-68 criarChamado: o mesmo reporte enviado duas vezes (mesmo id) gera um único chamado (1.3785ms)
+✔ CBN-69 criarChamado: mesmo protocolo com outro id é conflito (409) e não duplica (1.1607ms)
+✔ CBN-70 criarChamado: pelo QR sem GPS, usa as coordenadas e o endereço do poste (0.9116ms)
+✔ CBN-71 fecharChamado: reenvio com o mesmo operacao_id não fecha de novo nem baixa o estoque duas vezes (CA04) (3.123ms)
+✔ CBN-72 fecharChamado: chamado já fechado por outra operação é conflito (409) (0.4421ms)
+✔ CBN-73 fecharChamado: chamado inexistente é 404 (0.2974ms)
+✔ CBN-74 fecharChamado: sem operacao_id (como o app envia hoje) é recusado (0.2725ms)
+✔ CBN-75 validarFechamentoCampo: valor limite da quantidade de material (0 recusa, 1 aceita) (0.28ms)
+✔ CBN-76 API: corpo em formulário (como o app do cidadão envia) é recusado com 400 JSON_INVALIDO (414.9537ms)
+✔ CBN-77 API: JSON sem id é recusado com 400 e o campo é apontado (33.737ms)
+✔ CBN-78 API: JSON com id é aceito (201) e o reenvio devolve o mesmo chamado sem duplicar (44.9451ms)
+✔ CBN-79 API: POST /api (para onde o técnico envia) não existe; a rota certa exige Bearer (149.5266ms)
+✔ CBN-80 API: corpo vazio vira {} e a validação aponta os campos que faltam (21.1687ms)
+✔ CBN-81 API: corpo acima de 8 MB (ex.: foto sem compressão) é recusado com 413 (191.724ms)
+✔ CBN-82 middlewareValidacao: sem corpo nenhum (req.body ausente) aponta todos os campos (1.085ms)
+✔ CBN-83 tratarErros: banco fora do ar vira 503; erro inesperado vira 500 sem expor detalhes (0.4275ms)
+✔ CBN-84 criarChamado: pelo QR com GPS do aparelho, mantém o GPS e completa o endereço pelo poste (0.9928ms)
+✔ CBN-85 fecharChamado: com poste identificado, atualiza a ficha do poste na mesma transação (1.0595ms)
+✔ CBN-86 validarFechamentoCampo: sem status e sem serviço gera um erro para cada (0.3322ms)
+✔ CBN-87 coordenadasValidas: valor limite dos dois lados de cada eixo e perto do zero (0.2387ms)
+✔ CBN-88 validações recusam campos com tipo errado (número no lugar de texto) (0.3853ms)
+✔ CBN-89 criarChamado: repassa foto, telefone, navegador e horário que o app envia (0.3956ms)
+✔ CBN-90 criarChamado: pelo QR com só a latitude, completa as coordenadas pelo poste (0.3295ms)
+✔ CBN-91 fecharChamado: grava foto, data e materiais informados e marca o poste no chamado (1.0479ms)
+✔ CBN-92 API: um único campo faltando (ou vazio, ou nulo) já é recusado (43.3396ms)
+✔ CBN-93 API: valor limite do corpo — exatamente 8 MB é aceito (239.8358ms)
+✔ CBA-01 flushQueue (cidadão): sem internet não lê a fila nem envia (13.633ms)
+✔ CBA-02 flushQueue (cidadão): endereço do servidor não configurado ("__...") não envia (2.0255ms)
+✔ CBA-03 flushQueue (cidadão): erro ao ler o banco do aparelho encerra sem enviar e sem lançar erro (3.2637ms)
+✔ CBA-04 flushQueue (cidadão): fila vazia encerra sem enviar (3.8594ms)
+✔ CBA-05 flushQueue (cidadão): envio aceito (Apps Script) apaga o item e atualiza o aviso (7.2893ms)
+✔ CBA-06 flushQueue (cidadão): recusa do servidor (Apps Script) mantém o item e soma 1 tentativa com o motivo (3.7529ms)
+✔ CBA-07 flushQueue (cidadão): resposta vazia conta como recusa ("server error") (3.2669ms)
+✔ CBA-08 flushQueue (cidadão): erro de rede mantém o item, soma 1 tentativa e guarda a mensagem do erro (3.2117ms)
+✔ CBA-09 flushQueue (cidadão): erro de rede sem mensagem é guardado como "network error" (4.554ms)
+✔ CBA-10 flushQueue (cidadão): valor limite — com 4 tentativas ainda envia; com 5 descarta sem enviar (3.6079ms)
+✔ CBA-11 flushQueue (cidadão): falha ao apagar um item descartado não interrompe a fila (2.2764ms)
+✔ CBA-12 flushQueue (cidadão): falha ao gravar a tentativa depois de um erro de rede não interrompe a fila (3.549ms)
+✔ CBA-13 flushQueue (cidadão): falha no 1º item não impede o envio do 2º (4.7515ms)
+⚠ CBA-14 flushQueue (cidadão): reporte descartado após 5 tentativas deve avisar o cidadão (3.2208ms) # Defeito DEF-03 — descarte silencioso (UC03 regra de negócio)
+⚠ CBA-15 flushQueue (cidadão): três sincronizações ao mesmo tempo enviam o reporte uma única vez (4.1101ms) # Defeito DEF-04 — falta trava contra execução simultânea
+✔ CBA-16 updatePendingBanner: esconde com 0; singular com 1; plural com 3 (9.3789ms)
+✔ CBA-17 updatePendingBanner: erro no banco ou tela sem o aviso não quebram o app (2.7034ms)
+✔ CBA-18 submitReport: segundo toque durante o envio é ignorado (2.1807ms)
+✔ CBA-19 submitReport: com internet e envio aceito (Apps Script), mostra "enviado" sem gravar na fila (1.8581ms)
+✔ CBA-20 submitReport: com internet e recusa (Apps Script), guarda na fila (1.7449ms)
+✔ CBA-21 submitReport: com internet e erro de rede, guarda na fila (1.442ms)
+✔ CBA-22 submitReport: envio e gravação falham — mensagem de erro e botão liberado (UC01-E1) (1.5683ms)
+✔ CBA-23 submitReport: sem internet grava direto na fila, sem tentar enviar (1.3416ms)
+✔ CBA-24 submitReport: sem internet e sem conseguir gravar — mensagem de erro (UC01-E1) (3.2761ms)
+✔ CBA-47 submitReport: durante o envio o botão fica travado e marcado "Enviando…" (1.5799ms)
+✔ CBA-25 submitReport: com internet e servidor não configurado ("__..."), guarda na fila (1.497ms)
+✔ CBA-46 submitReport: recusa sem motivo é registrada como "server error" e guardada na fila (1.5774ms)
+✔ CBA-26 postReport: envia ao endereço do Apps Script no formato que ele aceita (2.4215ms)
+✔ CBA-27 postReport: limite de 60 s, timer limpo e resposta lida (1.4457ms)
+✔ CBA-28 postReport: resposta que não é JSON vira recusa ("resposta inválida do servidor") (1.695ms)
+✔ CBA-29 postReport: erro de rede é repassado e o timer é limpo (5.1324ms)
+✔ CBA-30 postReport: depois de 60 s sem resposta a requisição é cancelada (42.3773ms)
+✔ CBA-31 generateProtocol: formato IC-AAMMDD-XXXXX com zero à esquerda no mês e no dia (3.4623ms)
+✔ CBA-32 buildPayload: a mensagem do reporte leva protocolo, tipo, GPS, foto, poste e textos limpos (4.9248ms)
+✔ CBA-33 flushQueue (técnico): sem internet não envia e não atualiza o aviso (5.3526ms)
+✔ CBA-34 flushQueue (técnico): sem sessão (sem PIN) não envia (2.1766ms)
+✔ CBA-35 flushQueue (técnico): fila vazia libera a trava e atualiza o aviso (2.703ms)
+✔ CBA-36 flushQueue (técnico): todos aceitos (Apps Script) são apagados na ordem da fila (4.9271ms)
+✔ CBA-37 flushQueue (técnico): sessão expirada (Apps Script) interrompe e mantém a fila (2.9376ms)
+✔ CBA-38 flushQueue (técnico): erro de rede interrompe e mantém a fila (3.0258ms)
+✔ CBA-39 flushQueue (técnico): três sincronizações ao mesmo tempo enviam cada fechamento uma vez (trava) (3.6612ms)
+✔ CBA-40 flushQueue (técnico): erro ao ler a fila libera a trava, mas o erro escapa da função (3.7249ms)
+✔ CBA-41 flushQueue (técnico): erro do servidor em um fechamento não trava os seguintes (3.615ms)
+✔ CBA-42 apiFetchTO: fechamento vai ao endereço e formato do Apps Script (5.6765ms)
+✔ CBA-43 apiFetchTO: usa 15 s por padrão, limpa o timer e cancela ao fim do tempo (7.3725ms)
+✔ CBA-44 renderPendingBanner: esconde com 0; singular/plural; "enviando…" e "sem sinal"; tela sem aviso (11.4385ms)
+✔ CBA-45 queueCount: conta a fila e devolve 0 se o banco falhar (o limite de 10 deixa de valer) (2.7965ms)
+✔ CBA-50 flushQueue (técnico): reenvio que o script responde "ja_fechado" deve sair da fila (5.8664ms)
+✔ CBA-51 integração (cidadão ↔ dublê do Apps Script): flushQueue e postReport reais esvaziam a fila (301.4396ms)
+⚠ CBA-52 integração (cidadão ↔ dublê): resposta perdida e reenvio geram um único registro (75.2879ms) # Defeito DEF-11 — sem identificador único, a duplicidade depende de o script descartar protocolo repetido
+✔ CBA-53 integração (técnico ↔ dublê): fechamento na fila é registrado e sai da fila (57.9577ms)
+ℹ tests 311
+ℹ suites 4
+ℹ pass 301
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 10
+ℹ duration_ms 74459.3319
+ℹ start of coverage report
+ℹ ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ℹ file                             | line % | branch % | funcs % | uncovered lines
+ℹ ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ℹ public                           |        |          |         | 
+ℹ  js                              |        |          |         | 
+ℹ   cidadao                        |        |          |         | 
+ℹ    application                   |        |          |         | 
+ℹ     EnviarReporte.js             | 100.00 |   100.00 |  100.00 | 
+ℹ     SincronizarFila.js           |  67.69 |    37.50 |  100.00 | 25 27-46
+ℹ    domain                        |        |          |         | 
+ℹ     Report.js                    |  90.76 |    83.33 |   85.71 | 22-26 37-40 91-92
+ℹ    infrastructure                |        |          |         | 
+ℹ     GeolocationService.js        |  42.86 |   100.00 |   20.00 | 18-20 23-24 27-48 51-55
+ℹ  shared                          |        |          |         | 
+ℹ   infrastructure                 |        |          |         | 
+ℹ    ApiClient.js                  | 100.00 |   100.00 |  100.00 | 
+ℹ  tecnico                         |        |          |         | 
+ℹ   js                             |        |          |         | 
+ℹ    application                   |        |          |         | 
+ℹ     CarregarPainel.js            |  94.29 |    39.13 |   54.55 | 12-13 16-17
+ℹ     CarregarRota.js              | 100.00 |   100.00 |  100.00 | 
+ℹ     FecharAdministrativamente.js | 100.00 |    90.91 |  100.00 | 
+ℹ    domain                        |        |          |         | 
+ℹ     AdminClose.js                | 100.00 |    50.00 |  100.00 | 
+ℹ     Close.js                     |  17.86 |   100.00 |    0.00 | 7-15 18-48 51-56
+ℹ     Ticket.js                    | 100.00 |    93.75 |  100.00 | 
+ℹ    presentation                  |        |          |         | 
+ℹ     ListView.js                  |  80.65 |    40.00 |   60.00 | 12-13 27-30
+ℹ     MapView.js                   |  61.22 |    77.78 |   75.00 | 30-48
+ℹ server                           |        |          |         | 
+ℹ  src                             |        |          |         | 
+ℹ   app.js                         |  94.36 |    85.71 |   95.00 | 86-89 138-139 189-193
+ℹ   application                    |        |          |         | 
+ℹ    errors                        |        |          |         | 
+ℹ     Conflito.js                  | 100.00 |   100.00 |  100.00 | 
+ℹ     index.js                     | 100.00 |   100.00 |  100.00 | 
+ℹ     NaoEncontrado.js             | 100.00 |   100.00 |  100.00 | 
+ℹ     SemPermissao.js              | 100.00 |   100.00 |  100.00 | 
+ℹ    services                      |        |          |         | 
+ℹ     AuthService.js               |  98.04 |    88.24 |  100.00 | 82-83
+ℹ     ChamadoService.js            |  97.56 |    85.11 |  100.00 | 125-126 134-135
+ℹ     EstoqueService.js            |  88.24 |    70.00 |   85.71 | 25-26 43-44 57-60
+ℹ     FechamentoService.js         | 100.00 |    96.92 |  100.00 | 
+ℹ     PosteService.js              |  84.15 |    36.36 |  100.00 | 14-15 24-30 55-56 60-61
+ℹ   domain                         |        |          |         | 
+ℹ    Chamado.js                    | 100.00 |   100.00 |  100.00 | 
+ℹ    Fechamento.js                 | 100.00 |   100.00 |  100.00 | 
+ℹ    ItemEstoque.js                |  84.00 |    26.67 |  100.00 | 24-25 28-29 33-34 36-37
+ℹ    Missao.js                     |  79.31 |    33.33 |  100.00 | 9-10 12-13 15 19-20 22-23 40-42
+ℹ    Poste.js                      |  72.55 |   100.00 |   50.00 | 32-45
+ℹ    Tentativa.js                  |  83.33 |    50.00 |  100.00 | 10-11 13-14
+ℹ   infrastructure                 |        |          |         | 
+ℹ    config                        |        |          |         | 
+ℹ     env.js                       | 100.00 |   100.00 |  100.00 | 
+ℹ    database                      |        |          |         | 
+ℹ     pool.js                      | 100.00 |    87.50 |  100.00 | 
+ℹ     transacao.js                 |  94.59 |    71.43 |  100.00 | 27-28
+ℹ    repositories                  |        |          |         | 
+ℹ     ChamadoRepository.js         |  98.50 |    76.00 |  100.00 | 96-97
+ℹ     EstoqueRepository.js         |  98.82 |    85.37 |  100.00 | 123-124
+ℹ     FechamentoRepository.js      | 100.00 |    90.91 |  100.00 | 
+ℹ     PosteRepository.js           | 100.00 |    93.75 |  100.00 | 
+ℹ     SessaoRepository.js          | 100.00 |    71.43 |  100.00 | 
+ℹ     TentativaRepository.js       |  85.29 |   100.00 |   66.67 | 35-44
+ℹ     UsuarioRepository.js         | 100.00 |   100.00 |  100.00 | 
+ℹ    security                      |        |          |         | 
+ℹ     gerarToken.js                | 100.00 |   100.00 |  100.00 | 
+ℹ     hashPin.js                   |  96.67 |    46.67 |  100.00 | 53-54
+ℹ    storage                       |        |          |         | 
+ℹ     FotoStorage.js               |  83.33 |    64.71 |  100.00 | 22-23 31-35 41-42
+ℹ   presentation                   |        |          |         | 
+ℹ    controllers                   |        |          |         | 
+ℹ     AuthController.js            |  94.74 |    57.14 |  100.00 | 18-19
+ℹ     ChamadoController.js         |  88.89 |    58.33 |  100.00 | 31-32 40-41 53-54 62-63
+ℹ     EstoqueController.js         |  76.19 |    45.45 |   80.00 | 13-14 26-27 35-36 42 48-55
+ℹ     FechamentoController.js      | 100.00 |   100.00 |  100.00 | 
+ℹ     PosteController.js           |  85.00 |    57.14 |  100.00 | 13-14 22-23 32-33
+ℹ    middlewares                   |        |          |         | 
+ℹ     autenticar.js                | 100.00 |   100.00 |  100.00 | 
+ℹ     limitarTentativas.js         | 100.00 |    90.00 |  100.00 | 
+ℹ     tratarErros.js               | 100.00 |   100.00 |  100.00 | 
+ℹ     validar.js                   | 100.00 |   100.00 |  100.00 | 
+ℹ    routes                        |        |          |         | 
+ℹ     auth.routes.js               | 100.00 |   100.00 |  100.00 | 
+ℹ     chamados.routes.js           | 100.00 |   100.00 |  100.00 | 
+ℹ     estoque.routes.js            | 100.00 |   100.00 |  100.00 | 
+ℹ     postes.routes.js             | 100.00 |   100.00 |  100.00 | 
+ℹ    views                         |        |          |         | 
+ℹ     chamado.view.js              | 100.00 |    77.78 |  100.00 | 
+ℹ     resposta.js                  | 100.00 |   100.00 |  100.00 | 
+ℹ     tentativa.view.js            | 100.00 |    25.00 |  100.00 | 
+ℹ  tests                           |        |          |         | 
+ℹ   fechar-os                      |        |          |         | 
+ℹ    banco-simulado.js             |  95.62 |    86.44 |   90.70 | 57-59 61-62 108
+ℹ    fixture.js                    | 100.00 |   100.00 |  100.00 | 
+ℹ   helpers                        |        |          |         | 
+ℹ    administrative-fixture.js     | 100.00 |    96.15 |  100.00 | 
+ℹ   reportar-defeito               |        |          |         | 
+ℹ    banco-simulado.js             |  98.41 |    95.24 |  100.00 | 37
+ℹ    fixture.js                    | 100.00 |   100.00 |  100.00 | 
+ℹ   testes-offline                 |        |          |         | 
+ℹ    apoio                         |        |          |         | 
+ℹ     casos-cliente.js             | 100.00 |    97.17 |  100.00 | 
+ℹ     dubles-cliente.js            | 100.00 |    94.44 |   91.38 | 
+ℹ     extrair-funcao.js            |  78.29 |    81.82 |   70.00 | 65 115 117-120 124-150
+ℹ     servidor-teste.js            |  85.78 |    63.31 |   69.12 | 53-67 112-114 125 156-159 162-164 264-266 313-315 325-328 368-374 387-388 394-399 427-431 433-435 438-440 442 446-448
+ℹ ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ℹ all files                        |  92.64 |    83.45 |   89.94 | 
+ℹ ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ℹ end of coverage report
+
+✖ failing tests:
+
+test at server\tests\integracao-sistema.test.js:644:3
+⚠ INT-13 [Almoxarifado | Miss?es] Sa?da de miss?o debita estoque, ativa alerta de m?nimo e lista itens agregados (12.8094ms) # Defeito DEF-13 - EstoqueRepository usa coluna data em vez de data_missao na tabela missoes
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  503 !== 201
+  
+      at TestContext.<anonymous> (<copia-main+PR14>\server\tests\integracao-sistema.test.js:655:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1313:7)
+      at async Suite.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 503,
+    expected: 201,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at server\tests\testes-offline\apoio\casos-cliente.js:172:3
+⚠ CBN-14 flushQueue (cidadão): reporte descartado após 5 tentativas deve avisar o cidadão (9.2606ms) # Defeito DEF-03 — descarte silencioso (UC03 regra de negócio)
+  AssertionError [ERR_ASSERTION]: o reporte foi apagado e só houve console.warn, que o cidadão não vê
+      at TestContext.<anonymous> (<copia-main+PR14>\server\tests\testes-offline\apoio\casos-cliente.js:176:12)
+      at async Test.run (node:internal/test_runner/test:1313:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at server\tests\testes-offline\apoio\casos-cliente.js:179:3
+⚠ CBN-15 flushQueue (cidadão): três sincronizações ao mesmo tempo enviam o reporte uma única vez (6.5247ms) # Defeito DEF-04 — falta trava contra execução simultânea
+  AssertionError [ERR_ASSERTION]: o mesmo protocolo foi enviado 3 vezes
+  
+  3 !== 1
+  
+      at TestContext.<anonymous> (<copia-main+PR14>\server\tests\testes-offline\apoio\casos-cliente.js:182:12)
+      at async Test.run (node:internal/test_runner/test:1313:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at server\tests\testes-offline\apoio\casos-cliente.js:291:3
+⚠ CBN-26 postReport: envia ao endereço do API Node no formato que ele aceita (3.7145ms) # Defeito DEF-01 — o app envia formulário sem id; a API Node só aceita JSON com id
+  AssertionError [ERR_ASSERTION]: Content-Type enviado: (nenhum: o navegador usa form-urlencoded)
+      at TestContext.<anonymous> (<copia-main+PR14>\server\tests\testes-offline\apoio\casos-cliente.js:304:16)
+      at async Test.run (node:internal/test_runner/test:1313:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: '(nenhum: o navegador usa form-urlencoded)',
+    expected: /application\/json/,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at server\tests\testes-offline\api-node\caixa-branca\cliente.test.js:18:1
+⚠ CBN-50 integração (cidadão ↔ API Node): a fila deve esvaziar quando a API está no ar (353.3587ms) # Defeito DEF-01 — a API recusa o formulário com 400 JSON_INVALIDO
+  AssertionError [ERR_ASSERTION]: o reporte ficou na fila com o motivo {"codigo":"JSON_INVALIDO","mensagem":"JSON inválido no corpo da requisição."}
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (<copia-main+PR14>\server\tests\testes-offline\api-node\caixa-branca\cliente.test.js:32:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1313:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at server\tests\testes-offline\api-node\caixa-branca\cliente.test.js:92:1
+⚠ CBN-55 buildPayload: a mensagem do reporte deve levar o id único exigido pela API Node (1.9632ms) # Defeito DEF-01 — a mensagem não tem o campo id
+  AssertionError [ERR_ASSERTION]: campos enviados: protocolo, timestamp, tipo, lat, lng, acc, descricao, nome, tel, endereco, foto_base64, poste_id, user_agent
+      at TestContext.<anonymous> (<copia-main+PR14>\server\tests\testes-offline\api-node\caixa-branca\cliente.test.js:94:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1306:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+      at Test.postRun (node:internal/test_runner/test:1447:19)
+      at Test.run (node:internal/test_runner/test:1372:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at server\tests\testes-offline\api-node\caixa-branca\cliente.test.js:97:1
+⚠ CBN-54 submitReport: o motivo de uma recusa da API deve ser legível (1.7157ms) # Defeito DEF-12 — o objeto de erro da API vira "[object Object]"
+  AssertionError [ERR_ASSERTION]: registro do app: Submit online falhou, enfileirando: Error: [object Object]
+      at TestContext.<anonymous> (<copia-main+PR14>\server\tests\testes-offline\api-node\caixa-branca\cliente.test.js:104:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1313:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'Submit online falhou, enfileirando: Error: [object Object]',
+    expected: /\[object Object\]/,
+    operator: 'doesNotMatch',
+    diff: 'simple'
+  }
+
+test at server\tests\testes-offline\apoio\casos-cliente.js:172:3
+⚠ CBA-14 flushQueue (cidadão): reporte descartado após 5 tentativas deve avisar o cidadão (3.2208ms) # Defeito DEF-03 — descarte silencioso (UC03 regra de negócio)
+  AssertionError [ERR_ASSERTION]: o reporte foi apagado e só houve console.warn, que o cidadão não vê
+      at TestContext.<anonymous> (<copia-main+PR14>\server\tests\testes-offline\apoio\casos-cliente.js:176:12)
+      at async Test.run (node:internal/test_runner/test:1313:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at server\tests\testes-offline\apoio\casos-cliente.js:179:3
+⚠ CBA-15 flushQueue (cidadão): três sincronizações ao mesmo tempo enviam o reporte uma única vez (4.1101ms) # Defeito DEF-04 — falta trava contra execução simultânea
+  AssertionError [ERR_ASSERTION]: o mesmo protocolo foi enviado 3 vezes
+  
+  3 !== 1
+  
+      at TestContext.<anonymous> (<copia-main+PR14>\server\tests\testes-offline\apoio\casos-cliente.js:182:12)
+      at async Test.run (node:internal/test_runner/test:1313:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at server\tests\testes-offline\apps-script\caixa-branca\cliente.test.js:46:1
+⚠ CBA-52 integração (cidadão ↔ dublê): resposta perdida e reenvio geram um único registro (75.2879ms) # Defeito DEF-11 — sem identificador único, a duplicidade depende de o script descartar protocolo repetido
+  AssertionError [ERR_ASSERTION]: linhas na planilha com o mesmo protocolo: 2
+  
+  2 !== 1
+  
+      at TestContext.<anonymous> (<copia-main+PR14>\server\tests\testes-offline\apps-script\caixa-branca\cliente.test.js:60:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1313:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+npm test exit=0

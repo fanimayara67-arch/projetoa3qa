@@ -1,0 +1,76 @@
+{
+  "rotulo": "merge",
+  "resultados": [
+    {
+      "id": "L-01",
+      "descricao": "Tela do PIN: botão \"Sair\" escondido",
+      "obtido": false,
+      "esperado": false,
+      "ok": true
+    },
+    {
+      "id": "L-02",
+      "descricao": "Login com PIN 0123 abre o painel",
+      "obtido": true,
+      "esperado": true,
+      "ok": true
+    },
+    {
+      "id": "L-03",
+      "descricao": "Painel: botão \"Sair\" visível",
+      "obtido": true,
+      "esperado": true,
+      "ok": true
+    },
+    {
+      "id": "L-04",
+      "descricao": "Logout volta para a tela do PIN",
+      "obtido": true,
+      "esperado": true,
+      "ok": true
+    },
+    {
+      "id": "L-05",
+      "descricao": "Após logout: pontos do PIN vazios",
+      "obtido": 0,
+      "esperado": 0,
+      "ok": true
+    },
+    {
+      "id": "L-06",
+      "descricao": "Após logout: sessão removida do aparelho",
+      "obtido": null,
+      "esperado": null,
+      "ok": true
+    },
+    {
+      "id": "L-07",
+      "descricao": "Após logout: teclado aceita novo dígito (1 ponto)",
+      "obtido": 1,
+      "esperado": 1,
+      "ok": true
+    },
+    {
+      "id": "L-08",
+      "descricao": "Novo login sem recarregar a página",
+      "obtido": true,
+      "esperado": true,
+      "ok": true
+    },
+    {
+      "id": "L-09",
+      "descricao": "PIN errado: tempo até limpar os pontos (ms, aprox.)",
+      "obtido": 566,
+      "esperado": "informativo",
+      "ok": true
+    },
+    {
+      "id": "L-10",
+      "descricao": "Nenhum erro de JavaScript na página",
+      "obtido": 0,
+      "esperado": 0,
+      "ok": true
+    }
+  ],
+  "errosJs": []
+}
