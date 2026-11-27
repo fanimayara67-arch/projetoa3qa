@@ -1,0 +1,12 @@
+Testes: 87 (código de saída 0)
+Mutação: 156 mutantes
+  20/156
+  40/156
+  60/156
+  80/156
+  100/156
+  120/156
+  140/156
+{"total":87,"aprovados":81,"defeitosConfirmados":6,"reprovados":0,"todoQuePassou":0,"codigoDeSaida":0}
+Mutação: 147/156 mortos (94.2%)
+exit=0

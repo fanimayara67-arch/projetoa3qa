@@ -1,0 +1,197 @@
+Comando: node --test "server/tests/testes-offline/api-node/caixa-branca/*.test.js"  (Node.js v24.16.0, win32)
+Testes marcados com ⚠ são "todo": exigem o comportamento correto e falham hoje, confirmando um defeito.
+
+✔ CBN-01 flushQueue (cidadão): sem internet não lê a fila nem envia (15.079ms)
+✔ CBN-02 flushQueue (cidadão): endereço do servidor não configurado ("__...") não envia (3.188ms)
+✔ CBN-03 flushQueue (cidadão): erro ao ler o banco do aparelho encerra sem enviar e sem lançar erro (5.2466ms)
+✔ CBN-04 flushQueue (cidadão): fila vazia encerra sem enviar (2.9759ms)
+✔ CBN-05 flushQueue (cidadão): envio aceito (API Node) apaga o item e atualiza o aviso (7.0324ms)
+✔ CBN-06 flushQueue (cidadão): recusa do servidor (API Node) mantém o item e soma 1 tentativa com o motivo (3.9277ms)
+✔ CBN-07 flushQueue (cidadão): resposta vazia conta como recusa ("server error") (2.9972ms)
+✔ CBN-08 flushQueue (cidadão): erro de rede mantém o item, soma 1 tentativa e guarda a mensagem do erro (3.0618ms)
+✔ CBN-09 flushQueue (cidadão): erro de rede sem mensagem é guardado como "network error" (2.6684ms)
+✔ CBN-10 flushQueue (cidadão): valor limite — com 4 tentativas ainda envia; com 5 descarta sem enviar (2.89ms)
+✔ CBN-11 flushQueue (cidadão): falha ao apagar um item descartado não interrompe a fila (2.5517ms)
+✔ CBN-12 flushQueue (cidadão): falha ao gravar a tentativa depois de um erro de rede não interrompe a fila (2.7958ms)
+✔ CBN-13 flushQueue (cidadão): falha no 1º item não impede o envio do 2º (2.9995ms)
+⚠ CBN-14 flushQueue (cidadão): reporte descartado após 5 tentativas deve avisar o cidadão (4.2025ms) # Defeito DEF-03 — descarte silencioso (UC03 regra de negócio)
+⚠ CBN-15 flushQueue (cidadão): três sincronizações ao mesmo tempo enviam o reporte uma única vez (4.4061ms) # Defeito DEF-04 — falta trava contra execução simultânea
+✔ CBN-16 updatePendingBanner: esconde com 0; singular com 1; plural com 3 (9.5868ms)
+✔ CBN-17 updatePendingBanner: erro no banco ou tela sem o aviso não quebram o app (5.3872ms)
+✔ CBN-18 submitReport: segundo toque durante o envio é ignorado (8.1741ms)
+✔ CBN-19 submitReport: com internet e envio aceito (API Node), mostra "enviado" sem gravar na fila (8.9149ms)
+✔ CBN-20 submitReport: com internet e recusa (API Node), guarda na fila (3.3182ms)
+✔ CBN-21 submitReport: com internet e erro de rede, guarda na fila (4.3716ms)
+✔ CBN-22 submitReport: envio e gravação falham — mensagem de erro e botão liberado (UC01-E1) (3.916ms)
+✔ CBN-23 submitReport: sem internet grava direto na fila, sem tentar enviar (2.8622ms)
+✔ CBN-24 submitReport: sem internet e sem conseguir gravar — mensagem de erro (UC01-E1) (3.3054ms)
+✔ CBN-47 submitReport: durante o envio o botão fica travado e marcado "Enviando…" (3.2581ms)
+✔ CBN-25 submitReport: com internet e servidor não configurado ("__..."), guarda na fila (30.5838ms)
+✔ CBN-46 submitReport: recusa sem motivo é registrada como "server error" e guardada na fila (3.7985ms)
+⚠ CBN-26 postReport: envia ao endereço do API Node no formato que ele aceita (6.3436ms) # Defeito DEF-01 — o app envia formulário sem id; a API Node só aceita JSON com id
+✔ CBN-27 postReport: limite de 60 s, timer limpo e resposta lida (3.4413ms)
+✔ CBN-28 postReport: resposta que não é JSON vira recusa ("resposta inválida do servidor") (3.6476ms)
+✔ CBN-29 postReport: erro de rede é repassado e o timer é limpo (25.8885ms)
+✔ CBN-30 postReport: depois de 60 s sem resposta a requisição é cancelada (201.5727ms)
+✔ CBN-31 generateProtocol: formato IC-AAMMDD-XXXXX com zero à esquerda no mês e no dia (7.2806ms)
+✔ CBN-32 buildPayload: a mensagem do reporte leva protocolo, tipo, GPS, foto, poste e textos limpos (6.1298ms)
+✔ CBN-33 flushQueue (técnico): sem internet não envia e não atualiza o aviso (82.4045ms)
+✔ CBN-34 flushQueue (técnico): sem sessão (sem PIN) não envia (3.4704ms)
+✔ CBN-35 flushQueue (técnico): fila vazia libera a trava e atualiza o aviso (5.8156ms)
+✔ CBN-36 flushQueue (técnico): todos aceitos (API Node) são apagados na ordem da fila (4.7555ms)
+✔ CBN-37 flushQueue (técnico): sessão expirada (API Node) interrompe e mantém a fila (3.3864ms)
+✔ CBN-38 flushQueue (técnico): erro de rede interrompe e mantém a fila (3.9274ms)
+✔ CBN-39 flushQueue (técnico): três sincronizações ao mesmo tempo enviam cada fechamento uma vez (trava) (10.2558ms)
+✔ CBN-40 flushQueue (técnico): erro ao ler a fila libera a trava, mas o erro escapa da função (71.4867ms)
+✔ CBN-41 flushQueue (técnico): erro do servidor em um fechamento não trava os seguintes (12.0144ms)
+✔ CBN-42 apiFetchTO: fechamento vai ao endereço e formato do API Node (29.1129ms)
+✔ CBN-43 apiFetchTO: usa 15 s por padrão, limpa o timer e cancela ao fim do tempo (5.6993ms)
+✔ CBN-44 renderPendingBanner: esconde com 0; singular/plural; "enviando…" e "sem sinal"; tela sem aviso (13.1334ms)
+✔ CBN-45 queueCount: conta a fila e devolve 0 se o banco falhar (o limite de 10 deixa de valer) (2.879ms)
+⚠ CBN-50 integração (cidadão ↔ API Node): a fila deve esvaziar quando a API está no ar (1700.9803ms) # Defeito DEF-01 — a API recusa o formulário com 400 JSON_INVALIDO
+✔ CBN-51 integração (cidadão ↔ API Node): a causa da recusa é o formato da mensagem (61.1591ms)
+✔ CBN-52 integração (técnico ↔ API Node): o fechamento na fila deve ser registrado (182.2567ms)
+✔ CBN-53 integração (técnico ↔ API Node): com sessão inválida a API responde 401 e a fila fica guardada (36.6633ms)
+⚠ CBN-55 buildPayload: a mensagem do reporte deve levar o id único exigido pela API Node (3.176ms) # Defeito DEF-01 — a mensagem não tem o campo id
+⚠ CBN-54 submitReport: o motivo de uma recusa da API deve ser legível (7.5546ms) # Defeito DEF-12 — o objeto de erro da API vira "[object Object]"
+✔ CBN-60 coordenadasValidas: limites do globo (±90 e ±180) são aceitos; um passo além é recusado (4.49ms)
+✔ CBN-61 coordenadasValidas: o ponto (0,0) é recusado; 0,0001 já é aceito (0.4007ms)
+✔ CBN-62 coordenadasValidas: valores vazios, nulos ou não numéricos são recusados (0.9326ms)
+✔ CBN-63 validarNovoChamado: reporte completo é válido (4.9853ms)
+✔ CBN-64 validarNovoChamado: sem id (como o app envia hoje) é inválido (1.0714ms)
+✔ CBN-65 validarNovoChamado: id que não é texto, sem protocolo e tipo em branco geram um erro cada (0.4938ms)
+✔ CBN-66 validarNovoChamado: sem GPS válido só é aceito com o poste do QR (0.6668ms)
+✔ CBN-67 criarChamado: dados inválidos são recusados antes de salvar foto ou gravar (3.0314ms)
+✔ CBN-68 criarChamado: o mesmo reporte enviado duas vezes (mesmo id) gera um único chamado (2.2653ms)
+✔ CBN-69 criarChamado: mesmo protocolo com outro id é conflito (409) e não duplica (1.5921ms)
+✔ CBN-70 criarChamado: pelo QR sem GPS, usa as coordenadas e o endereço do poste (1.6983ms)
+✔ CBN-71 fecharChamado: reenvio com o mesmo operacao_id não fecha de novo nem baixa o estoque duas vezes (CA04) (6.3165ms)
+✔ CBN-72 fecharChamado: chamado já fechado por outra operação é conflito (409) (0.754ms)
+✔ CBN-73 fecharChamado: chamado inexistente é 404 (0.6012ms)
+✔ CBN-74 fecharChamado: sem operacao_id (como o app envia hoje) é recusado (0.7746ms)
+✔ CBN-75 validarFechamentoCampo: valor limite da quantidade de material (0 recusa, 1 aceita) (0.9212ms)
+✔ CBN-76 API: corpo em formulário (como o app do cidadão envia) é recusado com 400 JSON_INVALIDO (1233.3472ms)
+✔ CBN-77 API: JSON sem id é recusado com 400 e o campo é apontado (57.8584ms)
+✔ CBN-78 API: JSON com id é aceito (201) e o reenvio devolve o mesmo chamado sem duplicar (98.3005ms)
+✔ CBN-79 API: POST /api (para onde o técnico envia) não existe; a rota certa exige Bearer (276.6448ms)
+✔ CBN-80 API: corpo vazio vira {} e a validação aponta os campos que faltam (26.0206ms)
+✔ CBN-81 API: corpo acima de 8 MB (ex.: foto sem compressão) é recusado com 413 (309.3762ms)
+✔ CBN-82 middlewareValidacao: sem corpo nenhum (req.body ausente) aponta todos os campos (1.4753ms)
+✔ CBN-83 tratarErros: banco fora do ar vira 503; erro inesperado vira 500 sem expor detalhes (0.8242ms)
+✔ CBN-84 criarChamado: pelo QR com GPS do aparelho, mantém o GPS e completa o endereço pelo poste (1.4411ms)
+✔ CBN-85 fecharChamado: com poste identificado, atualiza a ficha do poste na mesma transação (1.4404ms)
+✔ CBN-86 validarFechamentoCampo: sem status e sem serviço gera um erro para cada (0.4091ms)
+✔ CBN-87 coordenadasValidas: valor limite dos dois lados de cada eixo e perto do zero (0.2388ms)
+✔ CBN-88 validações recusam campos com tipo errado (número no lugar de texto) (0.6194ms)
+✔ CBN-89 criarChamado: repassa foto, telefone, navegador e horário que o app envia (0.6068ms)
+✔ CBN-90 criarChamado: pelo QR com só a latitude, completa as coordenadas pelo poste (5.3519ms)
+✔ CBN-91 fecharChamado: grava foto, data e materiais informados e marca o poste no chamado (3.8328ms)
+✔ CBN-92 API: um único campo faltando (ou vazio, ou nulo) já é recusado (98.7048ms)
+✔ CBN-93 API: valor limite do corpo — exatamente 8 MB é aceito (379.5069ms)
+ℹ tests 87
+ℹ suites 0
+ℹ pass 81
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 6
+ℹ duration_ms 3720.1955
+
+✖ failing tests:
+
+test at server\tests\testes-offline\apoio\casos-cliente.js:172:3
+⚠ CBN-14 flushQueue (cidadão): reporte descartado após 5 tentativas deve avisar o cidadão (4.2025ms) # Defeito DEF-03 — descarte silencioso (UC03 regra de negócio)
+  AssertionError [ERR_ASSERTION]: o reporte foi apagado e só houve console.warn, que o cidadão não vê
+      at TestContext.<anonymous> (<local>
+      at async Test.run (node:internal/test_runner/test:1313:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at server\tests\testes-offline\apoio\casos-cliente.js:179:3
+⚠ CBN-15 flushQueue (cidadão): três sincronizações ao mesmo tempo enviam o reporte uma única vez (4.4061ms) # Defeito DEF-04 — falta trava contra execução simultânea
+  AssertionError [ERR_ASSERTION]: o mesmo protocolo foi enviado 3 vezes
+  
+  3 !== 1
+  
+      at TestContext.<anonymous> (<local>
+      at async Test.run (node:internal/test_runner/test:1313:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at server\tests\testes-offline\apoio\casos-cliente.js:291:3
+⚠ CBN-26 postReport: envia ao endereço do API Node no formato que ele aceita (6.3436ms) # Defeito DEF-01 — o app envia formulário sem id; a API Node só aceita JSON com id
+  AssertionError [ERR_ASSERTION]: Content-Type enviado: (nenhum: o navegador usa form-urlencoded)
+      at TestContext.<anonymous> (<local>
+      at async Test.run (node:internal/test_runner/test:1313:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: '(nenhum: o navegador usa form-urlencoded)',
+    expected: /application\/json/,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at server\tests\testes-offline\api-node\caixa-branca\cliente.test.js:18:1
+⚠ CBN-50 integração (cidadão ↔ API Node): a fila deve esvaziar quando a API está no ar (1700.9803ms) # Defeito DEF-01 — a API recusa o formulário com 400 JSON_INVALIDO
+  AssertionError [ERR_ASSERTION]: o reporte ficou na fila com o motivo {"codigo":"JSON_INVALIDO","mensagem":"JSON inválido no corpo da requisição."}
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (<local>
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1313:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at server\tests\testes-offline\api-node\caixa-branca\cliente.test.js:92:1
+⚠ CBN-55 buildPayload: a mensagem do reporte deve levar o id único exigido pela API Node (3.176ms) # Defeito DEF-01 — a mensagem não tem o campo id
+  AssertionError [ERR_ASSERTION]: campos enviados: protocolo, timestamp, tipo, lat, lng, acc, descricao, nome, tel, endereco, foto_base64, poste_id, user_agent
+      at TestContext.<anonymous> (<local>
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1306:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+      at Test.postRun (node:internal/test_runner/test:1447:19)
+      at Test.run (node:internal/test_runner/test:1372:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at server\tests\testes-offline\api-node\caixa-branca\cliente.test.js:97:1
+⚠ CBN-54 submitReport: o motivo de uma recusa da API deve ser legível (7.5546ms) # Defeito DEF-12 — o objeto de erro da API vira "[object Object]"
+  AssertionError [ERR_ASSERTION]: registro do app: Submit online falhou, enfileirando: Error: [object Object]
+      at TestContext.<anonymous> (<local>
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1313:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'Submit online falhou, enfileirando: Error: [object Object]',
+    expected: /\[object Object\]/,
+    operator: 'doesNotMatch',
+    diff: 'simple'
+  }
