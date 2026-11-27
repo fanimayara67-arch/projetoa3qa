@@ -21,7 +21,7 @@ Rodei de novo toda a bateria de testes offline, nos dois cenários de servidor (
 O que esses números mostram:
 
 1. **Do lado do técnico, o modo offline com a API Node agora funciona.** Os casos CT-04, CT-06, CT-07, CT-08 e CT-09 passaram a ser aprovados, porque os defeitos DEF-02, DEF-07, DEF-08 e DEF-13 foram corrigidos no UC05.
-2. **Achei um defeito novo, o DEF-14.** Sem internet, o app do cidadão não abre por **QR Code do poste** nem por **link com parâmetros** (como os compartilhados no WhatsApp). Ele já existia em 12/11, mas a versão antiga da ferramenta de teste escondia a falha. Mostro abaixo como isso foi comprovado e a correção de uma linha.
+2. **Achei um defeito novo, o DEF-14.** Sem internet, o app do cidadão não abre por **link com parâmetros**, como os compartilhados no WhatsApp (`?utm_source=whatsapp`). Ele já existia em 12/11, mas a versão antiga da ferramenta de teste escondia a falha. Mostro abaixo como isso foi comprovado e a correção de uma linha. O mesmo defeito afetava a abertura pelo QR Code do poste, mas **em 26/11 a equipe decidiu não usar mais o QR Code**, e esse caso (CP-20) saiu do escopo.
 3. **Do lado do cidadão, nada mudou.** Nenhum reporte chega à API Node, porque o DEF-01 continua aberto. Também seguem abertos o DEF-03, DEF-04, DEF-05, DEF-06, DEF-09, DEF-10, DEF-11 e DEF-12.
 4. **Encontrei duas lacunas nos próprios testes**, descritas em [Lacunas nos testes](#lacunas-nos-testes).
 
@@ -59,17 +59,22 @@ Usei os mesmos scripts e casos da rodada de 12/11, sem alterar nenhum, numa **c�
 | CT-08 | Fechamento recusado não trava os outros | Reprovado → ✅ **Aprovado** | Reprovado → ✅ **Aprovado** | DEF-07 corrigido |
 | CT-09 | Resposta perdida no fechamento não fecha duas vezes | Reprovado → ✅ **Aprovado** | Reprovado → ✅ **Aprovado** | DEF-08 corrigido |
 | CP-19 | Link com parâmetros abre sem internet | Aprovado → ❌ **Reprovado** | Aprovado → ❌ **Reprovado** | **DEF-14** (falso positivo em 12/11) |
-| CP-20 | QR Code do poste lido sem internet | Aprovado → ❌ **Erro** | Aprovado → ❌ **Erro** | **DEF-14**: a página nem abre |
+| CP-20 | QR Code do poste lido sem internet | Aprovado → ❌ **Erro** | Aprovado → ❌ **Erro** | DEF-14: a página nem abre. **Fora do escopo:** o QR Code deixou de ser usado (decisão de 26/11) |
 | CT-10 | Sessão expirada com fechamento na fila | Reprovado → ⚠ Erro | Reprovado (igual) | Instabilidade do teste; rodando só ele, reprova 6 de 6 vezes (DEF-09) |
 | CT-11 | Chamado fechado sem internet não pode ser fechado de novo | Reprovado (igual, instável) | Reprovado (igual) | DEF-10; 1 tempo-limite em 6 execuções |
 
 Os outros casos tiveram o mesmo resultado de 12/11. No cenário API Node, CP-03 e CP-10 a CP-17 continuam reprovados pelo DEF-01: a API responde `400 JSON_INVALIDO` ao reporte do cidadão e ele fica na fila para sempre.
 
-**Contagem corrigida (API Node).** Os 2 "erros de execução" da rodada completa foram investigados:
-- CP-20 é uma falha real do app (DEF-14);
-- CT-10 reprovou em todas as 6 execuções isoladas.
+**Contagem corrigida.** Os "erros de execução" da rodada completa foram investigados:
+- CP-20 é uma falha real do app (DEF-14), mas o caso saiu do escopo com o fim do QR Code;
+- CT-10 reprovou em todas as 6 execuções isoladas (DEF-09).
 
-Com isso, o resultado da API Node é **17 aprovados e 14 reprovados**, sem nenhum erro que dependa só do teste.
+Sem o CP-20 e sem nenhum erro que dependa só do teste:
+
+| | Casos no escopo | Aprovados | Reprovados |
+|---|---|---|---|
+| API Node | 30 | **17** | 13 |
+| Apps Script | 32 | **24** | 8 |
 
 ### Caixa-branca
 
@@ -93,12 +98,12 @@ Os 2 restantes estão em `apiFetchTO` e são uma lacuna real, descrita abaixo.
 
 **Complexidade (RNF05, até 10 caminhos).** `criarChamado` caiu de V(G) 11 para 2 e `fecharChamado` de 12 para 6, por causa da refatoração do UC01 e do UC05. O único acima do limite continua sendo o `flushQueue` do cidadão (V(G) = 11).
 
-## DEF-14 (novo): app do cidadão não abre por QR Code ou link com parâmetros sem internet
+## DEF-14 (novo): app do cidadão não abre por link com parâmetros sem internet
 
 | | |
 |---|---|
-| **Severidade** | **Alta.** O QR Code no poste é o caminho principal de reporte (UC02), e o caso A3 do UC02 é justamente a leitura sem internet. |
-| **Requisitos** | UC02-A3, RNF01 |
+| **Severidade** | **Média.** O cidadão que abre sem internet um link compartilhado (por exemplo, no WhatsApp) vê uma página de erro. Abrir pelo endereço sem parâmetros continua funcionando (CP-01). O defeito seria **alto** se o QR Code do poste continuasse no projeto: ele abre o app por `/?poste=...`, o caminho principal do UC02. Mas a equipe decidiu em 26/11 não usar mais o QR Code. |
+| **Requisitos** | RNF01 (UC02-A3 saiu do escopo com o QR Code) |
 | **Defeito (no código)** | O service worker do cidadão procura no cache o endereço exato, com os parâmetros: `caches.match(req)` em [public/sw.js](../../../../public/sw.js). O cache guarda `/` e `/index.html`, não `/?poste=P-0007`. Sem internet, a busca falha e o `respondWith` recebe `undefined`. |
 | **Falha (o que o cidadão vê)** | A página de erro do navegador (`net::ERR_FAILED`) no lugar do app |
 | **Sugestão de correção** | Ignorar os parâmetros nas navegações: `caches.match(req, { ignoreSearch: req.mode === 'navigate' })` |
@@ -155,7 +160,7 @@ A correção foi aplicada só numa cópia descartável, para comprovar a causa. 
 | DEF-11 | Alta (condicional) | ❌ Aberto (só Apps Script) |
 | DEF-12 | Baixa | ❌ Aberto |
 | DEF-13 | Média | ✅ Corrigido (UC05) |
-| **DEF-14** | **Alta** | ❌ **Novo**: QR Code e links com parâmetros não abrem sem internet |
+| **DEF-14** | **Média** | ❌ **Novo**: links com parâmetros não abrem sem internet (a parte do QR Code saiu do escopo) |
 
 Os detalhes de cada defeito estão no [catálogo](../defeitos.json), onde o DEF-14 foi acrescentado.
 
@@ -315,7 +320,8 @@ FILTRO='^CT-1[01]$'   REPETICOES=3 node server/tests/testes-offline/api-node/cai
 
 - Os testes rodaram em Windows com Chrome. Não foram feitos em celular físico nem em outros navegadores (Safari no iPhone, por exemplo).
 - O MySQL foi trocado por repositórios em memória e o Apps Script por um dublê. O script real do Apps Script não está no repositório.
-- A correção do DEF-14 foi comprovada só numa cópia descartável; ela precisa de um PR próprio e de uma nova rodada de CP-01, CP-19 e CP-20.
+- A correção do DEF-14 foi comprovada só numa cópia descartável; ela precisa de um PR próprio e de uma nova rodada de CP-01 e CP-19.
+- O CP-20 (QR Code) continua no script de caixa-preta e foi executado, mas não conta no resultado: o QR Code saiu do escopo em 26/11. O código do QR ainda existe no app (`?poste=`, `link_poste`, `jsQR.js` no painel do técnico, redirecionamento `/p/:id` no `vercel.json`); removê-lo é uma tarefa separada.
 
 ## Evidências
 

@@ -85,7 +85,7 @@ Severidade: **Crítica** — a funcionalidade não entrega o que promete; **Alta
 | DEF-11 | Alta (condicional) | — | ✘ | Sem identificador único, o reenvio vira linha repetida se o script não descartar protocolo repetido. |
 | DEF-12 | Baixa | ✘ | — | O erro da API aparece como "[object Object]". |
 | DEF-13 | Média | ✘ | — | Com a API Node, o técnico não reconhece a sessão expirada (401). **Corrigido em 13/11 (UC05).** |
-| DEF-14 | Alta | ✘ | ✘ | Sem internet, o app do cidadão não abre por QR Code do poste nem por link com parâmetros. **Encontrado em 26/11** ([rodada de 26/11](<Rodada 26-11 (main após PR 14)/README.md>)). |
+| DEF-14 | Média | ✘ | ✘ | Sem internet, o app do cidadão não abre por link com parâmetros (ex.: compartilhado no WhatsApp). A parte do QR Code saiu do escopo. **Encontrado em 26/11** ([rodada de 26/11](<Rodada 26-11 (main após PR 14)/README.md>)). |
 
 O lugar exato no código, a falha observada e uma sugestão de correção de cada defeito estão em [defeitos.json](defeitos.json).
 
