@@ -159,11 +159,51 @@ async function listarMissoes(tx = pool) {
   return rows.map(m => ({ ...m, itens: typeof m.itens === 'string' ? JSON.parse(m.itens) : (m.itens || []) }));
 }
 
+/* ── Retorno de material da missão ── */
+
+/** Trava a missão até o fim da transação (dois retornos ao mesmo tempo não creditam em dobro). */
+async function buscarMissaoParaAtualizar(tx, missaoId) {
+  const { rows } = await tx.query('SELECT * FROM missoes WHERE id = ? FOR UPDATE', [missaoId]);
+  return rows[0] || null;
+}
+
+/** Itens que saíram na missão, com o nome do material, travados para o retorno. */
+async function listarItensDaMissao(tx, missaoId) {
+  const { rows } = await tx.query(
+    `SELECT mi.item_id, ie.nome, ie.unidade, mi.qtd_saida, mi.qtd_retorno
+       FROM missao_itens mi
+       JOIN itens_estoque ie ON ie.id = mi.item_id
+      WHERE mi.missao_id = ?
+      FOR UPDATE`,
+    [missaoId]
+  );
+  return rows;
+}
+
+/** Soma ao saldo o que voltou do campo (negativo quando um retorno é corrigido para menos). */
+async function creditarSaldo(tx, itemId, quantidade) {
+  await tx.query(
+    'UPDATE itens_estoque SET saldo = saldo + ?, atualizado_em = NOW() WHERE id = ?',
+    [quantidade, itemId]
+  );
+}
+
+async function registrarRetornoItem(tx, missaoId, itemId, quantidade) {
+  await tx.query(
+    'UPDATE missao_itens SET qtd_retorno = ? WHERE missao_id = ? AND item_id = ?',
+    [quantidade, missaoId, itemId]
+  );
+}
+
 module.exports = {
   listarItens,
   salvarItem,
   removerItem,
   baixarMateriais,
   criarMissaoComItens,
-  listarMissoes
+  listarMissoes,
+  buscarMissaoParaAtualizar,
+  listarItensDaMissao,
+  creditarSaldo,
+  registrarRetornoItem
 };

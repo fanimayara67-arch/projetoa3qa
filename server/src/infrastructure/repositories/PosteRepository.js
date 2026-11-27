@@ -111,16 +111,25 @@ async function atualizarConfiguracao(tx = pool, posteId, config = {}) {
   return buscarPorId(posteId, tx);
 }
 
+/**
+ * Lista os postes com quantos chamados cada um teve (qtd) e a data do último (data_ult),
+ * que o relatório de postes mostra em cada cartão.
+ */
+const SELECT_POSTES_COM_ATENDIMENTOS = `SELECT p.*,
+       (SELECT COUNT(*) FROM chamados c WHERE c.poste_id = p.id) AS qtd,
+       (SELECT MAX(c.criado_em) FROM chamados c WHERE c.poste_id = p.id) AS data_ult
+     FROM postes p`;
+
 async function listarTodos(filtroBairro = '', tx = pool) {
   if (filtroBairro && filtroBairro.trim()) {
     // A collation da tabela (utf8mb4_0900_ai_ci) já ignora maiúsculas e acentos, como o ILIKE fazia.
     const { rows } = await tx.query(
-      'SELECT * FROM postes WHERE bairro LIKE ? ORDER BY id ASC',
+      `${SELECT_POSTES_COM_ATENDIMENTOS} WHERE p.bairro LIKE ? ORDER BY p.id ASC`,
       [`%${filtroBairro.trim()}%`]
     );
     return rows;
   }
-  const { rows } = await tx.query('SELECT * FROM postes ORDER BY id ASC');
+  const { rows } = await tx.query(`${SELECT_POSTES_COM_ATENDIMENTOS} ORDER BY p.id ASC`);
   return rows;
 }
 

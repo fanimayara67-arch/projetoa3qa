@@ -12,6 +12,7 @@ function registrarRotasEstoque(router) {
 
   router.get('/api/missoes', autenticar(['almoxarife', 'gestor']), EstoqueController.listarMissoes);
   router.post('/api/missoes', autenticar(['almoxarife', 'gestor']), EstoqueController.criarMissao);
+  router.post('/api/missoes/:id/retorno', autenticar(['almoxarife', 'gestor']), EstoqueController.registrarRetorno);
 }
 
 module.exports = registrarRotasEstoque;
