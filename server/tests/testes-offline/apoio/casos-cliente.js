@@ -452,8 +452,10 @@ function registrarCasosCliente(test, servidor) {
     });
 
   test(`${id(43)} apiFetchTO: usa 15 s por padrão, limpa o timer e cancela ao fim do tempo`, async () => {
+    // Revisado no PR das telas na API Node: com a API Node, só o fechamento passa pelo fetch da
+    // tela; as outras ações vão pelo adaptador (TN-21), que leva o tempo limite ao ApiClient (TN-20).
     const { ctx, registro } = d.montarRequisicaoTecnico({ url: c.endpointTecnico });
-    await ctx.apiFetchTO({ action: 'list' });
+    await ctx.apiFetchTO({ action: 'close' });
     assert.equal(registro.timers[0].ms, 15000);
     assert.deepEqual(registro.limpos, [1]);
     ctx.fetch = (u, opcoes) => new Promise((_, rej) => opcoes.signal.addEventListener('abort', () => rej(new Error('AbortError'))));

@@ -60,3 +60,24 @@ export function rotuloStatusChamado(status) {
   const chave = String(status || '').trim();
   return ROTULOS_STATUS[chave] || chave || 'Aguardando atendimento';
 }
+
+/**
+ * Status como as telas do técnico mostram e filtram: aberto e em atendimento ainda podem ser
+ * fechados, por isso os dois aparecem como "Aguardando atendimento".
+ */
+export function statusParaTela(status) {
+  if (status === 'aberto' || status === 'em_atendimento') return 'Aguardando atendimento';
+  if (status === 'fechado') return 'Concluído';
+  return status;
+}
+
+/** Chamado da API Node (chamado.view) → registro no formato da lista e da busca do técnico. */
+export function registroParaTela(registro) {
+  return {
+    ...registro,
+    status: statusParaTela(registro.status),
+    data: registro.criadoEm ? new Date(registro.criadoEm).toLocaleString('pt-BR') : '',
+    foto_thumb: registro.fotoUrl || '',
+    foto: registro.fotoUrl || ''
+  };
+}

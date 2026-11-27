@@ -898,9 +898,19 @@
     let pinChecking = false;
     let callsIndex = {};
 
+    /* Adaptador das ações que ainda montam a mensagem do Apps Script (almoxarifado, postes,
+       busca e tentativa) para as rotas REST da API Node (DEF-15 e DEF-16). */
+    async function acoesApiNode() {
+      return import('./js/infrastructure/AcoesApiNode.js');
+    }
+
     /* ── FETCH com timeout ── */
     function apiFetchTO(payload, ms) {
       ms = ms || 15000;
+      // API Node: o fechamento segue abaixo (fila offline, DEF-02); as outras ações vão pelo adaptador.
+      if (/\/api\/?$/.test(String(SHEETS_URL || '')) && payload && payload.action !== 'close') {
+        return acoesApiNode().then(m => m.executarAcao(payload, { timeout: ms }));
+      }
       const ctrl = new AbortController();
       const to = setTimeout(() => ctrl.abort(), ms);
       // API Node (DEF-02): o fechamento vai para a rota REST, em JSON, com o token no cabeçalho.
@@ -3609,7 +3619,8 @@ function logoutTecnico() {
       showToast('Verificando…', 'info');
       try {
         const data = await apiFetchTO({ action: 'almox_login', pin: pin }, 20000);
-        if (!data || !data.success) return showToast('PIN incorreto.', 'err');
+        // Mostra o motivo da recusa (PIN errado ou bloqueio por tentativas), quando vier.
+        if (!data || !data.success) return showToast((data && data.error) || 'PIN incorreto.', 'err');
         almoxToken = data.token;
         document.getElementById('almox-pin-gate').style.display = 'none';
         document.getElementById('almox-content').style.display = '';
