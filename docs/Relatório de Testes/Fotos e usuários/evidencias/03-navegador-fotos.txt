@@ -1,0 +1,11 @@
+✔ F-01 [disco] Cidadão envia reporte com foto; o chamado guarda o endereço /uploads/fotos/...
+✔ F-02 [disco] A foto fica na pasta UPLOAD_DIR
+✔ F-03 [disco] GET /uploads/fotos/<arquivo> pela mesma origem do site entrega a imagem
+✔ F-04 [disco] O técnico abre o chamado e vê a foto do cidadão
+✔ F-05 [mysql] Cidadão envia reporte com foto; o chamado guarda o endereço /uploads/fotos/...
+✔ F-06 [mysql] A foto fica na tabela fotos, não no disco
+✔ F-07 [mysql] GET /uploads/fotos/<arquivo> pela mesma origem do site entrega a imagem
+✔ F-08 [mysql] O técnico abre o chamado e vê a foto do cidadão
+✔ F-09 Nenhum erro de JavaScript
+
+Total 9 | aprovados 9 | reprovados 0

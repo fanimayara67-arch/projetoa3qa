@@ -7,6 +7,7 @@
   "scripts": {
     "start": "node src/app.js",
     "db:check": "node scripts/check-db.js",
+    "usuario:cadastrar": "node scripts/cadastrar-usuario.js",
     "test": "node --test"
   },
   "dependencies": {

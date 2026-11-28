@@ -20,6 +20,12 @@
   to = "https://api-ilumina-coruripe.onrender.com/api/:splat"
   status = 200
 
+# Fotos gravadas pela API (foto_url = /uploads/fotos/<arquivo>): também vêm do servidor Node.js
+[[redirects]]
+  from = "/uploads/*"
+  to = "https://api-ilumina-coruripe.onrender.com/uploads/:splat"
+  status = 200
+
 # Service workers e config nunca ficam presos em cache de CDN:
 # é por aqui que sai uma correção de endpoint sem esperar expirar cache.
 [[headers]]
