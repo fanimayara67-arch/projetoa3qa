@@ -9,6 +9,7 @@
     "start": "npm run dev",
     "start:server": "node server/src/app.js",
     "db:check": "npm --prefix server run db:check",
+    "usuario:cadastrar": "node server/scripts/cadastrar-usuario.js",
     "test": "node --test --experimental-test-coverage",
     "test:coverage": "node --test --experimental-test-coverage",
     "test:uc01": "node --test \"server/tests/reportar-defeito/*.test.js\"",
