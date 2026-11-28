@@ -1,0 +1,18 @@
+# Fase vermelha (TDD) — testes escritos antes da correção
+# Base: fix/telas-api-node (PR #20) | 2026-11-28T00:30Z
+# node --test server/tests/fotos/fotos.test.js server/tests/usuarios/cadastrar-usuario.test.js
+
+not ok 1 - FT-01 [caixa-preta | fluxo principal] foto salva em disco é lida de volta com os mesmos bytes e o tipo certo
+not ok 2 - FT-02 [caixa-preta | risco: segurança] nome com caminho ou extensão estranha é recusado sem ler o disco
+not ok 3 - FT-03 [caixa-preta | fluxo alternativo] foto que não existe devolve nulo
+not ok 4 - FT-04 [caixa-preta | fluxo principal] no modo MySQL a foto vai para a tabela fotos, não para o disco
+not ok 5 - FT-05 [caixa-branca] o modo vem de STORAGE_DRIVER; sem a variável, grava em disco
+not ok 6 - FT-06 [caixa-branca] a migração 002 cria a tabela fotos no MySQL
+not ok 7 - FT-07 [integração | fluxo principal] GET /uploads/fotos/:arquivo entrega a foto, sem login, com cache longo
+ok 8 - FT-08 [integração | fluxo alternativo e segurança] foto inexistente e caminho com ../ respondem 404 sem vazar arquivo
+not ok 9 - FT-09 [caixa-branca] Vercel e Netlify repassam /uploads/* para a API, como fazem com /api/*
+not ok 2 - server/tests/usuarios/cadastrar-usuario.test.js
+# tests 10
+# pass 1
+# fail 9
+# todo 0
