@@ -1,0 +1,344 @@
+# Suíte completa (npm test) — 2026-11-27T20:49Z
+# Sem MySQL neste ambiente: as 8 falhas são os testes que precisam do banco (passam no CI).
+
+ok 1 - Almoxarifado: nenhuma consulta do estoque usa sintaxe do PostgreSQL
+ok 2 - Almoxarifado: salvarItem faz upsert pelo nome e devolve a linha salva
+ok 3 - Almoxarifado: removerItem devolve null quando o item não existe e não executa DELETE
+ok 4 - Almoxarifado: baixa trava o item (FOR UPDATE) antes de debitar
+ok 5 - Almoxarifado: saldo insuficiente gera Conflito sem debitar nada
+ok 6 - Almoxarifado: material inexistente gera NaoEncontrado
+ok 7 - Almoxarifado: missão usa o insertId e grava os itens debitados
+ok 8 - Almoxarifado: listarMissoes devolve itens como array, mesmo se o driver mandar texto
+ok 9 - RM-01 [caixa-preta | fluxo principal] retorno devolve ao estoque o que voltou e registra o retorno de cada item
+ok 10 - RM-02 [caixa-preta | valor limite] retorno igual à saída é aceito; um a mais é recusado sem mexer no estoque
+ok 11 - RM-03 [caixa-preta | risco: reenvio] corrigir um retorno já registrado credita só a diferença
+ok 12 - RM-04 [caixa-preta | fluxo de exceção] missão inexistente é 404; item que não saiu na missão é recusado
+ok 13 - RM-05 [caixa-preta | partição inválida] retorno sem itens ou com quantidade negativa é recusado antes da transação
+ok 14 - RM-06 [caixa-branca] repositório trava a missão e os itens, credita o saldo e grava o retorno em MySQL
+ok 15 - BP-01 [caixa-preta | partição válida] normalizarIdPoste aceita P-0001, P0001 e p0001 e devolve P-0001
+ok 16 - BP-02 [caixa-preta | partição inválida] normalizarIdPoste recusa texto que não é ID de poste
+ok 17 - BP-03 [caixa-preta | fluxo principal] buscarPoste abre o histórico do poste digitado
+ok 18 - BP-04 [caixa-preta | fluxo alternativo] buscarPoste avisa quando o ID é inválido e não abre nada
+ok 19 - BP-05 [caixa-preta | fluxo alternativo] buscarPoste cancelado não abre nada nem mostra erro
+ok 20 - MySQL: configuração incompleta informa somente as chaves ausentes
+ok 21 - MySQL: rejeita portas inválidas antes de tentar uma conexão
+ok 22 - Domínio Chamado: permite fechar apenas chamados abertos ou em_atendimento
+ok 23 - Domínio Chamado: rejeita coordenada (0,0) e exige GPS válido ou poste_id do QR
+ok 24 - Domínio Poste: normaliza códigos de QR Code mantendo compatibilidade com placas físicas
+ok 25 - Domínio ItemEstoque e Missao: valida saldo suficiente e impede retorno maior que saída
+ok 26 - Domínio Fechamento: exige operacao_id, status e serviço na baixa em campo
+ok 27 - Arquitetura: garante isolamento das camadas (Domínio sem banco/HTTP e Apresentação sem SQL)
+ok 28 - Cliente administrativo: valida antes de enviar e exige identificador estável e sessão
+ok 29 - Cliente administrativo: usa REST e mantém o UUID ao repetir depois de falha de rede
+ok 30 - Cliente administrativo: preserva conflito e acesso negado como falha
+ok 31 - Administrativo: exige UUID, informante, justificativa mínima e status permitido
+ok 32 - Administrativo: registra gestor, motivo e data, sem movimentar estoque nem salvar foto
+ok 33 - Administrativo: dois reenvios simultâneos da mesma operação retornam o mesmo fechamento
+ok 34 - Administrativo: outro fechamento concorrente recebe conflito
+ok 35 - Administrativo: não reutiliza identificador com dados ou gestor diferentes
+ok 36 - Administrativo: chamado inexistente retorna 404 e falha após inserir reverte a transação
+ok 37 - API administrativa: parâmetro de rota malformado retorna 400 sem interromper o servidor
+ok 38 - API administrativa: autenticação e perfil são aplicados antes da gravação
+ok 39 - UC03 - Caixa-branca: FechamentoController
+ok 40 - UC03 - Caixa-branca: FechamentoService.fecharChamado
+ok 41 - UC03 - Caixa-branca: ApiClient (envio do fechamento pelo aparelho)
+ok 42 - FO-21 [caixa-preta | integração | RNF03 e CA05] sem sessão válida: 401; perfil sem acesso: 403
+ok 43 - FO-22 [caixa-preta | integração] fechamento válido: 201 com o fechamento; reenvio devolve o mesmo registro
+ok 44 - FO-23 [caixa-preta | integração | passo 6] sem foto, sem GPS ou com status fora do UC05: 400 e nada gravado
+ok 45 - FO-24 [suposição de erro | integração] data no formato da tela antiga gera 400, não erro interno (500)
+ok 46 - FO-25 [caixa-branca | DEF-02] com a API Node, o fechamento vai para POST /api/chamados/:protocolo/fechamento em JSON com o token no cabeçalho
+ok 47 - FO-26 [caixa-branca | DEF-02] o corpo segue o contrato da API: operacao_id, materiais {nome, quantidade}, data ISO, poste e precisão
+ok 48 - FO-27 [suposição de erro | DEF-02] fechamento antigo da fila, sem operacao_id nem data ISO, ainda é enviado
+ok 49 - FO-28 [caixa-branca | DEF-02] as respostas da API viram as respostas que a tela já sabe tratar
+ok 50 - FO-29 [caixa-preta | regressão] com o Apps Script o envio continua igual (text/plain, corpo inalterado)
+ok 51 - FO-30 [baseada em risco | DEF-07 | A5] um fechamento recusado não trava os seguintes e continua na fila
+ok 52 - FO-31 [baseada em risco | DEF-08 | A5] chamado já fechado (resposta "ja_fechado") sai da fila e não trava os outros
+ok 53 - FO-32 [caixa-branca | cobertura de ramos] sessão expirada e falta de rede interrompem a fila sem apagar nada
+ok 54 - FO-01 [caixa-preta | partição válida] fechamento completo do passo 6 é aceito
+ok 55 - FO-02 [caixa-preta | partição inválida] sem operacao_id, status ou serviço o fechamento é recusado
+ok 56 - FO-03 [caixa-preta | partição inválida | passo 6] sem foto do reparo o fechamento é recusado
+ok 57 - FO-04 [caixa-preta | tabela de decisão | passo 3] só os quatro status do UC05 são aceitos
+ok 58 - FO-05 [caixa-preta | partição inválida | passo 6 e A4] sem GPS válido o fechamento é recusado
+ok 59 - FO-06 [caixa-preta | valor-limite | A4] região: bordas aceitas, um passo fora recusado
+ok 60 - FO-07 [caixa-preta | valor-limite | passo 6 e A4] precisão do GPS até 100 m
+ok 61 - FO-08 [caixa-preta | tabela de decisão | passo 4 e CA04] materiais da OS
+ok 62 - FO-09 [suposição de erro] item nulo na lista de materiais é recusado, sem erro interno
+ok 63 - FO-10 [suposição de erro | valor-limite] data do fechamento: ISO aceita; formato brasileiro e texto recusados
+ok 64 - FO-11 [caixa-preta | valor-limite] referência do local: 255 caracteres aceitos, 256 recusados
+ok 65 - FO-12 [caixa-preta | partição válida | passo 7] grava o fechamento, fecha o chamado, baixa o estoque e atualiza o poste
+ok 66 - FO-13 [baseada em risco | CA04 "uma única vez"] reenvio da mesma operação devolve o mesmo fechamento sem baixar o estoque de novo
+ok 67 - FO-14 [baseada em risco | concorrência] chamado já fechado gera 409; chamado inexistente gera 404
+ok 68 - FO-15 [baseada em risco | idempotência] operacao_id já usada em outro chamado não fecha este nem finge sucesso
+ok 69 - FO-16 [baseada em risco | CA04] material repetido na lista: o estoque e a OS registram a mesma quantidade
+ok 70 - FO-17 [baseada em risco | atomicidade] saldo insuficiente: 409 e nada fica gravado
+ok 71 - FO-18 [baseada em risco | atomicidade] material que não existe no almoxarifado: 404 e nada fica gravado
+ok 72 - FO-19 [caixa-branca | cobertura de ramos] poste: o informado pelo técnico, o do chamado ou nenhum
+ok 73 - FO-20 [caixa-branca | cobertura de ramos] dados inválidos não abrem transação nem gravam a foto
+ok 74 - FO-33 [caixa-branca | cobertura de ramos] campos alternativos e opcionais: latitude/longitude, sem config, sem materiais e sem data
+not ok 75 - Suíte de Integração Ponta a Ponta (HTTP + Serviços + MySQL Real)
+ok 76 - CT-29 [Caixa Branca] Logout do técnico limpa PIN e indicadores visuais
+ok 77 - Persistência MySQL: fechamento vincula os valores e devolve a linha inserida
+ok 78 - Persistência MySQL: colisão de protocolo não é confundida com reenvio do mesmo chamado
+ok 79 - Persistência MySQL: estatísticas numéricas e vínculo de poste mantêm o contrato
+ok 80 - Persistência MySQL: login e sessão usam parâmetros, inclusive listas de perfis
+ok 81 - ApiClient: o corpo não pode transformar HTTP 403 em sucesso nem alterar seu status
+ok 82 - Apresentação: chamados da API mantêm os campos usados pela tela e seus filtros
+ok 83 - PL-01 [caixa-branca] listarTodos conta os chamados do poste e traz a data do último, com e sem filtro de bairro
+ok 84 - Postes: nenhuma consulta usa sintaxe do PostgreSQL
+ok 85 - Postes: garantirExistencia não sobrescreve poste existente e devolve a linha
+ok 86 - Postes: atualizarConfiguracao preserva campos não informados (COALESCE) e devolve a linha
+ok 87 - Postes: atualizarConfiguracao sem poste não executa nada
+ok 88 - Postes: filtro por bairro usa LIKE com curingas
+ok 89 - Relatório: escopo "fechados" junta fechamento e técnico, só de chamados fechados
+ok 90 - Relatório: a view inclui o fechamento só quando a consulta trouxe esses campos
+ok 91 - Relatório: carregarFechados devolve registros no formato da tela, com data em pt-BR
+ok 92 - Relatório: carregarFechados propaga o status HTTP quando a API recusa (sessão expirada)
+ok 93 - Relatório: rotuloTipo traduz códigos conhecidos e preserva textos livres
+ok 94 - Tentativas: inserir usa SQL do MySQL (placeholders ?) e devolve a linha salva
+ok 95 - Tentativas: reenvio com a mesma operacao_id devolve o registro existente sem erro
+ok 96 - Tentativas: outros erros do banco não são engolidos
+ok 97 - Tentativas: listagem do relatório junta chamado e técnico
+ok 98 - Tentativas: a view expõe só os campos usados pelo relatório
+ok 99 - Tentativas: carregarTentativas converte para o formato da tela
+ok 100 - Tentativas: rotuloStatusChamado traduz os status do banco
+ok 101 - RP-11 [caixa-preta | integração] POST /api/chamados: 201 para reporte válido e 400 para inválido
+ok 102 - RP-02 (cliente) [caixa-preta | tabela de decisão] envio só é liberado com GPS, tipo e foto (passo 6, A4, A5)
+ok 103 - RP-12 [caixa-preta | partição válida] protocolo no formato IC-AAMMDD-XXXXX com a data do aparelho
+ok 104 - RP-13 [baseada em risco | perda de reporte] grava na fila antes de enviar; sem rede fica pendente (A1)
+ok 105 - RP-16 [caixa-preta | valor-limite] classificação da precisão do GPS: 10 m e 25 m (passo 2)
+ok 106 - RP-16 [suposição de erro] precisão desconhecida ou negativa não é exibida como "Excelente" (passo 2, A3)
+ok 107 - RP-01 [caixa-preta | partição válida] reporte completo é aceito
+ok 108 - RP-04 [caixa-preta | partição válida] os seis tipos do UC01 são aceitos
+ok 109 - RP-05 [caixa-preta | valor-limite] limites de latitude e longitude e o ponto (0,0)
+ok 110 - RP-08 [caixa-preta | partição válida] nome, telefone, endereço e descrição são opcionais
+ok 111 - RP-02 (servidor) [caixa-preta | tabela de decisão] só aceita com GPS, tipo e foto (passo 6, CA01)
+ok 112 - RP-03 [caixa-preta | partição inválida] tipo fora da lista do UC01 é rejeitado
+ok 113 - RP-06 [caixa-preta | valor-limite] descrição: 500 caracteres aceita, 501 rejeita (passo 5)
+ok 114 - RP-07 [caixa-preta | valor-limite] foto: 2 MB aceita, 2 MB + 1 byte rejeita (RNF02)
+ok 115 - RP-14 [caixa-branca | cobertura de ramos] identificação: id e protocolo ausentes ou de tipo errado
+ok 116 - RP-14 [caixa-branca | cobertura de ramos] foto: URL já enviada, campo fotoUrl e preenchimento do Base64
+ok 117 - RP-14 [caixa-branca | cobertura de ramos] coordenadas como texto vazio e como texto numérico
+ok 118 - RP-09 [baseada em risco | duplicidade] reenvio do mesmo reporte devolve o mesmo chamado (CA03)
+ok 119 - RP-09 [baseada em risco | duplicidade] outro reporte com protocolo já usado é recusado
+ok 120 - RP-10 [caixa-branca | ramo de erro] falha ao salvar a foto não cria chamado
+ok 121 - RP-15 [baseada em risco | chamado sem localização] QR de poste sem coordenadas e sem GPS é recusado (CA01)
+ok 122 - RP-15 [caixa-preta | partição válida] QR de poste cadastrado dispensa o GPS e usa as coordenadas do poste
+ok 123 - RP-14 [caixa-branca | cobertura de ramos] com GPS e QR, prevalece o GPS do aparelho e o endereço informado
+ok 124 - RP-14 [caixa-branca | cobertura de ramos] poste sem retorno do cadastro: usa o GPS; sem endereço: usa o do poste
+ok 125 - Rota: agrupa chamados a até 80 m e ordena as paradas a partir do GPS informado
+ok 126 - Rota: exclui fechados, cancelados, GPS ausente, zero e coordenadas fora dos limites
+ok 127 - Rota: não inventa origem e aceita lista vazia com origem válida
+ok 128 - Maps: divide a rota para navegadores móveis sem perder paradas e encadeia as origens
+ok 129 - Infraestrutura SQL: emTransacao executa BEGIN e COMMIT quando a operação tem sucesso
+ok 130 - Infraestrutura SQL: emTransacao executa ROLLBACK automaticamente se ocorrer qualquer falha
+ok 131 - Aplicação FechamentoService: fecha chamado, debita estoque e atualiza poste na mesma transação
+ok 132 - Aplicação FechamentoService: bloqueia segundo técnico com 409 Conflito se chamado já estiver fechado
+ok 133 - Segurança e AuthService: gera hash scrypt de PIN e bloqueia força bruta com HTTP 429
+ok 134 - PWA Cidadão (Camada de Aplicação): SincronizarFila aplica backoff exponencial em falha de rede
+ok 135 - CT-01 [Caixa Branca] Arquivo design-tokens.css existe e possui tokens CSS
+ok 136 - CT-02 [Caixa Branca] Arquivo tecnico.css existe e possui estilos da tela
+ok 137 - CT-03 [Caixa Branca] Arquivo utilities.css existe e possui classes utilitarias
+ok 138 - CT-04 [Caixa Preta] Tela tecnico/index.html renderiza os 4 indicadores visuais de PIN (d0 a d3)
+ok 139 - CT-05 [Caixa Preta] Tela tecnico/index.html possui teclado numerico (0-9) e preenchimento de 4 digitos
+ok 140 - CT-06 [Caixa Preta] Tela tecnico/index.html possui botao apagar e funcao de limpeza do PIN
+ok 141 - CT-07 [Caixa Branca] Arquivo public/shared/config.js existe e define namespace ILUMINA
+ok 142 - CT-08 [Caixa Branca] config.js define propriedade API_URL
+ok 143 - CT-09 [Caixa Branca] config.js define string valida para API_URL
+ok 144 - CT-10 [Caixa Branca] Codigo protege acesso contra window.ILUMINA indefinido (optional chaining)
+ok 145 - CT-11 [Caixa Preta] Fluxo de login dispara POST /api/auth/login quando USA_API_NODE esta ativo
+ok 146 - CT-12 [Caixa Preta] Fluxo de login preserva fallback apiFetchTO quando USA_API_NODE esta falso
+ok 147 - CT-13 [Caixa Preta] AuthService aceita formato de PIN valido com 4 digitos ("1234")
+not ok 148 - CT-14 [Caixa Preta] AuthService aceita PIN com zero a esquerda ("0123") preservando string
+ok 149 - CT-15 [Caixa Preta] AuthService rejeita PIN com 3 digitos ("123") com DadoInvalido
+ok 150 - CT-16 [Caixa Preta] AuthService rejeita PIN com 5 digitos ("12345") com DadoInvalido
+ok 151 - CT-17 [Caixa Preta] AuthService rejeita PIN contendo letra ("12a4") com DadoInvalido
+not ok 152 - CT-18 [Caixa Branca] Conexao ativa com MySQL executando SELECT 1
+not ok 153 - CT-19 [Caixa Branca] Tabelas usuarios, sessoes e tentativas_login existem no MySQL
+not ok 154 - CT-20 [Caixa Branca] Existe tecnico ativo na tabela usuarios com pin_hash no formato scrypt$
+not ok 155 - CT-21 [Caixa Preta] Login real no MySQL com PIN "0123" gera sessao valida na tabela sessoes
+ok 156 - CT-22 [Caixa Preta] Login real no MySQL rejeita "123" comprovando preservacao do zero a esquerda em "0123"
+not ok 157 - CT-23 [Caixa Preta] 5 tentativas incorretas de PIN geram bloqueio (MuitasTentativas)
+not ok 158 - CT-24 [Caixa Preta] Retroceder o tempo em 16 min no MySQL libera o login bloqueado pelo CT-23
+ok 159 - CT-25 [Caixa Preta] 8 req/min consecutivas geram HTTP 429 no Rate Limiter (Middleware)
+ok 160 - CT-26 [Caixa Preta] 7 req/min consecutivas nao bloqueiam a requisição HTTP
+ok 161 - CT-27 [Caixa Preta] Rate limiter HTTP expira após janela de 1 minuto e libera requisição
+not ok 162 - CT-28 [Caixa Branca] Bloqueio do banco e Rate Limiter HTTP atuam em camadas independentes
+ok 163 - TN-01 [caixa-preta | partição] atende as ações das telas que faltavam e deixa as já migradas com a tela
+ok 164 - TN-02 [caixa-preta | fluxo principal] almox_login vai para POST /api/auth/almoxarifado e devolve o token
+ok 165 - TN-03 [caixa-preta | fluxo alternativo] almox_login recusado devolve a mensagem da API (PIN errado ou bloqueio)
+ok 166 - TN-04 [caixa-preta | fluxo principal] estoque_list converte os itens da API para a lista da tela
+ok 167 - TN-05 [caixa-preta | fluxo principal] estoque_upsert e estoque_delete usam a rota do item, com o nome codificado
+ok 168 - TN-06 [caixa-preta | fluxo de exceção] estoque_upsert recusado devolve a mensagem de validação da API
+ok 169 - TN-07 [caixa-preta | valor limite] missao_create converte a data dd/mm/aaaa e os itens; sem data usa hoje
+ok 170 - TN-08 [caixa-preta | fluxo principal] missao_list mostra situação, saída, retorno e consumo de cada missão
+ok 171 - TN-09 [caixa-preta | fluxo principal] missao_return envia o retorno de cada item para a missão
+ok 172 - TN-10 [caixa-preta | fluxo principal] material_report junta estoque e missões e marca o que precisa repor
+ok 173 - TN-11 [caixa-preta | fluxo principal] get_poste_history converte o poste e separa chamados abertos e atendidos
+ok 174 - TN-12 [caixa-preta | fluxo alternativo] get_poste_history de poste não cadastrado mostra "Poste não cadastrado" (404 vira poste nulo)
+ok 175 - TN-13 [caixa-preta | fluxo principal] list_postes converte coordenadas, foto e contagem de atendimentos
+ok 176 - TN-14 [caixa-preta | fluxo principal] search busca o protocolo e devolve o registro no formato da lista
+ok 177 - TN-15 [caixa-preta | fluxo alternativo] search: protocolo inexistente dá registro nulo; sessão vencida avisa a tela
+ok 178 - TN-16 [caixa-preta | risco: reenvio] attempt envia a tentativa com um operacao_id que se mantém no reenvio
+ok 179 - TN-17 [caixa-preta | fluxo de exceção] attempt com sessão vencida avisa a tela; chamado fechado mostra o motivo
+ok 180 - TN-18 [caixa-preta | risco: rede] sem conexão o erro chega à tela, que mostra "Sem conexão"
+ok 181 - TN-19 [caixa-preta | partição inválida] ação desconhecida não chama a rede e responde que não está disponível
+ok 182 - TN-20 [caixa-branca] o tempo limite pedido pela tela chega ao ApiClient
+ok 183 - TN-30 [integração | DEF-16] almoxarife entra com o próprio PIN; o PIN do técnico não abre o almoxarifado
+ok 184 - TN-31 [integração | DEF-16] estoque: cadastrar, listar, editar e excluir pela tela
+ok 185 - TN-32 [integração | DEF-16] missão: a saída debita o estoque, o retorno devolve e o relatório mostra o consumo
+ok 186 - TN-33 [integração | perfis] o técnico não usa as rotas do almoxarifado
+ok 187 - TN-34 [integração | DEF-15] histórico do poste, poste não cadastrado e relatório de postes
+ok 188 - TN-35 [integração] busca por protocolo e tentativa sem resolução pela tela do técnico
+ok 189 - TN-21 [caixa-preta | DEF-15 e DEF-16] com a API Node, as ações das telas que faltavam vão pelo adaptador, com o tempo limite da tela
+ok 190 - TN-22 [caixa-preta | regressão] com o Apps Script, as mesmas ações continuam no formato antigo (text/plain com action)
+ok 191 - TN-23 [caixa-preta | regressão] com a API Node, o fechamento continua indo direto para a rota REST da tela (UC05)
+ok 192 - TN-24 [caixa-preta | DEF-16] login do almoxarifado recusado mostra o motivo da API, não sempre "PIN incorreto."
+ok 193 - TN-25 [caixa-preta | fluxo principal] login do almoxarifado aceito guarda o token e abre o estoque
+ok 194 - TN-26 [caixa-branca] o adaptador entra no cache do service worker do técnico (o painel abre sem internet)
+ok 195 - TN-27 [caixa-preta | fluxo de exceção] almoxarifado mostra o motivo da recusa da API ao salvar, excluir, registrar saída e retorno
+ok 196 - CBN-01 flushQueue (cidadão): sem internet não lê a fila nem envia
+ok 197 - CBN-02 flushQueue (cidadão): endereço do servidor não configurado ("__...") não envia
+ok 198 - CBN-03 flushQueue (cidadão): erro ao ler o banco do aparelho encerra sem enviar e sem lançar erro
+ok 199 - CBN-04 flushQueue (cidadão): fila vazia encerra sem enviar
+ok 200 - CBN-05 flushQueue (cidadão): envio aceito (API Node) apaga o item e atualiza o aviso
+ok 201 - CBN-06 flushQueue (cidadão): recusa do servidor (API Node) mantém o item e soma 1 tentativa com o motivo
+ok 202 - CBN-07 flushQueue (cidadão): resposta vazia conta como recusa ("server error")
+ok 203 - CBN-08 flushQueue (cidadão): erro de rede mantém o item, soma 1 tentativa e guarda a mensagem do erro
+ok 204 - CBN-09 flushQueue (cidadão): erro de rede sem mensagem é guardado como "network error"
+ok 205 - CBN-10 flushQueue (cidadão): valor limite — com 4 tentativas ainda envia; com 5 descarta sem enviar
+ok 206 - CBN-11 flushQueue (cidadão): falha ao apagar um item descartado não interrompe a fila
+ok 207 - CBN-12 flushQueue (cidadão): falha ao gravar a tentativa depois de um erro de rede não interrompe a fila
+ok 208 - CBN-13 flushQueue (cidadão): falha no 1º item não impede o envio do 2º
+not ok 209 - CBN-14 flushQueue (cidadão): reporte descartado após 5 tentativas deve avisar o cidadão # TODO (defeito conhecido)
+not ok 210 - CBN-15 flushQueue (cidadão): três sincronizações ao mesmo tempo enviam o reporte uma única vez # TODO (defeito conhecido)
+ok 211 - CBN-16 updatePendingBanner: esconde com 0; singular com 1; plural com 3
+ok 212 - CBN-17 updatePendingBanner: erro no banco ou tela sem o aviso não quebram o app
+ok 213 - CBN-18 submitReport: segundo toque durante o envio é ignorado
+ok 214 - CBN-19 submitReport: com internet e envio aceito (API Node), mostra "enviado" sem gravar na fila
+ok 215 - CBN-20 submitReport: com internet e recusa (API Node), guarda na fila
+ok 216 - CBN-21 submitReport: com internet e erro de rede, guarda na fila
+ok 217 - CBN-22 submitReport: envio e gravação falham — mensagem de erro e botão liberado (UC01-E1)
+ok 218 - CBN-23 submitReport: sem internet grava direto na fila, sem tentar enviar
+ok 219 - CBN-24 submitReport: sem internet e sem conseguir gravar — mensagem de erro (UC01-E1)
+ok 220 - CBN-47 submitReport: durante o envio o botão fica travado e marcado "Enviando…"
+ok 221 - CBN-25 submitReport: com internet e servidor não configurado ("__..."), guarda na fila
+ok 222 - CBN-46 submitReport: recusa sem motivo é registrada como "server error" e guardada na fila
+ok 223 - CBN-26 postReport: envia ao endereço do API Node no formato que ele aceita
+ok 224 - CBN-27 postReport: limite de 60 s, timer limpo e resposta lida
+ok 225 - CBN-28 postReport: resposta que não é JSON vira recusa ("resposta inválida do servidor")
+ok 226 - CBN-29 postReport: erro de rede é repassado e o timer é limpo
+ok 227 - CBN-30 postReport: depois de 60 s sem resposta a requisição é cancelada
+ok 228 - CBN-31 generateProtocol: formato IC-AAMMDD-XXXXX com zero à esquerda no mês e no dia
+ok 229 - CBN-32 buildPayload: a mensagem do reporte leva protocolo, tipo, GPS, foto e textos limpos
+ok 230 - CBN-33 flushQueue (técnico): sem internet não envia e não atualiza o aviso
+ok 231 - CBN-34 flushQueue (técnico): sem sessão (sem PIN) não envia
+ok 232 - CBN-35 flushQueue (técnico): fila vazia libera a trava e atualiza o aviso
+ok 233 - CBN-36 flushQueue (técnico): todos aceitos (API Node) são apagados na ordem da fila
+ok 234 - CBN-37 flushQueue (técnico): sessão expirada (API Node) interrompe e mantém a fila
+ok 235 - CBN-38 flushQueue (técnico): erro de rede interrompe e mantém a fila
+ok 236 - CBN-39 flushQueue (técnico): três sincronizações ao mesmo tempo enviam cada fechamento uma vez (trava)
+ok 237 - CBN-40 flushQueue (técnico): erro ao ler a fila libera a trava, mas o erro escapa da função
+ok 238 - CBN-41 flushQueue (técnico): erro do servidor em um fechamento não trava os seguintes
+ok 239 - CBN-42 apiFetchTO: fechamento vai ao endereço e formato do API Node
+ok 240 - CBN-43 apiFetchTO: usa 15 s por padrão, limpa o timer e cancela ao fim do tempo
+ok 241 - CBN-44 renderPendingBanner: esconde com 0; singular/plural; "enviando…" e "sem sinal"; tela sem aviso
+ok 242 - CBN-45 queueCount: conta a fila e devolve 0 se o banco falhar (o limite de 10 deixa de valer)
+ok 243 - CBN-50 integração (cidadão ↔ API Node): a fila deve esvaziar quando a API está no ar
+ok 244 - CBN-51 integração (cidadão ↔ API Node): a mensagem vai em JSON, com id, e a API grava o chamado
+ok 245 - CBN-52 integração (técnico ↔ API Node): o fechamento na fila deve ser registrado
+ok 246 - CBN-53 integração (técnico ↔ API Node): com sessão inválida a API responde 401 e a fila fica guardada
+ok 247 - CBN-55 buildPayload: a mensagem do reporte deve levar o id único exigido pela API Node
+not ok 248 - CBN-54 submitReport: o motivo de uma recusa da API deve ser legível # TODO (defeito conhecido)
+ok 249 - CBN-56 postReport: reporte antigo da fila, sem id, ganha um id que se mantém no reenvio
+ok 250 - CBN-60 coordenadasValidas: limites do globo (±90 e ±180) são aceitos; um passo além é recusado
+ok 251 - CBN-61 coordenadasValidas: o ponto (0,0) é recusado; 0,0001 já é aceito
+ok 252 - CBN-62 coordenadasValidas: valores vazios, nulos ou não numéricos são recusados
+ok 253 - CBN-63 validarNovoChamado: reporte completo é válido
+ok 254 - CBN-64 validarNovoChamado: sem id (como o app envia hoje) é inválido
+ok 255 - CBN-65 validarNovoChamado: id que não é texto, sem protocolo e tipo em branco geram um erro cada
+ok 256 - CBN-66 validarNovoChamado: sem GPS válido só é aceito com o poste do QR
+ok 257 - CBN-67 criarChamado: dados inválidos são recusados antes de salvar foto ou gravar
+ok 258 - CBN-68 criarChamado: o mesmo reporte enviado duas vezes (mesmo id) gera um único chamado
+ok 259 - CBN-69 criarChamado: mesmo protocolo com outro id é conflito (409) e não duplica
+ok 260 - CBN-70 criarChamado: pelo QR sem GPS, usa as coordenadas e o endereço do poste
+ok 261 - CBN-71 fecharChamado: reenvio com o mesmo operacao_id não fecha de novo nem baixa o estoque duas vezes (CA04)
+ok 262 - CBN-72 fecharChamado: chamado já fechado por outra operação é conflito (409)
+ok 263 - CBN-73 fecharChamado: chamado inexistente é 404
+ok 264 - CBN-74 fecharChamado: sem operacao_id (como o app envia hoje) é recusado
+ok 265 - CBN-75 validarFechamentoCampo: valor limite da quantidade de material (0 recusa, 1 aceita)
+ok 266 - CBN-76 API: corpo em formulário (como o app do cidadão envia) é recusado com 400 JSON_INVALIDO
+ok 267 - CBN-77 API: JSON sem id é recusado com 400 e o campo é apontado
+ok 268 - CBN-78 API: JSON com id é aceito (201) e o reenvio devolve o mesmo chamado sem duplicar
+ok 269 - CBN-79 API: POST /api (para onde o técnico envia) não existe; a rota certa exige Bearer
+ok 270 - CBN-80 API: corpo vazio vira {} e a validação aponta os campos que faltam
+ok 271 - CBN-81 API: corpo acima de 8 MB (ex.: foto sem compressão) é recusado com 413
+ok 272 - CBN-82 middlewareValidacao: sem corpo nenhum (req.body ausente) aponta todos os campos
+ok 273 - CBN-83 tratarErros: banco fora do ar vira 503; erro inesperado vira 500 sem expor detalhes
+ok 274 - CBN-84 criarChamado: pelo QR com GPS do aparelho, mantém o GPS e completa o endereço pelo poste
+ok 275 - CBN-85 fecharChamado: com poste identificado, atualiza a ficha do poste na mesma transação
+ok 276 - CBN-86 validarFechamentoCampo: sem status e sem serviço gera um erro para cada
+ok 277 - CBN-87 coordenadasValidas: valor limite dos dois lados de cada eixo e perto do zero
+ok 278 - CBN-88 validações recusam campos com tipo errado (número no lugar de texto)
+ok 279 - CBN-89 criarChamado: repassa foto, telefone, navegador e horário que o app envia
+ok 280 - CBN-90 criarChamado: pelo QR com só a latitude, completa as coordenadas pelo poste
+ok 281 - CBN-91 fecharChamado: grava foto, data e materiais informados e marca o poste no chamado
+ok 282 - CBN-92 API: um único campo faltando (ou vazio, ou nulo) já é recusado
+ok 283 - CBN-93 API: valor limite do corpo — exatamente 8 MB é aceito
+ok 284 - CBA-01 flushQueue (cidadão): sem internet não lê a fila nem envia
+ok 285 - CBA-02 flushQueue (cidadão): endereço do servidor não configurado ("__...") não envia
+ok 286 - CBA-03 flushQueue (cidadão): erro ao ler o banco do aparelho encerra sem enviar e sem lançar erro
+ok 287 - CBA-04 flushQueue (cidadão): fila vazia encerra sem enviar
+ok 288 - CBA-05 flushQueue (cidadão): envio aceito (Apps Script) apaga o item e atualiza o aviso
+ok 289 - CBA-06 flushQueue (cidadão): recusa do servidor (Apps Script) mantém o item e soma 1 tentativa com o motivo
+ok 290 - CBA-07 flushQueue (cidadão): resposta vazia conta como recusa ("server error")
+ok 291 - CBA-08 flushQueue (cidadão): erro de rede mantém o item, soma 1 tentativa e guarda a mensagem do erro
+ok 292 - CBA-09 flushQueue (cidadão): erro de rede sem mensagem é guardado como "network error"
+ok 293 - CBA-10 flushQueue (cidadão): valor limite — com 4 tentativas ainda envia; com 5 descarta sem enviar
+ok 294 - CBA-11 flushQueue (cidadão): falha ao apagar um item descartado não interrompe a fila
+ok 295 - CBA-12 flushQueue (cidadão): falha ao gravar a tentativa depois de um erro de rede não interrompe a fila
+ok 296 - CBA-13 flushQueue (cidadão): falha no 1º item não impede o envio do 2º
+not ok 297 - CBA-14 flushQueue (cidadão): reporte descartado após 5 tentativas deve avisar o cidadão # TODO (defeito conhecido)
+not ok 298 - CBA-15 flushQueue (cidadão): três sincronizações ao mesmo tempo enviam o reporte uma única vez # TODO (defeito conhecido)
+ok 299 - CBA-16 updatePendingBanner: esconde com 0; singular com 1; plural com 3
+ok 300 - CBA-17 updatePendingBanner: erro no banco ou tela sem o aviso não quebram o app
+ok 301 - CBA-18 submitReport: segundo toque durante o envio é ignorado
+ok 302 - CBA-19 submitReport: com internet e envio aceito (Apps Script), mostra "enviado" sem gravar na fila
+ok 303 - CBA-20 submitReport: com internet e recusa (Apps Script), guarda na fila
+ok 304 - CBA-21 submitReport: com internet e erro de rede, guarda na fila
+ok 305 - CBA-22 submitReport: envio e gravação falham — mensagem de erro e botão liberado (UC01-E1)
+ok 306 - CBA-23 submitReport: sem internet grava direto na fila, sem tentar enviar
+ok 307 - CBA-24 submitReport: sem internet e sem conseguir gravar — mensagem de erro (UC01-E1)
+ok 308 - CBA-47 submitReport: durante o envio o botão fica travado e marcado "Enviando…"
+ok 309 - CBA-25 submitReport: com internet e servidor não configurado ("__..."), guarda na fila
+ok 310 - CBA-46 submitReport: recusa sem motivo é registrada como "server error" e guardada na fila
+ok 311 - CBA-26 postReport: envia ao endereço do Apps Script no formato que ele aceita
+ok 312 - CBA-27 postReport: limite de 60 s, timer limpo e resposta lida
+ok 313 - CBA-28 postReport: resposta que não é JSON vira recusa ("resposta inválida do servidor")
+ok 314 - CBA-29 postReport: erro de rede é repassado e o timer é limpo
+ok 315 - CBA-30 postReport: depois de 60 s sem resposta a requisição é cancelada
+ok 316 - CBA-31 generateProtocol: formato IC-AAMMDD-XXXXX com zero à esquerda no mês e no dia
+ok 317 - CBA-32 buildPayload: a mensagem do reporte leva protocolo, tipo, GPS, foto e textos limpos
+ok 318 - CBA-33 flushQueue (técnico): sem internet não envia e não atualiza o aviso
+ok 319 - CBA-34 flushQueue (técnico): sem sessão (sem PIN) não envia
+ok 320 - CBA-35 flushQueue (técnico): fila vazia libera a trava e atualiza o aviso
+ok 321 - CBA-36 flushQueue (técnico): todos aceitos (Apps Script) são apagados na ordem da fila
+ok 322 - CBA-37 flushQueue (técnico): sessão expirada (Apps Script) interrompe e mantém a fila
+ok 323 - CBA-38 flushQueue (técnico): erro de rede interrompe e mantém a fila
+ok 324 - CBA-39 flushQueue (técnico): três sincronizações ao mesmo tempo enviam cada fechamento uma vez (trava)
+ok 325 - CBA-40 flushQueue (técnico): erro ao ler a fila libera a trava, mas o erro escapa da função
+ok 326 - CBA-41 flushQueue (técnico): erro do servidor em um fechamento não trava os seguintes
+ok 327 - CBA-42 apiFetchTO: fechamento vai ao endereço e formato do Apps Script
+ok 328 - CBA-43 apiFetchTO: usa 15 s por padrão, limpa o timer e cancela ao fim do tempo
+ok 329 - CBA-44 renderPendingBanner: esconde com 0; singular/plural; "enviando…" e "sem sinal"; tela sem aviso
+ok 330 - CBA-45 queueCount: conta a fila e devolve 0 se o banco falhar (o limite de 10 deixa de valer)
+ok 331 - CBA-50 flushQueue (técnico): reenvio que o script responde "ja_fechado" deve sair da fila
+ok 332 - CBA-51 integração (cidadão ↔ dublê do Apps Script): flushQueue e postReport reais esvaziam a fila
+not ok 333 - CBA-52 integração (cidadão ↔ dublê): resposta perdida e reenvio geram um único registro # TODO (defeito conhecido)
+ok 334 - CBA-53 integração (técnico ↔ dublê): fechamento na fila é registrado e sai da fila
+# tests 357
+# pass 328
+# fail 8
+# cancelled 14
+# skipped 0
+# todo 7
+# all files                         |  89.26 |    86.86 |   91.11 |

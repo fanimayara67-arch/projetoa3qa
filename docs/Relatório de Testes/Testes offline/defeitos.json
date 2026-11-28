@@ -9,6 +9,7 @@
   "defeitos": [
     {
       "id": "DEF-01", "severidade": "Crítica", "servidores": ["api-node"],
+      "situacao": "Corrigido em 27/11/2026 (telas na API Node): buildPayload cria o id e postReport envia JSON para /api/chamados; reporte antigo da fila ganha o id no primeiro envio. Ver docs/Relatório de Testes/Telas na API Node.",
       "titulo": "App do cidadão envia o reporte num formato que a API Node não aceita",
       "requisitos": ["UC01 passo 7", "UC03", "RF01", "RF02", "CA03"],
       "defeito": "postReport monta um formulário (payload=...) sem o campo id; a API só lê JSON e exige id para a idempotência.",

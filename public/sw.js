@@ -1,6 +1,6 @@
 // ILUMINA CORURIPE — CIDADÃO — Service Worker
 // Escopo: "/" — mas NUNCA intercepta "/tecnico/" nem "/api/", que são rotas dinâmicas/separadas.
-const CACHE_NAME = 'ilumina-cidadao-v8-sem-qr-2026-11-26';
+const CACHE_NAME = 'ilumina-cidadao-v9-api-node-2026-11-27';
 const APP_SHELL = [
   './',
   './index.html',

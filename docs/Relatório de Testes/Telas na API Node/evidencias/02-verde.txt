@@ -1,0 +1,102 @@
+# Fase verde (TDD) — os mesmos testes da fase vermelha (mais o TN-27), depois das correções
+# 2026-11-27T20:49Z
+# node --test server/tests/telas-api-node/acoes-api-node.test.js server/tests/telas-api-node/tela-tecnico.test.js server/tests/telas-api-node/integracao.test.js server/tests/almoxarifado/retorno-missao.test.js server/tests/postes/listar-postes.test.js server/tests/testes-offline/api-node/caixa-branca/cliente.test.js
+
+ok 1 - RM-01 [caixa-preta | fluxo principal] retorno devolve ao estoque o que voltou e registra o retorno de cada item
+ok 2 - RM-02 [caixa-preta | valor limite] retorno igual à saída é aceito; um a mais é recusado sem mexer no estoque
+ok 3 - RM-03 [caixa-preta | risco: reenvio] corrigir um retorno já registrado credita só a diferença
+ok 4 - RM-04 [caixa-preta | fluxo de exceção] missão inexistente é 404; item que não saiu na missão é recusado
+ok 5 - RM-05 [caixa-preta | partição inválida] retorno sem itens ou com quantidade negativa é recusado antes da transação
+ok 6 - RM-06 [caixa-branca] repositório trava a missão e os itens, credita o saldo e grava o retorno em MySQL
+ok 7 - PL-01 [caixa-branca] listarTodos conta os chamados do poste e traz a data do último, com e sem filtro de bairro
+ok 8 - TN-01 [caixa-preta | partição] atende as ações das telas que faltavam e deixa as já migradas com a tela
+ok 9 - TN-02 [caixa-preta | fluxo principal] almox_login vai para POST /api/auth/almoxarifado e devolve o token
+ok 10 - TN-03 [caixa-preta | fluxo alternativo] almox_login recusado devolve a mensagem da API (PIN errado ou bloqueio)
+ok 11 - TN-04 [caixa-preta | fluxo principal] estoque_list converte os itens da API para a lista da tela
+ok 12 - TN-05 [caixa-preta | fluxo principal] estoque_upsert e estoque_delete usam a rota do item, com o nome codificado
+ok 13 - TN-06 [caixa-preta | fluxo de exceção] estoque_upsert recusado devolve a mensagem de validação da API
+ok 14 - TN-07 [caixa-preta | valor limite] missao_create converte a data dd/mm/aaaa e os itens; sem data usa hoje
+ok 15 - TN-08 [caixa-preta | fluxo principal] missao_list mostra situação, saída, retorno e consumo de cada missão
+ok 16 - TN-09 [caixa-preta | fluxo principal] missao_return envia o retorno de cada item para a missão
+ok 17 - TN-10 [caixa-preta | fluxo principal] material_report junta estoque e missões e marca o que precisa repor
+ok 18 - TN-11 [caixa-preta | fluxo principal] get_poste_history converte o poste e separa chamados abertos e atendidos
+ok 19 - TN-12 [caixa-preta | fluxo alternativo] get_poste_history de poste não cadastrado mostra "Poste não cadastrado" (404 vira poste nulo)
+ok 20 - TN-13 [caixa-preta | fluxo principal] list_postes converte coordenadas, foto e contagem de atendimentos
+ok 21 - TN-14 [caixa-preta | fluxo principal] search busca o protocolo e devolve o registro no formato da lista
+ok 22 - TN-15 [caixa-preta | fluxo alternativo] search: protocolo inexistente dá registro nulo; sessão vencida avisa a tela
+ok 23 - TN-16 [caixa-preta | risco: reenvio] attempt envia a tentativa com um operacao_id que se mantém no reenvio
+ok 24 - TN-17 [caixa-preta | fluxo de exceção] attempt com sessão vencida avisa a tela; chamado fechado mostra o motivo
+ok 25 - TN-18 [caixa-preta | risco: rede] sem conexão o erro chega à tela, que mostra "Sem conexão"
+ok 26 - TN-19 [caixa-preta | partição inválida] ação desconhecida não chama a rede e responde que não está disponível
+ok 27 - TN-20 [caixa-branca] o tempo limite pedido pela tela chega ao ApiClient
+ok 28 - TN-30 [integração | DEF-16] almoxarife entra com o próprio PIN; o PIN do técnico não abre o almoxarifado
+ok 29 - TN-31 [integração | DEF-16] estoque: cadastrar, listar, editar e excluir pela tela
+ok 30 - TN-32 [integração | DEF-16] missão: a saída debita o estoque, o retorno devolve e o relatório mostra o consumo
+ok 31 - TN-33 [integração | perfis] o técnico não usa as rotas do almoxarifado
+ok 32 - TN-34 [integração | DEF-15] histórico do poste, poste não cadastrado e relatório de postes
+ok 33 - TN-35 [integração] busca por protocolo e tentativa sem resolução pela tela do técnico
+ok 34 - TN-21 [caixa-preta | DEF-15 e DEF-16] com a API Node, as ações das telas que faltavam vão pelo adaptador, com o tempo limite da tela
+ok 35 - TN-22 [caixa-preta | regressão] com o Apps Script, as mesmas ações continuam no formato antigo (text/plain com action)
+ok 36 - TN-23 [caixa-preta | regressão] com a API Node, o fechamento continua indo direto para a rota REST da tela (UC05)
+ok 37 - TN-24 [caixa-preta | DEF-16] login do almoxarifado recusado mostra o motivo da API, não sempre "PIN incorreto."
+ok 38 - TN-25 [caixa-preta | fluxo principal] login do almoxarifado aceito guarda o token e abre o estoque
+ok 39 - TN-26 [caixa-branca] o adaptador entra no cache do service worker do técnico (o painel abre sem internet)
+ok 40 - TN-27 [caixa-preta | fluxo de exceção] almoxarifado mostra o motivo da recusa da API ao salvar, excluir, registrar saída e retorno
+ok 41 - CBN-01 flushQueue (cidadão): sem internet não lê a fila nem envia
+ok 42 - CBN-02 flushQueue (cidadão): endereço do servidor não configurado ("__...") não envia
+ok 43 - CBN-03 flushQueue (cidadão): erro ao ler o banco do aparelho encerra sem enviar e sem lançar erro
+ok 44 - CBN-04 flushQueue (cidadão): fila vazia encerra sem enviar
+ok 45 - CBN-05 flushQueue (cidadão): envio aceito (API Node) apaga o item e atualiza o aviso
+ok 46 - CBN-06 flushQueue (cidadão): recusa do servidor (API Node) mantém o item e soma 1 tentativa com o motivo
+ok 47 - CBN-07 flushQueue (cidadão): resposta vazia conta como recusa ("server error")
+ok 48 - CBN-08 flushQueue (cidadão): erro de rede mantém o item, soma 1 tentativa e guarda a mensagem do erro
+ok 49 - CBN-09 flushQueue (cidadão): erro de rede sem mensagem é guardado como "network error"
+ok 50 - CBN-10 flushQueue (cidadão): valor limite — com 4 tentativas ainda envia; com 5 descarta sem enviar
+ok 51 - CBN-11 flushQueue (cidadão): falha ao apagar um item descartado não interrompe a fila
+ok 52 - CBN-12 flushQueue (cidadão): falha ao gravar a tentativa depois de um erro de rede não interrompe a fila
+ok 53 - CBN-13 flushQueue (cidadão): falha no 1º item não impede o envio do 2º
+not ok 54 - CBN-14 flushQueue (cidadão): reporte descartado após 5 tentativas deve avisar o cidadão # TODO (defeito conhecido, fora deste PR)
+not ok 55 - CBN-15 flushQueue (cidadão): três sincronizações ao mesmo tempo enviam o reporte uma única vez # TODO (defeito conhecido, fora deste PR)
+ok 56 - CBN-16 updatePendingBanner: esconde com 0; singular com 1; plural com 3
+ok 57 - CBN-17 updatePendingBanner: erro no banco ou tela sem o aviso não quebram o app
+ok 58 - CBN-18 submitReport: segundo toque durante o envio é ignorado
+ok 59 - CBN-19 submitReport: com internet e envio aceito (API Node), mostra "enviado" sem gravar na fila
+ok 60 - CBN-20 submitReport: com internet e recusa (API Node), guarda na fila
+ok 61 - CBN-21 submitReport: com internet e erro de rede, guarda na fila
+ok 62 - CBN-22 submitReport: envio e gravação falham — mensagem de erro e botão liberado (UC01-E1)
+ok 63 - CBN-23 submitReport: sem internet grava direto na fila, sem tentar enviar
+ok 64 - CBN-24 submitReport: sem internet e sem conseguir gravar — mensagem de erro (UC01-E1)
+ok 65 - CBN-47 submitReport: durante o envio o botão fica travado e marcado "Enviando…"
+ok 66 - CBN-25 submitReport: com internet e servidor não configurado ("__..."), guarda na fila
+ok 67 - CBN-46 submitReport: recusa sem motivo é registrada como "server error" e guardada na fila
+ok 68 - CBN-26 postReport: envia ao endereço do API Node no formato que ele aceita
+ok 69 - CBN-27 postReport: limite de 60 s, timer limpo e resposta lida
+ok 70 - CBN-28 postReport: resposta que não é JSON vira recusa ("resposta inválida do servidor")
+ok 71 - CBN-29 postReport: erro de rede é repassado e o timer é limpo
+ok 72 - CBN-30 postReport: depois de 60 s sem resposta a requisição é cancelada
+ok 73 - CBN-31 generateProtocol: formato IC-AAMMDD-XXXXX com zero à esquerda no mês e no dia
+ok 74 - CBN-32 buildPayload: a mensagem do reporte leva protocolo, tipo, GPS, foto e textos limpos
+ok 75 - CBN-33 flushQueue (técnico): sem internet não envia e não atualiza o aviso
+ok 76 - CBN-34 flushQueue (técnico): sem sessão (sem PIN) não envia
+ok 77 - CBN-35 flushQueue (técnico): fila vazia libera a trava e atualiza o aviso
+ok 78 - CBN-36 flushQueue (técnico): todos aceitos (API Node) são apagados na ordem da fila
+ok 79 - CBN-37 flushQueue (técnico): sessão expirada (API Node) interrompe e mantém a fila
+ok 80 - CBN-38 flushQueue (técnico): erro de rede interrompe e mantém a fila
+ok 81 - CBN-39 flushQueue (técnico): três sincronizações ao mesmo tempo enviam cada fechamento uma vez (trava)
+ok 82 - CBN-40 flushQueue (técnico): erro ao ler a fila libera a trava, mas o erro escapa da função
+ok 83 - CBN-41 flushQueue (técnico): erro do servidor em um fechamento não trava os seguintes
+ok 84 - CBN-42 apiFetchTO: fechamento vai ao endereço e formato do API Node
+ok 85 - CBN-43 apiFetchTO: usa 15 s por padrão, limpa o timer e cancela ao fim do tempo
+ok 86 - CBN-44 renderPendingBanner: esconde com 0; singular/plural; "enviando…" e "sem sinal"; tela sem aviso
+ok 87 - CBN-45 queueCount: conta a fila e devolve 0 se o banco falhar (o limite de 10 deixa de valer)
+ok 88 - CBN-50 integração (cidadão ↔ API Node): a fila deve esvaziar quando a API está no ar
+ok 89 - CBN-51 integração (cidadão ↔ API Node): a mensagem vai em JSON, com id, e a API grava o chamado
+ok 90 - CBN-52 integração (técnico ↔ API Node): o fechamento na fila deve ser registrado
+ok 91 - CBN-53 integração (técnico ↔ API Node): com sessão inválida a API responde 401 e a fila fica guardada
+ok 92 - CBN-55 buildPayload: a mensagem do reporte deve levar o id único exigido pela API Node
+not ok 93 - CBN-54 submitReport: o motivo de uma recusa da API deve ser legível # TODO (defeito conhecido, fora deste PR)
+ok 94 - CBN-56 postReport: reporte antigo da fila, sem id, ganha um id que se mantém no reenvio
+# tests 94
+# pass 91
+# fail 0
+# todo 3

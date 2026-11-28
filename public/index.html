@@ -582,8 +582,18 @@ function generateProtocol() {
   const rnd = Math.random().toString(36).slice(2, 7).toUpperCase();
   return `IC-${ymd}-${rnd}`;
 }
+/* Identificador único do reporte (DEF-01). A API Node usa o id para não duplicar o chamado
+   quando a resposta se perde e a fila reenvia. */
+function novoIdReporte() {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') return crypto.randomUUID();
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+    const r = (Math.random() * 16) | 0;
+    return (c === 'x' ? r : (r & 0x3) | 0x8).toString(16);
+  });
+}
 function buildPayload() {
   return {
+    id: novoIdReporte(),
     protocolo: generateProtocol(),
     timestamp: new Date().toISOString(),
     tipo: state.tipo,
@@ -600,15 +610,24 @@ async function postReport(payload) {
   const ctrl = new AbortController();
   const to = setTimeout(() => ctrl.abort(), 60000); // 60s
   try {
-    // Envia como form-urlencoded pra evitar preflight CORS em Apps Script.
-    // O servidor lê via e.postData.contents igual ao text/plain.
-    const formBody = new URLSearchParams();
-    formBody.append('payload', JSON.stringify(payload));
+    let opcoes;
+    if (/\/api\/chamados\/?$/.test(ENDPOINT)) {
+      // API Node (DEF-01): JSON com o id único. Reporte salvo na fila antes desta versão
+      // ganha o id aqui; como o objeto é o próprio item da fila, o reenvio usa o mesmo id.
+      if (!payload.id) payload.id = novoIdReporte();
+      opcoes = { headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) };
+    } else {
+      // Apps Script: form-urlencoded evita o preflight de CORS.
+      // O servidor lê via e.postData.contents igual ao text/plain.
+      const formBody = new URLSearchParams();
+      formBody.append('payload', JSON.stringify(payload));
+      opcoes = { body: formBody };
+    }
     const resp = await fetch(ENDPOINT, {
       method: 'POST',
       mode: 'cors',
       redirect: 'follow',
-      body: formBody,
+      ...opcoes,
       signal: ctrl.signal
     });
     const text = await resp.text();

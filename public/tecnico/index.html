@@ -898,9 +898,19 @@
     let pinChecking = false;
     let callsIndex = {};
 
+    /* Adaptador das ações que ainda montam a mensagem do Apps Script (almoxarifado, postes,
+       busca e tentativa) para as rotas REST da API Node (DEF-15 e DEF-16). */
+    async function acoesApiNode() {
+      return import('./js/infrastructure/AcoesApiNode.js');
+    }
+
     /* ── FETCH com timeout ── */
     function apiFetchTO(payload, ms) {
       ms = ms || 15000;
+      // API Node: o fechamento segue abaixo (fila offline, DEF-02); as outras ações vão pelo adaptador.
+      if (/\/api\/?$/.test(String(SHEETS_URL || '')) && payload && payload.action !== 'close') {
+        return acoesApiNode().then(m => m.executarAcao(payload, { timeout: ms }));
+      }
       const ctrl = new AbortController();
       const to = setTimeout(() => ctrl.abort(), ms);
       // API Node (DEF-02): o fechamento vai para a rota REST, em JSON, com o token no cabeçalho.
@@ -3609,7 +3619,8 @@ function logoutTecnico() {
       showToast('Verificando…', 'info');
       try {
         const data = await apiFetchTO({ action: 'almox_login', pin: pin }, 20000);
-        if (!data || !data.success) return showToast('PIN incorreto.', 'err');
+        // Mostra o motivo da recusa (PIN errado ou bloqueio por tentativas), quando vier.
+        if (!data || !data.success) return showToast((data && data.error) || 'PIN incorreto.', 'err');
         almoxToken = data.token;
         document.getElementById('almox-pin-gate').style.display = 'none';
         document.getElementById('almox-content').style.display = '';
@@ -3726,7 +3737,7 @@ function logoutTecnico() {
       showToast('Excluindo…', 'info');
       try {
         const data = await apiFetchTO({ action: 'estoque_delete', token: almoxToken, item }, 25000);
-        if (!data || !data.success) return showToast('Erro ao excluir.', 'err');
+        if (!data || !data.success) return showToast((data && data.error) || 'Erro ao excluir.', 'err');
         showToast('Item excluído.', 'ok');
         if (estoqueEditando === item) cancelarEdicaoEstoque();
         else carregarEstoque();
@@ -3742,7 +3753,7 @@ function logoutTecnico() {
       showToast(estoqueEditando ? 'Salvando alterações…' : 'Salvando…', 'info');
       try {
         const data = await apiFetchTO({ action: 'estoque_upsert', token: almoxToken, item, unidade, saldo, minimo }, 25000);
-        if (!data || !data.success) return showToast('Erro ao salvar.', 'err');
+        if (!data || !data.success) return showToast((data && data.error) || 'Erro ao salvar.', 'err');
         showToast(estoqueEditando ? 'Alterações salvas.' : 'Item salvo.', 'ok');
         document.getElementById('est-item').value = '';
         document.getElementById('est-saldo').value = '';
@@ -3787,7 +3798,7 @@ function logoutTecnico() {
       showToast('Registrando saída…', 'info');
       try {
         const data = await apiFetchTO({ action: 'missao_create', token: almoxToken, data: dataFmt, equipe, obs, itens }, 30000);
-        if (!data || !data.success) return showToast('Erro ao registrar.', 'err');
+        if (!data || !data.success) return showToast((data && data.error) || 'Erro ao registrar.', 'err');
         showToast('Saída registrada. Estoque debitado.', 'ok');
         document.getElementById('mis-equipe').value = '';
         document.getElementById('mis-obs').value = '';
@@ -3854,7 +3865,7 @@ function logoutTecnico() {
       showToast('Registrando retorno…', 'info');
       try {
         const data = await apiFetchTO({ action: 'missao_return', token: almoxToken, id_missao: idMissao, retornos }, 30000);
-        if (!data || !data.success) return showToast('Erro ao registrar retorno.', 'err');
+        if (!data || !data.success) return showToast((data && data.error) || 'Erro ao registrar retorno.', 'err');
         const modal = document.getElementById('ret-modal'); if (modal) modal.remove();
         showToast('Retorno registrado. Estoque atualizado.', 'ok');
         carregarEstoque();

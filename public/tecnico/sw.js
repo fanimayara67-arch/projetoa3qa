@@ -1,5 +1,5 @@
 // ILUMINA CORURIPE TÉCNICO — Service Worker
-const CACHE_NAME = 'ilumina-tec-v21-sem-qr-2026-11-26';
+const CACHE_NAME = 'ilumina-tec-v22-telas-api-node-2026-11-27';
 const APP_SHELL = [
   './',
   './index.html',
@@ -25,6 +25,7 @@ const APP_SHELL = [
   './js/infrastructure/TicketCache.js',
   './js/infrastructure/CloseQueue.js',
   './js/infrastructure/PhotoCache.js',
+  './js/infrastructure/AcoesApiNode.js',
   './js/application/FecharChamado.js',
   './js/application/SincronizarBaixas.js',
   './js/application/CarregarRota.js',

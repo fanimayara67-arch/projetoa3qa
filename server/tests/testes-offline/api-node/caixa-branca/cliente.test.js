@@ -15,12 +15,21 @@ const { criarServidorTeste, PIN_TESTE } = require('../../apoio/servidor-teste');
 
 registrarCasosCliente(test, 'api-node');
 
-test('CBN-50 integração (cidadão ↔ API Node): a fila deve esvaziar quando a API está no ar', { todo: 'Defeito DEF-01 — a API recusa o formulário com 400 JSON_INVALIDO' }, async () => {
+// Reporte como o buildPayload da tela monta (UC01: tipo, GPS, foto). Sem id: o envio cria.
+const REPORTE_DA_TELA = {
+  timestamp: '2026-11-12T11:00:00.000Z', tipo: 'apagado', lat: -10.1251, lng: -36.1752, acc: 6,
+  descricao: 'Poste apagado em frente à escola', nome: '', tel: '', endereco: 'Rua de Teste, 1',
+  foto_base64: 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==', user_agent: 'Teste'
+};
+const reporte = (protocolo) => ({ payload: { ...REPORTE_DA_TELA, protocolo } });
+
+// DEF-01 (corrigido): era `todo` — a API recusava o formulário com 400 JSON_INVALIDO.
+test('CBN-50 integração (cidadão ↔ API Node): a fila deve esvaziar quando a API está no ar', async () => {
   const srv = await criarServidorTeste({ servidor: 'api-node' });
   try {
     // Preparação: um reporte na fila; flushQueue e postReport são o código real da tela.
     const { ctx, banco, registro } = d.montarFilaCidadao({
-      itens: [d.item('IC-261112-NODE1')],
+      itens: [reporte('IC-261112-NODE1')],
       endpoint: srv.url + '/api/chamados',
       comPostReportReal: true,
       rede: (url, opcoes) => fetch(url, opcoes)
@@ -33,18 +42,21 @@ test('CBN-50 integração (cidadão ↔ API Node): a fila deve esvaziar quando a
   } finally { await srv.fechar(); }
 });
 
-test('CBN-51 integração (cidadão ↔ API Node): a causa da recusa é o formato da mensagem', async () => {
+// DEF-01: antes este caso comprovava a causa da recusa (formulário → 400 JSON_INVALIDO).
+// Revisado: a mensagem tem de ir em JSON, com o id único, e a API grava um chamado só.
+test('CBN-51 integração (cidadão ↔ API Node): a mensagem vai em JSON, com id, e a API grava o chamado', async () => {
   const srv = await criarServidorTeste({ servidor: 'api-node' });
   try {
     const { ctx, registro } = d.montarFilaCidadao({
-      itens: [d.item('IC-261112-NODE2')],
+      itens: [reporte('IC-261112-NODE2')],
       endpoint: srv.url + '/api/chamados',
       comPostReportReal: true,
       rede: (url, opcoes) => fetch(url, opcoes)
     });
     await ctx.flushQueue();
-    assert.equal(registro.tentativas[0].lastError.codigo, 'JSON_INVALIDO');
-    assert.match(srv.estado.requisicoes[0].tipo, /x-www-form-urlencoded/);
+    const motivo = registro.tentativas[0] && JSON.stringify(registro.tentativas[0].lastError);
+    assert.match(srv.estado.requisicoes[0].tipo, /application\/json/, `recusa: ${motivo}`);
+    assert.equal(srv.estado.chamados.filter((c) => c.protocolo === 'IC-261112-NODE2').length, 1);
   } finally { await srv.fechar(); }
 });
 
@@ -89,7 +101,8 @@ test('CBN-53 integração (técnico ↔ API Node): com sessão inválida a API r
   } finally { await srv.fechar(); }
 });
 
-test('CBN-55 buildPayload: a mensagem do reporte deve levar o id único exigido pela API Node', { todo: 'Defeito DEF-01 — a mensagem não tem o campo id' }, () => {
+// DEF-01 (corrigido): era `todo` — a mensagem não tinha o campo id.
+test('CBN-55 buildPayload: a mensagem do reporte deve levar o id único exigido pela API Node', () => {
   const p = { ...d.montarPayloadCidadao().buildPayload() };
   assert.ok(p.id, `campos enviados: ${Object.keys(p).join(', ')}`);
 });
@@ -102,4 +115,17 @@ test('CBN-54 submitReport: o motivo de uma recusa da API deve ser legível', { t
   await ctx.submitReport();
   const log = registro.avisosConsole.join(' ');
   assert.doesNotMatch(log, /\[object Object\]/, `registro do app: ${log}`);
+});
+
+// DEF-01: reporte salvo na fila antes da correção (sem id). O id criado no primeiro envio fica
+// no próprio payload da fila: se a resposta se perder, o reenvio usa o mesmo id e a API não duplica.
+test('CBN-56 postReport: reporte antigo da fila, sem id, ganha um id que se mantém no reenvio', async () => {
+  const { ctx, registro } = d.montarRequisicaoCidadao({ endpoint: '/api/chamados' });
+  const antigo = { protocolo: 'IC-261101-VELHO', tipo: 'apagado' };
+  await ctx.postReport(antigo);
+  await ctx.postReport(antigo);
+  const [primeiro, segundo] = registro.chamadas.map((ch) => JSON.parse(ch.opcoes.body));
+  assert.match(primeiro.id, /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/);
+  assert.equal(segundo.id, primeiro.id);
+  assert.equal(antigo.id, primeiro.id, 'o id fica guardado no item da fila');
 });

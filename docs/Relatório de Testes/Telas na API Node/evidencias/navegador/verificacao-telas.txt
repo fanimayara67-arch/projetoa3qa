@@ -1,0 +1,15 @@
+✔ V-01 Almoxarifado recusa o PIN do técnico e continua fechado
+✔ V-02 Almoxarife entra com o próprio PIN e vê o estoque da API Node
+✔ V-03 Cadastro de item pela tela aparece na lista
+✔ V-04 Saída para a missão aparece como ABERTA e debita o estoque (8 → 5)
+✔ V-05 Retorno de material fecha a missão e mostra o consumo (saiu 3, voltou 1, usou 2)
+✔ V-06 O retorno volta ao estoque (5 → 6)
+✔ V-07 Relatório de material abre com estoque e missão
+✔ V-08 Histórico do poste P-0007: ficha, 1 chamado aberto e 1 atendido
+✔ V-09 Poste sem cadastro mostra "Poste não cadastrado"
+✔ V-10 Relatório de postes lista o P-0007 com 2 atendimentos
+✔ V-11 Busca por protocolo de chamado já fechado (fora da lista local) acha no servidor
+✔ V-12 Nenhum erro de JavaScript nas telas
+
+Pedidos no formato do Apps Script (POST /api): 0
+Total 12 | aprovados 12 | reprovados 0

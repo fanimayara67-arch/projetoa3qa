@@ -1,0 +1,184 @@
+{
+  "executadoEm": "2026-11-27T20:49:54.973Z",
+  "casos": [
+    {
+      "id": "V-01",
+      "descricao": "Almoxarifado recusa o PIN do técnico e continua fechado",
+      "obtido": {
+        "aviso": "PIN incorreto.",
+        "conteudoVisivel": false
+      },
+      "esperado": {
+        "aviso": "PIN incorreto.",
+        "conteudoVisivel": false
+      },
+      "ok": true
+    },
+    {
+      "id": "V-02",
+      "descricao": "Almoxarife entra com o próprio PIN e vê o estoque da API Node",
+      "obtido": {
+        "itens": [
+          "Lâmpada LED 100W",
+          "Reator 250W"
+        ]
+      },
+      "esperado": {
+        "itens": [
+          "Lâmpada LED 100W",
+          "Reator 250W"
+        ]
+      },
+      "ok": true
+    },
+    {
+      "id": "V-03",
+      "descricao": "Cadastro de item pela tela aparece na lista",
+      "obtido": {
+        "cabo": true
+      },
+      "esperado": {
+        "cabo": true
+      },
+      "ok": true
+    },
+    {
+      "id": "V-04",
+      "descricao": "Saída para a missão aparece como ABERTA e debita o estoque (8 → 5)",
+      "obtido": {
+        "reator": "5"
+      },
+      "esperado": {
+        "reator": "5"
+      },
+      "ok": true
+    },
+    {
+      "id": "V-05",
+      "descricao": "Retorno de material fecha a missão e mostra o consumo (saiu 3, voltou 1, usou 2)",
+      "obtido": {
+        "fechada": true,
+        "consumo": true
+      },
+      "esperado": {
+        "fechada": true,
+        "consumo": true
+      },
+      "ok": true
+    },
+    {
+      "id": "V-06",
+      "descricao": "O retorno volta ao estoque (5 → 6)",
+      "obtido": {
+        "reator": "6"
+      },
+      "esperado": {
+        "reator": "6"
+      },
+      "ok": true
+    },
+    {
+      "id": "V-07",
+      "descricao": "Relatório de material abre com estoque e missão",
+      "obtido": {
+        "estoque": true,
+        "missao": true
+      },
+      "esperado": {
+        "estoque": true,
+        "missao": true
+      },
+      "ok": true
+    },
+    {
+      "id": "V-08",
+      "descricao": "Histórico do poste P-0007: ficha, 1 chamado aberto e 1 atendido",
+      "obtido": {
+        "ficha": true,
+        "aberto": true,
+        "atendido": true
+      },
+      "esperado": {
+        "ficha": true,
+        "aberto": true,
+        "atendido": true
+      },
+      "ok": true
+    },
+    {
+      "id": "V-09",
+      "descricao": "Poste sem cadastro mostra \"Poste não cadastrado\"",
+      "obtido": {
+        "mensagem": true
+      },
+      "esperado": {
+        "mensagem": true
+      },
+      "ok": true
+    },
+    {
+      "id": "V-10",
+      "descricao": "Relatório de postes lista o P-0007 com 2 atendimentos",
+      "obtido": {
+        "poste": true,
+        "atendimentos": true,
+        "semUndefined": true
+      },
+      "esperado": {
+        "poste": true,
+        "atendimentos": true,
+        "semUndefined": true
+      },
+      "ok": true
+    },
+    {
+      "id": "V-11",
+      "descricao": "Busca por protocolo de chamado já fechado (fora da lista local) acha no servidor",
+      "obtido": {
+        "achou": true
+      },
+      "esperado": {
+        "achou": true
+      },
+      "ok": true
+    },
+    {
+      "id": "V-12",
+      "descricao": "Nenhum erro de JavaScript nas telas",
+      "obtido": {
+        "erros": []
+      },
+      "esperado": {
+        "erros": []
+      },
+      "ok": true
+    }
+  ],
+  "pedidosNaApi": [
+    "POST /api/auth/login",
+    "GET /api/chamados",
+    "POST /api/auth/almoxarifado",
+    "POST /api/auth/almoxarifado",
+    "GET /api/estoque",
+    "PUT /api/estoque/Cabo%202%2C5mm",
+    "GET /api/estoque",
+    "GET /api/missoes",
+    "POST /api/missoes",
+    "GET /api/estoque",
+    "GET /api/missoes",
+    "GET /api/missoes",
+    "POST /api/missoes/101/retorno",
+    "GET /api/estoque",
+    "GET /api/missoes",
+    "GET /api/estoque",
+    "GET /api/missoes",
+    "GET /api/chamados",
+    "GET /api/postes/P-0007/historico",
+    "GET /api/chamados",
+    "GET /api/postes/P-0999/historico",
+    "GET /api/postes",
+    "GET /api/chamados",
+    "GET /api/chamados/IC-261120-BUSCA"
+  ],
+  "pedidosNoFormatoAppsScript": 0
+}

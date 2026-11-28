@@ -72,7 +72,7 @@ Severidade: **Crítica** — a funcionalidade não entrega o que promete; **Alta
 
 | Defeito | Severidade | API Node | Apps Script | Resumo |
 |---|---|---|---|---|
-| DEF-01 | Crítica | ✘ | — | O app do cidadão envia formulário sem `id`; a API só aceita JSON com `id` (400). Nenhum reporte chega. |
+| DEF-01 | Crítica | ✘ | — | O app do cidadão envia formulário sem `id`; a API só aceita JSON com `id` (400). Nenhum reporte chega. **Corrigido em 27/11 ([telas na API Node](<../Telas na API Node/README.md>)).** |
 | DEF-02 | Crítica | ✘ | — | O técnico envia `{ action: "close" }` para `/api`, rota que não existe (404). Nenhum fechamento chega. **Corrigido em 13/11 (UC05).** |
 | DEF-03 | Alta | ✘ | ✘ | Depois de 5 tentativas o reporte é apagado do aparelho sem aviso. Erros temporários do servidor também contam. |
 | DEF-04 | Alta | ✘ | ✘ | A fila do cidadão não tem trava: gatilhos simultâneos enviam o mesmo reporte 3 vezes. |

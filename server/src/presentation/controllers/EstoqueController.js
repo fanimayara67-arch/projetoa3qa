@@ -54,7 +54,17 @@ async function listarMissoes(req, res, next) {
   }
 }
 
+async function registrarRetorno(req, res, next) {
+  try {
+    const resultado = await EstoqueService.registrarRetornoMissao(req.params.id, req.body && req.body.itens);
+    return ok(res, resultado);
+  } catch (err) {
+    next(err);
+  }
+}
+
 module.exports = {
+  registrarRetorno,
   listar,
   salvar,
   remover,
