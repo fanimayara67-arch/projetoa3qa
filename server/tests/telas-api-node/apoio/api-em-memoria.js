@@ -26,18 +26,28 @@ const banco = {
   postes: [],
   chamados: [],
   tentativas: [],
+  fotos: new Map(),
   proximoId: 100
 };
 
-function falhaSql(sql) {
+function falhaSql(sql, valores = []) {
   if (/^\s*(BEGIN|COMMIT|ROLLBACK)/i.test(sql)) return { rows: [] };
+  // Tabela fotos (STORAGE_DRIVER=mysql): o SQL real do FotoStorage roda contra a memória.
+  if (/^\s*INSERT INTO fotos \(nome, tipo, dados\) VALUES/i.test(sql)) {
+    banco.fotos.set(valores[0], { tipo: valores[1], dados: Buffer.from(valores[2]) });
+    return { rows: { affectedRows: 1 } };
+  }
+  if (/^\s*SELECT tipo, dados FROM fotos WHERE nome = \?/i.test(sql)) {
+    const foto = banco.fotos.get(valores[0]);
+    return { rows: foto ? [foto] : [] };
+  }
   throw new Error('SQL inesperado no teste: um repositório não foi substituído.\n' + sql);
 }
 
 /** Monta a API com o banco em memória. Devolve o app (handle/listen) e o banco, para conferir. */
 async function criarApiEmMemoria() {
   const pool = require(`${SRC}/infrastructure/database/pool`);
-  const conexao = { query: async (sql) => falhaSql(sql), release() {} };
+  const conexao = { query: async (sql, valores) => falhaSql(sql, valores), release() {} };
   pool.setPool({ query: conexao.query, connect: async () => conexao, end: async () => {} });
 
   const { gerarHashPin } = require(`${SRC}/infrastructure/security/hashPin`);
@@ -117,6 +127,16 @@ async function criarApiEmMemoria() {
     async obterEstatisticas() {
       const abertos = banco.chamados.filter((c) => ['aberto', 'em_atendimento'].includes(c.status)).length;
       return { total: banco.chamados.length, abertos, atendidos: banco.chamados.filter((c) => c.status === 'fechado').length };
+    },
+    // Mesma regra do INSERT real: id é chave primária; reenvio do mesmo id devolve o chamado.
+    async criarOuRetornarExistente(_tx, d) {
+      const existente = banco.chamados.find((c) => c.id === d.id);
+      if (existente) return existente;
+      const novo = { id: d.id, protocolo: d.protocolo, tipo: d.tipo, status: 'aberto', latitude: d.latitude ?? null,
+        longitude: d.longitude ?? null, precisao_m: d.precisao_m ?? null, descricao: d.descricao || null,
+        endereco: d.endereco || null, foto_url: d.fotoUrl || null, poste_id: d.posteId || null, criado_em: new Date() };
+      banco.chamados.push(novo);
+      return novo;
     },
     async buscarPorProtocolo(protocolo) { return banco.chamados.find((c) => c.protocolo === protocolo) || null; },
     async buscarParaAtualizar(_tx, protocolo) { return banco.chamados.find((c) => c.protocolo === protocolo) || null; },

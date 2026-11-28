@@ -1,0 +1,23 @@
+✔ FT-01 [caixa-preta | fluxo principal] foto salva em disco é lida de volta com os mesmos bytes e o tipo certo (7.569934ms)
+✔ FT-02 [caixa-preta | risco: segurança] nome com caminho ou extensão estranha é recusado sem ler o disco (0.483681ms)
+✔ FT-03 [caixa-preta | fluxo alternativo] foto que não existe devolve nulo (1.126281ms)
+✔ FT-04 [caixa-preta | fluxo principal] no modo MySQL a foto vai para a tabela fotos, não para o disco (1.736013ms)
+✔ FT-05 [caixa-branca] o modo vem de STORAGE_DRIVER; sem a variável, grava em disco (0.983941ms)
+✔ FT-06 [caixa-branca] a migração 002 cria a tabela fotos no MySQL (0.321174ms)
+✔ FT-07 [integração | fluxo principal] GET /uploads/fotos/:arquivo entrega a foto, sem login, com cache longo (51.038332ms)
+✔ FT-08 [integração | fluxo alternativo e segurança] foto inexistente e caminho com ../ respondem 404 sem vazar arquivo (14.734467ms)
+✔ FT-09 [caixa-branca] Vercel e Netlify repassam /uploads/* para a API, como fazem com /api/* (0.732859ms)
+✔ CU-01 [caixa-preta | fluxo principal] cadastra um gestor com o PIN guardado só como hash, que o login reconhece (114.412781ms)
+✔ CU-02 [caixa-preta | fluxo alternativo] mesmo nome e perfil troca o PIN e reativa, sem duplicar (157.685888ms)
+✔ CU-03 [caixa-preta | partição inválida e valor limite] perfil, PIN e nome inválidos são recusados antes de tocar no banco (34.718584ms)
+✔ CU-04 [caixa-preta | risco: login com o usuário errado] PIN já usado por outro usuário ativo é recusado (96.808959ms)
+✔ CU-05 [caixa-preta | fluxo principal e exceção] desativar tira o acesso; usuário inexistente é avisado (36.928356ms)
+✔ CU-06 [caixa-preta | partição] argumentos da linha de comando; o PIN mantém o zero à esquerda (0.596743ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 15
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 668.151741

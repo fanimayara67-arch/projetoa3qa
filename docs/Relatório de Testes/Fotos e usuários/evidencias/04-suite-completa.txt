@@ -1,0 +1,2712 @@
+
+> ilumina-coruripe@2.0.0 test
+> node --test --experimental-test-coverage
+
+TAP version 13
+# Subtest: Almoxarifado: nenhuma consulta do estoque usa sintaxe do PostgreSQL
+ok 1 - Almoxarifado: nenhuma consulta do estoque usa sintaxe do PostgreSQL
+  ---
+  duration_ms: 1.996638
+  type: 'test'
+  ...
+# Subtest: Almoxarifado: salvarItem faz upsert pelo nome e devolve a linha salva
+ok 2 - Almoxarifado: salvarItem faz upsert pelo nome e devolve a linha salva
+  ---
+  duration_ms: 1.081847
+  type: 'test'
+  ...
+# Subtest: Almoxarifado: removerItem devolve null quando o item não existe e não executa DELETE
+ok 3 - Almoxarifado: removerItem devolve null quando o item não existe e não executa DELETE
+  ---
+  duration_ms: 0.201012
+  type: 'test'
+  ...
+# Subtest: Almoxarifado: baixa trava o item (FOR UPDATE) antes de debitar
+ok 4 - Almoxarifado: baixa trava o item (FOR UPDATE) antes de debitar
+  ---
+  duration_ms: 0.213013
+  type: 'test'
+  ...
+# Subtest: Almoxarifado: saldo insuficiente gera Conflito sem debitar nada
+ok 5 - Almoxarifado: saldo insuficiente gera Conflito sem debitar nada
+  ---
+  duration_ms: 0.617041
+  type: 'test'
+  ...
+# Subtest: Almoxarifado: material inexistente gera NaoEncontrado
+ok 6 - Almoxarifado: material inexistente gera NaoEncontrado
+  ---
+  duration_ms: 0.163645
+  type: 'test'
+  ...
+# Subtest: Almoxarifado: missão usa o insertId e grava os itens debitados
+ok 7 - Almoxarifado: missão usa o insertId e grava os itens debitados
+  ---
+  duration_ms: 0.241766
+  type: 'test'
+  ...
+# Subtest: Almoxarifado: listarMissoes devolve itens como array, mesmo se o driver mandar texto
+ok 8 - Almoxarifado: listarMissoes devolve itens como array, mesmo se o driver mandar texto
+  ---
+  duration_ms: 0.179035
+  type: 'test'
+  ...
+# Subtest: RM-01 [caixa-preta | fluxo principal] retorno devolve ao estoque o que voltou e registra o retorno de cada item
+ok 9 - RM-01 [caixa-preta | fluxo principal] retorno devolve ao estoque o que voltou e registra o retorno de cada item
+  ---
+  duration_ms: 3.31877
+  type: 'test'
+  ...
+# Subtest: RM-02 [caixa-preta | valor limite] retorno igual à saída é aceito; um a mais é recusado sem mexer no estoque
+ok 10 - RM-02 [caixa-preta | valor limite] retorno igual à saída é aceito; um a mais é recusado sem mexer no estoque
+  ---
+  duration_ms: 0.973747
+  type: 'test'
+  ...
+# Subtest: RM-03 [caixa-preta | risco: reenvio] corrigir um retorno já registrado credita só a diferença
+ok 11 - RM-03 [caixa-preta | risco: reenvio] corrigir um retorno já registrado credita só a diferença
+  ---
+  duration_ms: 0.176315
+  type: 'test'
+  ...
+# Subtest: RM-04 [caixa-preta | fluxo de exceção] missão inexistente é 404; item que não saiu na missão é recusado
+ok 12 - RM-04 [caixa-preta | fluxo de exceção] missão inexistente é 404; item que não saiu na missão é recusado
+  ---
+  duration_ms: 0.328932
+  type: 'test'
+  ...
+# Subtest: RM-05 [caixa-preta | partição inválida] retorno sem itens ou com quantidade negativa é recusado antes da transação
+ok 13 - RM-05 [caixa-preta | partição inválida] retorno sem itens ou com quantidade negativa é recusado antes da transação
+  ---
+  duration_ms: 0.404562
+  type: 'test'
+  ...
+# Subtest: RM-06 [caixa-branca] repositório trava a missão e os itens, credita o saldo e grava o retorno em MySQL
+ok 14 - RM-06 [caixa-branca] repositório trava a missão e os itens, credita o saldo e grava o retorno em MySQL
+  ---
+  duration_ms: 0.746745
+  type: 'test'
+  ...
+# Subtest: BP-01 [caixa-preta | partição válida] normalizarIdPoste aceita P-0001, P0001 e p0001 e devolve P-0001
+ok 15 - BP-01 [caixa-preta | partição válida] normalizarIdPoste aceita P-0001, P0001 e p0001 e devolve P-0001
+  ---
+  duration_ms: 4.732438
+  type: 'test'
+  ...
+# Subtest: BP-02 [caixa-preta | partição inválida] normalizarIdPoste recusa texto que não é ID de poste
+ok 16 - BP-02 [caixa-preta | partição inválida] normalizarIdPoste recusa texto que não é ID de poste
+  ---
+  duration_ms: 1.151827
+  type: 'test'
+  ...
+# Subtest: BP-03 [caixa-preta | fluxo principal] buscarPoste abre o histórico do poste digitado
+ok 17 - BP-03 [caixa-preta | fluxo principal] buscarPoste abre o histórico do poste digitado
+  ---
+  duration_ms: 1.807446
+  type: 'test'
+  ...
+# Subtest: BP-04 [caixa-preta | fluxo alternativo] buscarPoste avisa quando o ID é inválido e não abre nada
+ok 18 - BP-04 [caixa-preta | fluxo alternativo] buscarPoste avisa quando o ID é inválido e não abre nada
+  ---
+  duration_ms: 1.981492
+  type: 'test'
+  ...
+# Subtest: BP-05 [caixa-preta | fluxo alternativo] buscarPoste cancelado não abre nada nem mostra erro
+ok 19 - BP-05 [caixa-preta | fluxo alternativo] buscarPoste cancelado não abre nada nem mostra erro
+  ---
+  duration_ms: 0.942173
+  type: 'test'
+  ...
+# Subtest: MySQL: configuração incompleta informa somente as chaves ausentes
+ok 20 - MySQL: configuração incompleta informa somente as chaves ausentes
+  ---
+  duration_ms: 1.738584
+  type: 'test'
+  ...
+# Subtest: MySQL: rejeita portas inválidas antes de tentar uma conexão
+ok 21 - MySQL: rejeita portas inválidas antes de tentar uma conexão
+  ---
+  duration_ms: 0.385349
+  type: 'test'
+  ...
+# Subtest: Domínio Chamado: permite fechar apenas chamados abertos ou em_atendimento
+ok 22 - Domínio Chamado: permite fechar apenas chamados abertos ou em_atendimento
+  ---
+  duration_ms: 1.788304
+  type: 'test'
+  ...
+# Subtest: Domínio Chamado: rejeita coordenada (0,0) e exige GPS válido ou poste_id do QR
+ok 23 - Domínio Chamado: rejeita coordenada (0,0) e exige GPS válido ou poste_id do QR
+  ---
+  duration_ms: 0.559614
+  type: 'test'
+  ...
+# Subtest: Domínio Poste: normaliza códigos de QR Code mantendo compatibilidade com placas físicas
+ok 24 - Domínio Poste: normaliza códigos de QR Code mantendo compatibilidade com placas físicas
+  ---
+  duration_ms: 0.384521
+  type: 'test'
+  ...
+# Subtest: Domínio ItemEstoque e Missao: valida saldo suficiente e impede retorno maior que saída
+ok 25 - Domínio ItemEstoque e Missao: valida saldo suficiente e impede retorno maior que saída
+  ---
+  duration_ms: 0.294183
+  type: 'test'
+  ...
+# Subtest: Domínio Fechamento: exige operacao_id, status e serviço na baixa em campo
+ok 26 - Domínio Fechamento: exige operacao_id, status e serviço na baixa em campo
+  ---
+  duration_ms: 0.370304
+  type: 'test'
+  ...
+# Subtest: Arquitetura: garante isolamento das camadas (Domínio sem banco/HTTP e Apresentação sem SQL)
+ok 27 - Arquitetura: garante isolamento das camadas (Domínio sem banco/HTTP e Apresentação sem SQL)
+  ---
+  duration_ms: 0.646169
+  type: 'test'
+  ...
+# Subtest: Cliente administrativo: valida antes de enviar e exige identificador estável e sessão
+ok 28 - Cliente administrativo: valida antes de enviar e exige identificador estável e sessão
+  ---
+  duration_ms: 3.303395
+  type: 'test'
+  ...
+# Subtest: Cliente administrativo: usa REST e mantém o UUID ao repetir depois de falha de rede
+ok 29 - Cliente administrativo: usa REST e mantém o UUID ao repetir depois de falha de rede
+  ---
+  duration_ms: 2.111657
+  type: 'test'
+  ...
+# Subtest: Cliente administrativo: preserva conflito e acesso negado como falha
+ok 30 - Cliente administrativo: preserva conflito e acesso negado como falha
+  ---
+  duration_ms: 0.403801
+  type: 'test'
+  ...
+# Subtest: Administrativo: exige UUID, informante, justificativa mínima e status permitido
+ok 31 - Administrativo: exige UUID, informante, justificativa mínima e status permitido
+  ---
+  duration_ms: 1.1543
+  type: 'test'
+  ...
+# Subtest: Administrativo: registra gestor, motivo e data, sem movimentar estoque nem salvar foto
+ok 32 - Administrativo: registra gestor, motivo e data, sem movimentar estoque nem salvar foto
+  ---
+  duration_ms: 2.152198
+  type: 'test'
+  ...
+# Subtest: Administrativo: dois reenvios simultâneos da mesma operação retornam o mesmo fechamento
+ok 33 - Administrativo: dois reenvios simultâneos da mesma operação retornam o mesmo fechamento
+  ---
+  duration_ms: 0.320838
+  type: 'test'
+  ...
+# Subtest: Administrativo: outro fechamento concorrente recebe conflito
+ok 34 - Administrativo: outro fechamento concorrente recebe conflito
+  ---
+  duration_ms: 0.272335
+  type: 'test'
+  ...
+# Subtest: Administrativo: não reutiliza identificador com dados ou gestor diferentes
+ok 35 - Administrativo: não reutiliza identificador com dados ou gestor diferentes
+  ---
+  duration_ms: 0.852005
+  type: 'test'
+  ...
+# Subtest: Administrativo: chamado inexistente retorna 404 e falha após inserir reverte a transação
+ok 36 - Administrativo: chamado inexistente retorna 404 e falha após inserir reverte a transação
+  ---
+  duration_ms: 0.425826
+  type: 'test'
+  ...
+# Subtest: API administrativa: parâmetro de rota malformado retorna 400 sem interromper o servidor
+ok 37 - API administrativa: parâmetro de rota malformado retorna 400 sem interromper o servidor
+  ---
+  duration_ms: 7.623907
+  type: 'test'
+  ...
+# Subtest: API administrativa: autenticação e perfil são aplicados antes da gravação
+ok 38 - API administrativa: autenticação e perfil são aplicados antes da gravação
+  ---
+  duration_ms: 77.479625
+  type: 'test'
+  ...
+# Subtest: UC03 - Caixa-branca: FechamentoController
+    # Subtest: FA-CB01: fechar repassa protocolo, técnico e corpo ao serviço e responde 201 no formato padrão
+    ok 1 - FA-CB01: fechar repassa protocolo, técnico e corpo ao serviço e responde 201 no formato padrão
+      ---
+      duration_ms: 2.073221
+      type: 'test'
+      ...
+    # Subtest: FA-CB02: fechar entrega ao next o erro do serviço e não escreve resposta
+    ok 2 - FA-CB02: fechar entrega ao next o erro do serviço e não escreve resposta
+      ---
+      duration_ms: 0.272132
+      type: 'test'
+      ...
+    # Subtest: FA-CB03: fecharAdmin repassa o gestor como gestorId e entrega o erro ao next
+    ok 3 - FA-CB03: fecharAdmin repassa o gestor como gestorId e entrega o erro ao next
+      ---
+      duration_ms: 0.289097
+      type: 'test'
+      ...
+    1..3
+ok 39 - UC03 - Caixa-branca: FechamentoController
+  ---
+  duration_ms: 3.695782
+  type: 'suite'
+  ...
+# Subtest: UC03 - Caixa-branca: FechamentoService.fecharChamado
+    # Subtest: FA-CB04: dados de fechamento nulos ou incompletos geram DadoInvalido (400) antes de abrir a transação
+    ok 1 - FA-CB04: dados de fechamento nulos ou incompletos geram DadoInvalido (400) antes de abrir a transação
+      ---
+      duration_ms: 1.254136
+      type: 'test'
+      ...
+    # Subtest: FA-CB05: reenvio da mesma operacao_id devolve o fechamento existente sem inserir nem baixar estoque
+    ok 2 - FA-CB05: reenvio da mesma operacao_id devolve o fechamento existente sem inserir nem baixar estoque
+      ---
+      duration_ms: 0.395916
+      type: 'test'
+      ...
+    # Subtest: FA-CB06: chamado inexistente gera NaoEncontrado (404) e chamado já fechado gera Conflito (409)
+    ok 3 - FA-CB06: chamado inexistente gera NaoEncontrado (404) e chamado já fechado gera Conflito (409)
+      ---
+      duration_ms: 0.420053
+      type: 'test'
+      ...
+    1..3
+ok 40 - UC03 - Caixa-branca: FechamentoService.fecharChamado
+  ---
+  duration_ms: 2.218059
+  type: 'suite'
+  ...
+# Subtest: UC03 - Caixa-branca: ApiClient (envio do fechamento pelo aparelho)
+    # Subtest: FA-CB07: com token, envia Authorization Bearer; o corpo vai em JSON e o método é respeitado
+    ok 1 - FA-CB07: com token, envia Authorization Bearer; o corpo vai em JSON e o método é respeitado
+      ---
+      duration_ms: 3.306141
+      type: 'test'
+      ...
+    # Subtest: FA-CB08: sem token não envia Authorization e sem corpo não envia body
+    ok 2 - FA-CB08: sem token não envia Authorization e sem corpo não envia body
+      ---
+      duration_ms: 0.243617
+      type: 'test'
+      ...
+    # Subtest: FA-CB09: resposta que não é JSON vira erro RESPOSTA_INVALIDA com ok=false
+    ok 3 - FA-CB09: resposta que não é JSON vira erro RESPOSTA_INVALIDA com ok=false
+      ---
+      duration_ms: 0.270995
+      type: 'test'
+      ...
+    # Subtest: FA-CB10: HTTP 200 com ok=false ou success=false no corpo não é tratado como sucesso; corpo vazio vira {}
+    ok 4 - FA-CB10: HTTP 200 com ok=false ou success=false no corpo não é tratado como sucesso; corpo vazio vira {}
+      ---
+      duration_ms: 1.182769
+      type: 'test'
+      ...
+    # Subtest: FA-CB11: usa window.ILUMINA.API_URL como base (sem barra dupla) e mantém endereço absoluto como está
+    ok 5 - FA-CB11: usa window.ILUMINA.API_URL como base (sem barra dupla) e mantém endereço absoluto como está
+      ---
+      duration_ms: 0.910653
+      type: 'test'
+      ...
+    # Subtest: FA-CB12: sem resposta dentro do timeout, a requisição é abortada
+    ok 6 - FA-CB12: sem resposta dentro do timeout, a requisição é abortada
+      ---
+      duration_ms: 20.60883
+      type: 'test'
+      ...
+    1..6
+ok 41 - UC03 - Caixa-branca: ApiClient (envio do fechamento pelo aparelho)
+  ---
+  duration_ms: 26.946337
+  type: 'suite'
+  ...
+# Subtest: FO-21 [caixa-preta | integração | RNF03 e CA05] sem sessão válida: 401; perfil sem acesso: 403
+ok 42 - FO-21 [caixa-preta | integração | RNF03 e CA05] sem sessão válida: 401; perfil sem acesso: 403
+  ---
+  duration_ms: 12.214603
+  type: 'test'
+  ...
+# Subtest: FO-22 [caixa-preta | integração] fechamento válido: 201 com o fechamento; reenvio devolve o mesmo registro
+ok 43 - FO-22 [caixa-preta | integração] fechamento válido: 201 com o fechamento; reenvio devolve o mesmo registro
+  ---
+  duration_ms: 3.9411
+  type: 'test'
+  ...
+# Subtest: FO-23 [caixa-preta | integração | passo 6] sem foto, sem GPS ou com status fora do UC05: 400 e nada gravado
+ok 44 - FO-23 [caixa-preta | integração | passo 6] sem foto, sem GPS ou com status fora do UC05: 400 e nada gravado
+  ---
+  duration_ms: 0.885873
+  type: 'test'
+  ...
+# Subtest: FO-24 [suposição de erro | integração] data no formato da tela antiga gera 400, não erro interno (500)
+ok 45 - FO-24 [suposição de erro | integração] data no formato da tela antiga gera 400, não erro interno (500)
+  ---
+  duration_ms: 0.438669
+  type: 'test'
+  ...
+# Subtest: FO-25 [caixa-branca | DEF-02] com a API Node, o fechamento vai para POST /api/chamados/:protocolo/fechamento em JSON com o token no cabeçalho
+ok 46 - FO-25 [caixa-branca | DEF-02] com a API Node, o fechamento vai para POST /api/chamados/:protocolo/fechamento em JSON com o token no cabeçalho
+  ---
+  duration_ms: 5.664032
+  type: 'test'
+  ...
+# Subtest: FO-26 [caixa-branca | DEF-02] o corpo segue o contrato da API: operacao_id, materiais {nome, quantidade}, data ISO, poste e precisão
+ok 47 - FO-26 [caixa-branca | DEF-02] o corpo segue o contrato da API: operacao_id, materiais {nome, quantidade}, data ISO, poste e precisão
+  ---
+  duration_ms: 2.767857
+  type: 'test'
+  ...
+# Subtest: FO-27 [suposição de erro | DEF-02] fechamento antigo da fila, sem operacao_id nem data ISO, ainda é enviado
+ok 48 - FO-27 [suposição de erro | DEF-02] fechamento antigo da fila, sem operacao_id nem data ISO, ainda é enviado
+  ---
+  duration_ms: 2.829083
+  type: 'test'
+  ...
+# Subtest: FO-28 [caixa-branca | DEF-02] as respostas da API viram as respostas que a tela já sabe tratar
+ok 49 - FO-28 [caixa-branca | DEF-02] as respostas da API viram as respostas que a tela já sabe tratar
+  ---
+  duration_ms: 4.771291
+  type: 'test'
+  ...
+# Subtest: FO-29 [caixa-preta | regressão] com o Apps Script o envio continua igual (text/plain, corpo inalterado)
+ok 50 - FO-29 [caixa-preta | regressão] com o Apps Script o envio continua igual (text/plain, corpo inalterado)
+  ---
+  duration_ms: 1.351258
+  type: 'test'
+  ...
+# Subtest: FO-30 [baseada em risco | DEF-07 | A5] um fechamento recusado não trava os seguintes e continua na fila
+ok 51 - FO-30 [baseada em risco | DEF-07 | A5] um fechamento recusado não trava os seguintes e continua na fila
+  ---
+  duration_ms: 2.47501
+  type: 'test'
+  ...
+# Subtest: FO-31 [baseada em risco | DEF-08 | A5] chamado já fechado (resposta "ja_fechado") sai da fila e não trava os outros
+ok 52 - FO-31 [baseada em risco | DEF-08 | A5] chamado já fechado (resposta "ja_fechado") sai da fila e não trava os outros
+  ---
+  duration_ms: 1.12864
+  type: 'test'
+  ...
+# Subtest: FO-32 [caixa-branca | cobertura de ramos] sessão expirada e falta de rede interrompem a fila sem apagar nada
+ok 53 - FO-32 [caixa-branca | cobertura de ramos] sessão expirada e falta de rede interrompem a fila sem apagar nada
+  ---
+  duration_ms: 2.080555
+  type: 'test'
+  ...
+# Subtest: FO-01 [caixa-preta | partição válida] fechamento completo do passo 6 é aceito
+ok 54 - FO-01 [caixa-preta | partição válida] fechamento completo do passo 6 é aceito
+  ---
+  duration_ms: 2.71676
+  type: 'test'
+  ...
+# Subtest: FO-02 [caixa-preta | partição inválida] sem operacao_id, status ou serviço o fechamento é recusado
+ok 55 - FO-02 [caixa-preta | partição inválida] sem operacao_id, status ou serviço o fechamento é recusado
+  ---
+  duration_ms: 0.302575
+  type: 'test'
+  ...
+# Subtest: FO-03 [caixa-preta | partição inválida | passo 6] sem foto do reparo o fechamento é recusado
+ok 56 - FO-03 [caixa-preta | partição inválida | passo 6] sem foto do reparo o fechamento é recusado
+  ---
+  duration_ms: 0.16189
+  type: 'test'
+  ...
+# Subtest: FO-04 [caixa-preta | tabela de decisão | passo 3] só os quatro status do UC05 são aceitos
+ok 57 - FO-04 [caixa-preta | tabela de decisão | passo 3] só os quatro status do UC05 são aceitos
+  ---
+  duration_ms: 0.145303
+  type: 'test'
+  ...
+# Subtest: FO-05 [caixa-preta | partição inválida | passo 6 e A4] sem GPS válido o fechamento é recusado
+ok 58 - FO-05 [caixa-preta | partição inválida | passo 6 e A4] sem GPS válido o fechamento é recusado
+  ---
+  duration_ms: 0.114083
+  type: 'test'
+  ...
+# Subtest: FO-06 [caixa-preta | valor-limite | A4] região: bordas aceitas, um passo fora recusado
+ok 59 - FO-06 [caixa-preta | valor-limite | A4] região: bordas aceitas, um passo fora recusado
+  ---
+  duration_ms: 0.221704
+  type: 'test'
+  ...
+# Subtest: FO-07 [caixa-preta | valor-limite | passo 6 e A4] precisão do GPS até 100 m
+ok 60 - FO-07 [caixa-preta | valor-limite | passo 6 e A4] precisão do GPS até 100 m
+  ---
+  duration_ms: 0.146259
+  type: 'test'
+  ...
+# Subtest: FO-08 [caixa-preta | tabela de decisão | passo 4 e CA04] materiais da OS
+ok 61 - FO-08 [caixa-preta | tabela de decisão | passo 4 e CA04] materiais da OS
+  ---
+  duration_ms: 0.158919
+  type: 'test'
+  ...
+# Subtest: FO-09 [suposição de erro] item nulo na lista de materiais é recusado, sem erro interno
+ok 62 - FO-09 [suposição de erro] item nulo na lista de materiais é recusado, sem erro interno
+  ---
+  duration_ms: 0.188383
+  type: 'test'
+  ...
+# Subtest: FO-10 [suposição de erro | valor-limite] data do fechamento: ISO aceita; formato brasileiro e texto recusados
+ok 63 - FO-10 [suposição de erro | valor-limite] data do fechamento: ISO aceita; formato brasileiro e texto recusados
+  ---
+  duration_ms: 0.089328
+  type: 'test'
+  ...
+# Subtest: FO-11 [caixa-preta | valor-limite] referência do local: 255 caracteres aceitos, 256 recusados
+ok 64 - FO-11 [caixa-preta | valor-limite] referência do local: 255 caracteres aceitos, 256 recusados
+  ---
+  duration_ms: 0.085929
+  type: 'test'
+  ...
+# Subtest: FO-12 [caixa-preta | partição válida | passo 7] grava o fechamento, fecha o chamado, baixa o estoque e atualiza o poste
+ok 65 - FO-12 [caixa-preta | partição válida | passo 7] grava o fechamento, fecha o chamado, baixa o estoque e atualiza o poste
+  ---
+  duration_ms: 4.337386
+  type: 'test'
+  ...
+# Subtest: FO-13 [baseada em risco | CA04 "uma única vez"] reenvio da mesma operação devolve o mesmo fechamento sem baixar o estoque de novo
+ok 66 - FO-13 [baseada em risco | CA04 "uma única vez"] reenvio da mesma operação devolve o mesmo fechamento sem baixar o estoque de novo
+  ---
+  duration_ms: 0.748089
+  type: 'test'
+  ...
+# Subtest: FO-14 [baseada em risco | concorrência] chamado já fechado gera 409; chamado inexistente gera 404
+ok 67 - FO-14 [baseada em risco | concorrência] chamado já fechado gera 409; chamado inexistente gera 404
+  ---
+  duration_ms: 0.827801
+  type: 'test'
+  ...
+# Subtest: FO-15 [baseada em risco | idempotência] operacao_id já usada em outro chamado não fecha este nem finge sucesso
+ok 68 - FO-15 [baseada em risco | idempotência] operacao_id já usada em outro chamado não fecha este nem finge sucesso
+  ---
+  duration_ms: 0.416705
+  type: 'test'
+  ...
+# Subtest: FO-16 [baseada em risco | CA04] material repetido na lista: o estoque e a OS registram a mesma quantidade
+ok 69 - FO-16 [baseada em risco | CA04] material repetido na lista: o estoque e a OS registram a mesma quantidade
+  ---
+  duration_ms: 1.691797
+  type: 'test'
+  ...
+# Subtest: FO-17 [baseada em risco | atomicidade] saldo insuficiente: 409 e nada fica gravado
+ok 70 - FO-17 [baseada em risco | atomicidade] saldo insuficiente: 409 e nada fica gravado
+  ---
+  duration_ms: 0.497212
+  type: 'test'
+  ...
+# Subtest: FO-18 [baseada em risco | atomicidade] material que não existe no almoxarifado: 404 e nada fica gravado
+ok 71 - FO-18 [baseada em risco | atomicidade] material que não existe no almoxarifado: 404 e nada fica gravado
+  ---
+  duration_ms: 0.362956
+  type: 'test'
+  ...
+# Subtest: FO-19 [caixa-branca | cobertura de ramos] poste: o informado pelo técnico, o do chamado ou nenhum
+ok 72 - FO-19 [caixa-branca | cobertura de ramos] poste: o informado pelo técnico, o do chamado ou nenhum
+  ---
+  duration_ms: 0.894519
+  type: 'test'
+  ...
+# Subtest: FO-20 [caixa-branca | cobertura de ramos] dados inválidos não abrem transação nem gravam a foto
+ok 73 - FO-20 [caixa-branca | cobertura de ramos] dados inválidos não abrem transação nem gravam a foto
+  ---
+  duration_ms: 0.253623
+  type: 'test'
+  ...
+# Subtest: FO-33 [caixa-branca | cobertura de ramos] campos alternativos e opcionais: latitude/longitude, sem config, sem materiais e sem data
+ok 74 - FO-33 [caixa-branca | cobertura de ramos] campos alternativos e opcionais: latitude/longitude, sem config, sem materiais e sem data
+  ---
+  duration_ms: 0.485683
+  type: 'test'
+  ...
+# Subtest: FT-01 [caixa-preta | fluxo principal] foto salva em disco é lida de volta com os mesmos bytes e o tipo certo
+ok 75 - FT-01 [caixa-preta | fluxo principal] foto salva em disco é lida de volta com os mesmos bytes e o tipo certo
+  ---
+  duration_ms: 10.151235
+  type: 'test'
+  ...
+# Subtest: FT-02 [caixa-preta | risco: segurança] nome com caminho ou extensão estranha é recusado sem ler o disco
+ok 76 - FT-02 [caixa-preta | risco: segurança] nome com caminho ou extensão estranha é recusado sem ler o disco
+  ---
+  duration_ms: 0.620087
+  type: 'test'
+  ...
+# Subtest: FT-03 [caixa-preta | fluxo alternativo] foto que não existe devolve nulo
+ok 77 - FT-03 [caixa-preta | fluxo alternativo] foto que não existe devolve nulo
+  ---
+  duration_ms: 1.265522
+  type: 'test'
+  ...
+# Subtest: FT-04 [caixa-preta | fluxo principal] no modo MySQL a foto vai para a tabela fotos, não para o disco
+ok 78 - FT-04 [caixa-preta | fluxo principal] no modo MySQL a foto vai para a tabela fotos, não para o disco
+  ---
+  duration_ms: 1.257834
+  type: 'test'
+  ...
+# Subtest: FT-05 [caixa-branca] o modo vem de STORAGE_DRIVER; sem a variável, grava em disco
+ok 79 - FT-05 [caixa-branca] o modo vem de STORAGE_DRIVER; sem a variável, grava em disco
+  ---
+  duration_ms: 1.191285
+  type: 'test'
+  ...
+# Subtest: FT-06 [caixa-branca] a migração 002 cria a tabela fotos no MySQL
+ok 80 - FT-06 [caixa-branca] a migração 002 cria a tabela fotos no MySQL
+  ---
+  duration_ms: 0.270269
+  type: 'test'
+  ...
+# Subtest: FT-07 [integração | fluxo principal] GET /uploads/fotos/:arquivo entrega a foto, sem login, com cache longo
+ok 81 - FT-07 [integração | fluxo principal] GET /uploads/fotos/:arquivo entrega a foto, sem login, com cache longo
+  ---
+  duration_ms: 57.904369
+  type: 'test'
+  ...
+# Subtest: FT-08 [integração | fluxo alternativo e segurança] foto inexistente e caminho com ../ respondem 404 sem vazar arquivo
+ok 82 - FT-08 [integração | fluxo alternativo e segurança] foto inexistente e caminho com ../ respondem 404 sem vazar arquivo
+  ---
+  duration_ms: 18.074714
+  type: 'test'
+  ...
+# Subtest: FT-09 [caixa-branca] Vercel e Netlify repassam /uploads/* para a API, como fazem com /api/*
+ok 83 - FT-09 [caixa-branca] Vercel e Netlify repassam /uploads/* para a API, como fazem com /api/*
+  ---
+  duration_ms: 0.535619
+  type: 'test'
+  ...
+# ◇ injected env (0) from .env // tip: ⌁ auth for agents [www.vestauth.com]
+# Subtest: Suíte de Integração Ponta a Ponta (HTTP + Serviços + MySQL Real)
+    # Subtest: INT-01 [Auth | MySQL] Login HTTP de técnico e gestor gera tokens Bearer válidos na tabela sessoes
+    not ok 1 - INT-01 [Auth | MySQL] Login HTTP de técnico e gestor gera tokens Bearer válidos na tabela sessoes
+      ---
+      duration_ms: 0
+      type: 'test'
+      location: '/home/claude/repo-novo/projetoa3qa/server/tests/integracao-sistema.test.js:294:3'
+      failureType: 'cancelledByParent'
+      error: 'test did not finish before its parent and was cancelled'
+      code: 'ERR_TEST_FAILURE'
+      ...
+    # Subtest: INT-02 [Auth | RBAC] Login do almoxarifado aceita almoxarife e bloqueia técnico comum
+    not ok 2 - INT-02 [Auth | RBAC] Login do almoxarifado aceita almoxarife e bloqueia técnico comum
+      ---
+      duration_ms: 0
+      type: 'test'
+      location: '/home/claude/repo-novo/projetoa3qa/server/tests/integracao-sistema.test.js:322:3'
+      failureType: 'cancelledByParent'
+      error: 'test did not finish before its parent and was cancelled'
+      code: 'ERR_TEST_FAILURE'
+      ...
+    # Subtest: INT-03 [Segurança | RBAC] Rotas protegidas exigem sessão (401) e respeitam hierarquia de perfil (403)
+    not ok 3 - INT-03 [Segurança | RBAC] Rotas protegidas exigem sessão (401) e respeitam hierarquia de perfil (403)
+      ---
+      duration_ms: 0
+      type: 'test'
+      location: '/home/claude/repo-novo/projetoa3qa/server/tests/integracao-sistema.test.js:339:3'
+      failureType: 'cancelledByParent'
+      error: 'test did not finish before its parent and was cancelled'
+      code: 'ERR_TEST_FAILURE'
+      ...
+    # Subtest: INT-04 [Chamados | Cidadão -> MySQL] Abertura pública cria chamado e aparece na listagem e busca por protocolo
+    not ok 4 - INT-04 [Chamados | Cidadão -> MySQL] Abertura pública cria chamado e aparece na listagem e busca por protocolo
+      ---
+      duration_ms: 0
+      type: 'test'
+      location: '/home/claude/repo-novo/projetoa3qa/server/tests/integracao-sistema.test.js:369:3'
+      failureType: 'cancelledByParent'
+      error: 'test did not finish before its parent and was cancelled'
+      code: 'ERR_TEST_FAILURE'
+      ...
+    # Subtest: INT-05 [Chamados | Idempotência] Reenvio do mesmo UUID pelo cidadão retorna o chamado existente sem duplicar
+    not ok 5 - INT-05 [Chamados | Idempotência] Reenvio do mesmo UUID pelo cidadão retorna o chamado existente sem duplicar
+      ---
+      duration_ms: 0
+      type: 'test'
+      location: '/home/claude/repo-novo/projetoa3qa/server/tests/integracao-sistema.test.js:400:3'
+      failureType: 'cancelledByParent'
+      error: 'test did not finish before its parent and was cancelled'
+      code: 'ERR_TEST_FAILURE'
+      ...
+    # Subtest: INT-06 [Postes | QR Code Público] Consulta pública da situação do poste detecta chamado aberto vinculado
+    not ok 6 - INT-06 [Postes | QR Code Público] Consulta pública da situação do poste detecta chamado aberto vinculado
+      ---
+      duration_ms: 0
+      type: 'test'
+      location: '/home/claude/repo-novo/projetoa3qa/server/tests/integracao-sistema.test.js:422:3'
+      failureType: 'cancelledByParent'
+      error: 'test did not finish before its parent and was cancelled'
+      code: 'ERR_TEST_FAILURE'
+      ...
+    # Subtest: INT-07 [Tentativas | Campo -> Relatório] Técnico registra tentativa frustrada e rota de relatório lista o evento
+    not ok 7 - INT-07 [Tentativas | Campo -> Relatório] Técnico registra tentativa frustrada e rota de relatório lista o evento
+      ---
+      duration_ms: 0
+      type: 'test'
+      location: '/home/claude/repo-novo/projetoa3qa/server/tests/integracao-sistema.test.js:429:3'
+      failureType: 'cancelledByParent'
+      error: 'test did not finish before its parent and was cancelled'
+      code: 'ERR_TEST_FAILURE'
+      ...
+    # Subtest: INT-08 [Almoxarifado | CRUD] Almoxarife cadastra, consulta e remove material no estoque real
+    not ok 8 - INT-08 [Almoxarifado | CRUD] Almoxarife cadastra, consulta e remove material no estoque real
+      ---
+      duration_ms: 0
+      type: 'test'
+      location: '/home/claude/repo-novo/projetoa3qa/server/tests/integracao-sistema.test.js:455:3'
+      failureType: 'cancelledByParent'
+      error: 'test did not finish before its parent and was cancelled'
+      code: 'ERR_TEST_FAILURE'
+      ...
+    # Subtest: INT-09 [Fechamento Campo | Transação ACID] Encerra chamado, debita estoque e atualiza ficha técnica do poste
+    not ok 9 - INT-09 [Fechamento Campo | Transação ACID] Encerra chamado, debita estoque e atualiza ficha técnica do poste
+      ---
+      duration_ms: 0
+      type: 'test'
+      location: '/home/claude/repo-novo/projetoa3qa/server/tests/integracao-sistema.test.js:495:3'
+      failureType: 'cancelledByParent'
+      error: 'test did not finish before its parent and was cancelled'
+      code: 'ERR_TEST_FAILURE'
+      ...
+    # Subtest: INT-10 [Fechamento Campo | Idempotência e Conflito] Reenvio não duplica baixa; nova operação no mesmo chamado retorna 409
+    not ok 10 - INT-10 [Fechamento Campo | Idempotência e Conflito] Reenvio não duplica baixa; nova operação no mesmo chamado retorna 409
+      ---
+      duration_ms: 0
+      type: 'test'
+      location: '/home/claude/repo-novo/projetoa3qa/server/tests/integracao-sistema.test.js:544:3'
+      failureType: 'cancelledByParent'
+      error: 'test did not finish before its parent and was cancelled'
+      code: 'ERR_TEST_FAILURE'
+      ...
+    # Subtest: INT-11 [Atomicidade | Rollback] Saldo insuficiente no fechamento retorna 409 e reverte totalmente a transação
+    not ok 11 - INT-11 [Atomicidade | Rollback] Saldo insuficiente no fechamento retorna 409 e reverte totalmente a transação
+      ---
+      duration_ms: 0
+      type: 'test'
+      location: '/home/claude/repo-novo/projetoa3qa/server/tests/integracao-sistema.test.js:584:3'
+      failureType: 'cancelledByParent'
+      error: 'test did not finish before its parent and was cancelled'
+      code: 'ERR_TEST_FAILURE'
+      ...
+    # Subtest: INT-12 [Relatórios e Postes] Listagem de fechados, lista de postes e histórico do poste refletem o ciclo completo
+    not ok 12 - INT-12 [Relatórios e Postes] Listagem de fechados, lista de postes e histórico do poste refletem o ciclo completo
+      ---
+      duration_ms: 0
+      type: 'test'
+      location: '/home/claude/repo-novo/projetoa3qa/server/tests/integracao-sistema.test.js:622:3'
+      failureType: 'cancelledByParent'
+      error: 'test did not finish before its parent and was cancelled'
+      code: 'ERR_TEST_FAILURE'
+      ...
+    # Subtest: INT-13 [Almoxarifado | Miss?es] Sa?da de miss?o debita estoque, ativa alerta de m?nimo e lista itens agregados
+    not ok 13 - INT-13 [Almoxarifado | Miss?es] Sa?da de miss?o debita estoque, ativa alerta de m?nimo e lista itens agregados # TODO Defeito DEF-13 - EstoqueRepository usa coluna data em vez de data_missao na tabela missoes
+      ---
+      duration_ms: 0
+      type: 'test'
+      location: '/home/claude/repo-novo/projetoa3qa/server/tests/integracao-sistema.test.js:644:3'
+      failureType: 'cancelledByParent'
+      error: 'test did not finish before its parent and was cancelled'
+      code: 'ERR_TEST_FAILURE'
+      ...
+    # Subtest: INT-14 [Fechamento Administrativo] Gestor encerra chamado administrativamente sem movimentar estoque
+    not ok 14 - INT-14 [Fechamento Administrativo] Gestor encerra chamado administrativamente sem movimentar estoque
+      ---
+      duration_ms: 0
+      type: 'test'
+      location: '/home/claude/repo-novo/projetoa3qa/server/tests/integracao-sistema.test.js:675:3'
+      failureType: 'cancelledByParent'
+      error: 'test did not finish before its parent and was cancelled'
+      code: 'ERR_TEST_FAILURE'
+      ...
+    # Subtest: INT-15 [Apresentação | Robustez HTTP] Rota inexistente (404) e JSON inválido (400) respondem de forma controlada
+    not ok 15 - INT-15 [Apresentação | Robustez HTTP] Rota inexistente (404) e JSON inválido (400) respondem de forma controlada
+      ---
+      duration_ms: 0
+      type: 'test'
+      location: '/home/claude/repo-novo/projetoa3qa/server/tests/integracao-sistema.test.js:713:3'
+      failureType: 'cancelledByParent'
+      error: 'test did not finish before its parent and was cancelled'
+      code: 'ERR_TEST_FAILURE'
+      ...
+    1..15
+not ok 84 - Suíte de Integração Ponta a Ponta (HTTP + Serviços + MySQL Real)
+  ---
+  duration_ms: 0.352861
+  type: 'suite'
+  location: '/home/claude/repo-novo/projetoa3qa/server/tests/integracao-sistema.test.js:293:1'
+  failureType: 'hookFailed'
+  error: 'Configure DB_USER, DB_NAME no .env da raiz antes de conectar ao MySQL.'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    criarPoolPadrao (/home/claude/repo-novo/projetoa3qa/server/src/infrastructure/database/pool.js:22:11)
+    getPool (/home/claude/repo-novo/projetoa3qa/server/src/infrastructure/database/pool.js:57:18)
+    Object.query (/home/claude/repo-novo/projetoa3qa/server/src/infrastructure/database/pool.js:72:23)
+    TestContext.<anonymous> (/home/claude/repo-novo/projetoa3qa/server/tests/integracao-sistema.test.js:138:14)
+    TestHook.runInAsyncScope (node:async_hooks:214:14)
+    TestHook.run (node:internal/test_runner/test:1047:25)
+    TestHook.run (node:internal/test_runner/test:1354:18)
+    TestHook.run (node:internal/util:580:20)
+    Test.createHook (node:internal/test_runner/test:872:33)
+    node:internal/test_runner/harness:335:12
+  ...
+# Subtest: CT-29 [Caixa Branca] Logout do técnico limpa PIN e indicadores visuais
+ok 85 - CT-29 [Caixa Branca] Logout do técnico limpa PIN e indicadores visuais
+  ---
+  duration_ms: 5.507671
+  type: 'test'
+  ...
+# Subtest: Persistência MySQL: fechamento vincula os valores e devolve a linha inserida
+ok 86 - Persistência MySQL: fechamento vincula os valores e devolve a linha inserida
+  ---
+  duration_ms: 1.975583
+  type: 'test'
+  ...
+# Subtest: Persistência MySQL: colisão de protocolo não é confundida com reenvio do mesmo chamado
+ok 87 - Persistência MySQL: colisão de protocolo não é confundida com reenvio do mesmo chamado
+  ---
+  duration_ms: 1.023109
+  type: 'test'
+  ...
+# Subtest: Persistência MySQL: estatísticas numéricas e vínculo de poste mantêm o contrato
+ok 88 - Persistência MySQL: estatísticas numéricas e vínculo de poste mantêm o contrato
+  ---
+  duration_ms: 0.302881
+  type: 'test'
+  ...
+# Subtest: Persistência MySQL: login e sessão usam parâmetros, inclusive listas de perfis
+ok 89 - Persistência MySQL: login e sessão usam parâmetros, inclusive listas de perfis
+  ---
+  duration_ms: 0.773761
+  type: 'test'
+  ...
+# Subtest: ApiClient: o corpo não pode transformar HTTP 403 em sucesso nem alterar seu status
+ok 90 - ApiClient: o corpo não pode transformar HTTP 403 em sucesso nem alterar seu status
+  ---
+  duration_ms: 2.408142
+  type: 'test'
+  ...
+# Subtest: Apresentação: chamados da API mantêm os campos usados pela tela e seus filtros
+ok 91 - Apresentação: chamados da API mantêm os campos usados pela tela e seus filtros
+  ---
+  duration_ms: 12.080012
+  type: 'test'
+  ...
+# Subtest: PL-01 [caixa-branca] listarTodos conta os chamados do poste e traz a data do último, com e sem filtro de bairro
+ok 92 - PL-01 [caixa-branca] listarTodos conta os chamados do poste e traz a data do último, com e sem filtro de bairro
+  ---
+  duration_ms: 1.009065
+  type: 'test'
+  ...
+# Subtest: Postes: nenhuma consulta usa sintaxe do PostgreSQL
+ok 93 - Postes: nenhuma consulta usa sintaxe do PostgreSQL
+  ---
+  duration_ms: 1.656354
+  type: 'test'
+  ...
+# Subtest: Postes: garantirExistencia não sobrescreve poste existente e devolve a linha
+ok 94 - Postes: garantirExistencia não sobrescreve poste existente e devolve a linha
+  ---
+  duration_ms: 0.238952
+  type: 'test'
+  ...
+# Subtest: Postes: atualizarConfiguracao preserva campos não informados (COALESCE) e devolve a linha
+ok 95 - Postes: atualizarConfiguracao preserva campos não informados (COALESCE) e devolve a linha
+  ---
+  duration_ms: 0.194615
+  type: 'test'
+  ...
+# Subtest: Postes: atualizarConfiguracao sem poste não executa nada
+ok 96 - Postes: atualizarConfiguracao sem poste não executa nada
+  ---
+  duration_ms: 0.094257
+  type: 'test'
+  ...
+# Subtest: Postes: filtro por bairro usa LIKE com curingas
+ok 97 - Postes: filtro por bairro usa LIKE com curingas
+  ---
+  duration_ms: 0.871797
+  type: 'test'
+  ...
+# Subtest: Relatório: escopo "fechados" junta fechamento e técnico, só de chamados fechados
+ok 98 - Relatório: escopo "fechados" junta fechamento e técnico, só de chamados fechados
+  ---
+  duration_ms: 1.21762
+  type: 'test'
+  ...
+# Subtest: Relatório: a view inclui o fechamento só quando a consulta trouxe esses campos
+ok 99 - Relatório: a view inclui o fechamento só quando a consulta trouxe esses campos
+  ---
+  duration_ms: 1.1278
+  type: 'test'
+  ...
+# Subtest: Relatório: carregarFechados devolve registros no formato da tela, com data em pt-BR
+ok 100 - Relatório: carregarFechados devolve registros no formato da tela, com data em pt-BR
+  ---
+  duration_ms: 13.220968
+  type: 'test'
+  ...
+# Subtest: Relatório: carregarFechados propaga o status HTTP quando a API recusa (sessão expirada)
+ok 101 - Relatório: carregarFechados propaga o status HTTP quando a API recusa (sessão expirada)
+  ---
+  duration_ms: 0.694527
+  type: 'test'
+  ...
+# Subtest: Relatório: rotuloTipo traduz códigos conhecidos e preserva textos livres
+ok 102 - Relatório: rotuloTipo traduz códigos conhecidos e preserva textos livres
+  ---
+  duration_ms: 0.196042
+  type: 'test'
+  ...
+# Subtest: Tentativas: inserir usa SQL do MySQL (placeholders ?) e devolve a linha salva
+ok 103 - Tentativas: inserir usa SQL do MySQL (placeholders ?) e devolve a linha salva
+  ---
+  duration_ms: 2.187788
+  type: 'test'
+  ...
+# Subtest: Tentativas: reenvio com a mesma operacao_id devolve o registro existente sem erro
+ok 104 - Tentativas: reenvio com a mesma operacao_id devolve o registro existente sem erro
+  ---
+  duration_ms: 0.362454
+  type: 'test'
+  ...
+# Subtest: Tentativas: outros erros do banco não são engolidos
+ok 105 - Tentativas: outros erros do banco não são engolidos
+  ---
+  duration_ms: 0.657389
+  type: 'test'
+  ...
+# Subtest: Tentativas: listagem do relatório junta chamado e técnico
+ok 106 - Tentativas: listagem do relatório junta chamado e técnico
+  ---
+  duration_ms: 0.185319
+  type: 'test'
+  ...
+# Subtest: Tentativas: a view expõe só os campos usados pelo relatório
+ok 107 - Tentativas: a view expõe só os campos usados pelo relatório
+  ---
+  duration_ms: 0.260017
+  type: 'test'
+  ...
+# Subtest: Tentativas: carregarTentativas converte para o formato da tela
+ok 108 - Tentativas: carregarTentativas converte para o formato da tela
+  ---
+  duration_ms: 12.85623
+  type: 'test'
+  ...
+# Subtest: Tentativas: rotuloStatusChamado traduz os status do banco
+ok 109 - Tentativas: rotuloStatusChamado traduz os status do banco
+  ---
+  duration_ms: 0.256636
+  type: 'test'
+  ...
+# Subtest: RP-11 [caixa-preta | integração] POST /api/chamados: 201 para reporte válido e 400 para inválido
+ok 110 - RP-11 [caixa-preta | integração] POST /api/chamados: 201 para reporte válido e 400 para inválido
+  ---
+  duration_ms: 19.372275
+  type: 'test'
+  ...
+# Subtest: RP-02 (cliente) [caixa-preta | tabela de decisão] envio só é liberado com GPS, tipo e foto (passo 6, A4, A5)
+ok 111 - RP-02 (cliente) [caixa-preta | tabela de decisão] envio só é liberado com GPS, tipo e foto (passo 6, A4, A5)
+  ---
+  duration_ms: 8.223299
+  type: 'test'
+  ...
+# Subtest: RP-12 [caixa-preta | partição válida] protocolo no formato IC-AAMMDD-XXXXX com a data do aparelho
+ok 112 - RP-12 [caixa-preta | partição válida] protocolo no formato IC-AAMMDD-XXXXX com a data do aparelho
+  ---
+  duration_ms: 2.680618
+  type: 'test'
+  ...
+# Subtest: RP-13 [baseada em risco | perda de reporte] grava na fila antes de enviar; sem rede fica pendente (A1)
+ok 113 - RP-13 [baseada em risco | perda de reporte] grava na fila antes de enviar; sem rede fica pendente (A1)
+  ---
+  duration_ms: 2.19879
+  type: 'test'
+  ...
+# Subtest: RP-16 [caixa-preta | valor-limite] classificação da precisão do GPS: 10 m e 25 m (passo 2)
+ok 114 - RP-16 [caixa-preta | valor-limite] classificação da precisão do GPS: 10 m e 25 m (passo 2)
+  ---
+  duration_ms: 1.012301
+  type: 'test'
+  ...
+# Subtest: RP-16 [suposição de erro] precisão desconhecida ou negativa não é exibida como "Excelente" (passo 2, A3)
+ok 115 - RP-16 [suposição de erro] precisão desconhecida ou negativa não é exibida como "Excelente" (passo 2, A3)
+  ---
+  duration_ms: 0.245422
+  type: 'test'
+  ...
+# Subtest: RP-01 [caixa-preta | partição válida] reporte completo é aceito
+ok 116 - RP-01 [caixa-preta | partição válida] reporte completo é aceito
+  ---
+  duration_ms: 2.627898
+  type: 'test'
+  ...
+# Subtest: RP-04 [caixa-preta | partição válida] os seis tipos do UC01 são aceitos
+ok 117 - RP-04 [caixa-preta | partição válida] os seis tipos do UC01 são aceitos
+  ---
+  duration_ms: 0.31157
+  type: 'test'
+  ...
+# Subtest: RP-05 [caixa-preta | valor-limite] limites de latitude e longitude e o ponto (0,0)
+ok 118 - RP-05 [caixa-preta | valor-limite] limites de latitude e longitude e o ponto (0,0)
+  ---
+  duration_ms: 0.212669
+  type: 'test'
+  ...
+# Subtest: RP-08 [caixa-preta | partição válida] nome, telefone, endereço e descrição são opcionais
+ok 119 - RP-08 [caixa-preta | partição válida] nome, telefone, endereço e descrição são opcionais
+  ---
+  duration_ms: 0.152711
+  type: 'test'
+  ...
+# Subtest: RP-02 (servidor) [caixa-preta | tabela de decisão] só aceita com GPS, tipo e foto (passo 6, CA01)
+ok 120 - RP-02 (servidor) [caixa-preta | tabela de decisão] só aceita com GPS, tipo e foto (passo 6, CA01)
+  ---
+  duration_ms: 0.202397
+  type: 'test'
+  ...
+# Subtest: RP-03 [caixa-preta | partição inválida] tipo fora da lista do UC01 é rejeitado
+ok 121 - RP-03 [caixa-preta | partição inválida] tipo fora da lista do UC01 é rejeitado
+  ---
+  duration_ms: 0.110452
+  type: 'test'
+  ...
+# Subtest: RP-06 [caixa-preta | valor-limite] descrição: 500 caracteres aceita, 501 rejeita (passo 5)
+ok 122 - RP-06 [caixa-preta | valor-limite] descrição: 500 caracteres aceita, 501 rejeita (passo 5)
+  ---
+  duration_ms: 0.09357
+  type: 'test'
+  ...
+# Subtest: RP-07 [caixa-preta | valor-limite] foto: 2 MB aceita, 2 MB + 1 byte rejeita (RNF02)
+ok 123 - RP-07 [caixa-preta | valor-limite] foto: 2 MB aceita, 2 MB + 1 byte rejeita (RNF02)
+  ---
+  duration_ms: 11.067387
+  type: 'test'
+  ...
+# Subtest: RP-14 [caixa-branca | cobertura de ramos] identificação: id e protocolo ausentes ou de tipo errado
+ok 124 - RP-14 [caixa-branca | cobertura de ramos] identificação: id e protocolo ausentes ou de tipo errado
+  ---
+  duration_ms: 0.323953
+  type: 'test'
+  ...
+# Subtest: RP-14 [caixa-branca | cobertura de ramos] foto: URL já enviada, campo fotoUrl e preenchimento do Base64
+ok 125 - RP-14 [caixa-branca | cobertura de ramos] foto: URL já enviada, campo fotoUrl e preenchimento do Base64
+  ---
+  duration_ms: 14.098427
+  type: 'test'
+  ...
+# Subtest: RP-14 [caixa-branca | cobertura de ramos] coordenadas como texto vazio e como texto numérico
+ok 126 - RP-14 [caixa-branca | cobertura de ramos] coordenadas como texto vazio e como texto numérico
+  ---
+  duration_ms: 0.125355
+  type: 'test'
+  ...
+# Subtest: RP-09 [baseada em risco | duplicidade] reenvio do mesmo reporte devolve o mesmo chamado (CA03)
+ok 127 - RP-09 [baseada em risco | duplicidade] reenvio do mesmo reporte devolve o mesmo chamado (CA03)
+  ---
+  duration_ms: 2.235496
+  type: 'test'
+  ...
+# Subtest: RP-09 [baseada em risco | duplicidade] outro reporte com protocolo já usado é recusado
+ok 128 - RP-09 [baseada em risco | duplicidade] outro reporte com protocolo já usado é recusado
+  ---
+  duration_ms: 0.961826
+  type: 'test'
+  ...
+# Subtest: RP-10 [caixa-branca | ramo de erro] falha ao salvar a foto não cria chamado
+ok 129 - RP-10 [caixa-branca | ramo de erro] falha ao salvar a foto não cria chamado
+  ---
+  duration_ms: 0.288102
+  type: 'test'
+  ...
+# Subtest: RP-15 [baseada em risco | chamado sem localização] QR de poste sem coordenadas e sem GPS é recusado (CA01)
+ok 130 - RP-15 [baseada em risco | chamado sem localização] QR de poste sem coordenadas e sem GPS é recusado (CA01)
+  ---
+  duration_ms: 0.504596
+  type: 'test'
+  ...
+# Subtest: RP-15 [caixa-preta | partição válida] QR de poste cadastrado dispensa o GPS e usa as coordenadas do poste
+ok 131 - RP-15 [caixa-preta | partição válida] QR de poste cadastrado dispensa o GPS e usa as coordenadas do poste
+  ---
+  duration_ms: 0.38892
+  type: 'test'
+  ...
+# Subtest: RP-14 [caixa-branca | cobertura de ramos] com GPS e QR, prevalece o GPS do aparelho e o endereço informado
+ok 132 - RP-14 [caixa-branca | cobertura de ramos] com GPS e QR, prevalece o GPS do aparelho e o endereço informado
+  ---
+  duration_ms: 0.22148
+  type: 'test'
+  ...
+# Subtest: RP-14 [caixa-branca | cobertura de ramos] poste sem retorno do cadastro: usa o GPS; sem endereço: usa o do poste
+ok 133 - RP-14 [caixa-branca | cobertura de ramos] poste sem retorno do cadastro: usa o GPS; sem endereço: usa o do poste
+  ---
+  duration_ms: 0.331568
+  type: 'test'
+  ...
+# Subtest: Rota: agrupa chamados a até 80 m e ordena as paradas a partir do GPS informado
+ok 134 - Rota: agrupa chamados a até 80 m e ordena as paradas a partir do GPS informado
+  ---
+  duration_ms: 3.082365
+  type: 'test'
+  ...
+# Subtest: Rota: exclui fechados, cancelados, GPS ausente, zero e coordenadas fora dos limites
+ok 135 - Rota: exclui fechados, cancelados, GPS ausente, zero e coordenadas fora dos limites
+  ---
+  duration_ms: 0.335102
+  type: 'test'
+  ...
+# Subtest: Rota: não inventa origem e aceita lista vazia com origem válida
+ok 136 - Rota: não inventa origem e aceita lista vazia com origem válida
+  ---
+  duration_ms: 0.521274
+  type: 'test'
+  ...
+# Subtest: Maps: divide a rota para navegadores móveis sem perder paradas e encadeia as origens
+ok 137 - Maps: divide a rota para navegadores móveis sem perder paradas e encadeia as origens
+  ---
+  duration_ms: 0.566893
+  type: 'test'
+  ...
+# Subtest: Infraestrutura SQL: emTransacao executa BEGIN e COMMIT quando a operação tem sucesso
+ok 138 - Infraestrutura SQL: emTransacao executa BEGIN e COMMIT quando a operação tem sucesso
+  ---
+  duration_ms: 1.661843
+  type: 'test'
+  ...
+# Subtest: Infraestrutura SQL: emTransacao executa ROLLBACK automaticamente se ocorrer qualquer falha
+ok 139 - Infraestrutura SQL: emTransacao executa ROLLBACK automaticamente se ocorrer qualquer falha
+  ---
+  duration_ms: 0.66702
+  type: 'test'
+  ...
+# Subtest: Aplicação FechamentoService: fecha chamado, debita estoque e atualiza poste na mesma transação
+ok 140 - Aplicação FechamentoService: fecha chamado, debita estoque e atualiza poste na mesma transação
+  ---
+  duration_ms: 1.360915
+  type: 'test'
+  ...
+# Subtest: Aplicação FechamentoService: bloqueia segundo técnico com 409 Conflito se chamado já estiver fechado
+ok 141 - Aplicação FechamentoService: bloqueia segundo técnico com 409 Conflito se chamado já estiver fechado
+  ---
+  duration_ms: 0.324936
+  type: 'test'
+  ...
+# Subtest: Segurança e AuthService: gera hash scrypt de PIN e bloqueia força bruta com HTTP 429
+ok 142 - Segurança e AuthService: gera hash scrypt de PIN e bloqueia força bruta com HTTP 429
+  ---
+  duration_ms: 133.363702
+  type: 'test'
+  ...
+# Subtest: PWA Cidadão (Camada de Aplicação): SincronizarFila aplica backoff exponencial em falha de rede
+ok 143 - PWA Cidadão (Camada de Aplicação): SincronizarFila aplica backoff exponencial em falha de rede
+  ---
+  duration_ms: 4.549257
+  type: 'test'
+  ...
+# ◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
+# Subtest: CT-01 [Caixa Branca] Arquivo design-tokens.css existe e possui tokens CSS
+ok 144 - CT-01 [Caixa Branca] Arquivo design-tokens.css existe e possui tokens CSS
+  ---
+  duration_ms: 1.113287
+  type: 'test'
+  ...
+# Subtest: CT-02 [Caixa Branca] Arquivo tecnico.css existe e possui estilos da tela
+ok 145 - CT-02 [Caixa Branca] Arquivo tecnico.css existe e possui estilos da tela
+  ---
+  duration_ms: 1.814137
+  type: 'test'
+  ...
+# Subtest: CT-03 [Caixa Branca] Arquivo utilities.css existe e possui classes utilitarias
+ok 146 - CT-03 [Caixa Branca] Arquivo utilities.css existe e possui classes utilitarias
+  ---
+  duration_ms: 0.292094
+  type: 'test'
+  ...
+# Subtest: CT-04 [Caixa Preta] Tela tecnico/index.html renderiza os 4 indicadores visuais de PIN (d0 a d3)
+ok 147 - CT-04 [Caixa Preta] Tela tecnico/index.html renderiza os 4 indicadores visuais de PIN (d0 a d3)
+  ---
+  duration_ms: 1.118779
+  type: 'test'
+  ...
+# Subtest: CT-05 [Caixa Preta] Tela tecnico/index.html possui teclado numerico (0-9) e preenchimento de 4 digitos
+ok 148 - CT-05 [Caixa Preta] Tela tecnico/index.html possui teclado numerico (0-9) e preenchimento de 4 digitos
+  ---
+  duration_ms: 1.105103
+  type: 'test'
+  ...
+# Subtest: CT-06 [Caixa Preta] Tela tecnico/index.html possui botao apagar e funcao de limpeza do PIN
+ok 149 - CT-06 [Caixa Preta] Tela tecnico/index.html possui botao apagar e funcao de limpeza do PIN
+  ---
+  duration_ms: 0.901053
+  type: 'test'
+  ...
+# Subtest: CT-07 [Caixa Branca] Arquivo public/shared/config.js existe e define namespace ILUMINA
+ok 150 - CT-07 [Caixa Branca] Arquivo public/shared/config.js existe e define namespace ILUMINA
+  ---
+  duration_ms: 0.569142
+  type: 'test'
+  ...
+# Subtest: CT-08 [Caixa Branca] config.js define propriedade API_URL
+ok 151 - CT-08 [Caixa Branca] config.js define propriedade API_URL
+  ---
+  duration_ms: 0.297527
+  type: 'test'
+  ...
+# Subtest: CT-09 [Caixa Branca] config.js define string valida para API_URL
+ok 152 - CT-09 [Caixa Branca] config.js define string valida para API_URL
+  ---
+  duration_ms: 0.538891
+  type: 'test'
+  ...
+# Subtest: CT-10 [Caixa Branca] Codigo protege acesso contra window.ILUMINA indefinido (optional chaining)
+ok 153 - CT-10 [Caixa Branca] Codigo protege acesso contra window.ILUMINA indefinido (optional chaining)
+  ---
+  duration_ms: 1.022982
+  type: 'test'
+  ...
+# Subtest: CT-11 [Caixa Preta] Fluxo de login dispara POST /api/auth/login quando USA_API_NODE esta ativo
+ok 154 - CT-11 [Caixa Preta] Fluxo de login dispara POST /api/auth/login quando USA_API_NODE esta ativo
+  ---
+  duration_ms: 1.063922
+  type: 'test'
+  ...
+# Subtest: CT-12 [Caixa Preta] Fluxo de login preserva fallback apiFetchTO quando USA_API_NODE esta falso
+ok 155 - CT-12 [Caixa Preta] Fluxo de login preserva fallback apiFetchTO quando USA_API_NODE esta falso
+  ---
+  duration_ms: 0.94755
+  type: 'test'
+  ...
+# Subtest: CT-13 [Caixa Preta] AuthService aceita formato de PIN valido com 4 digitos ("1234")
+ok 156 - CT-13 [Caixa Preta] AuthService aceita formato de PIN valido com 4 digitos ("1234")
+  ---
+  duration_ms: 2.871159
+  type: 'test'
+  ...
+# Subtest: CT-14 [Caixa Preta] AuthService aceita PIN com zero a esquerda ("0123") preservando string
+not ok 157 - CT-14 [Caixa Preta] AuthService aceita PIN com zero a esquerda ("0123") preservando string
+  ---
+  duration_ms: 0.322374
+  type: 'test'
+  location: '/home/claude/repo-novo/projetoa3qa/server/tests/suite-cts.test.js:220:1'
+  failureType: 'testCodeFailure'
+  error: 'Configure DB_USER, DB_NAME no .env da raiz antes de conectar ao MySQL.'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    criarPoolPadrao (/home/claude/repo-novo/projetoa3qa/server/src/infrastructure/database/pool.js:22:11)
+    getPool (/home/claude/repo-novo/projetoa3qa/server/src/infrastructure/database/pool.js:57:18)
+    Object.query (/home/claude/repo-novo/projetoa3qa/server/src/infrastructure/database/pool.js:72:23)
+    Object.contarFalhasRecentesPorIp (/home/claude/repo-novo/projetoa3qa/server/src/infrastructure/repositories/SessaoRepository.js:29:29)
+    Object.autenticarPorPin (/home/claude/repo-novo/projetoa3qa/server/src/application/services/AuthService.js:28:43)
+    chamarLogin (/home/claude/repo-novo/projetoa3qa/server/tests/suite-cts.test.js:76:22)
+    TestContext.<anonymous> (/home/claude/repo-novo/projetoa3qa/server/tests/suite-cts.test.js:222:27)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+  ...
+# Subtest: CT-15 [Caixa Preta] AuthService rejeita PIN com 3 digitos ("123") com DadoInvalido
+ok 158 - CT-15 [Caixa Preta] AuthService rejeita PIN com 3 digitos ("123") com DadoInvalido
+  ---
+  duration_ms: 0.492632
+  type: 'test'
+  ...
+# Subtest: CT-16 [Caixa Preta] AuthService rejeita PIN com 5 digitos ("12345") com DadoInvalido
+ok 159 - CT-16 [Caixa Preta] AuthService rejeita PIN com 5 digitos ("12345") com DadoInvalido
+  ---
+  duration_ms: 0.14687
+  type: 'test'
+  ...
+# Subtest: CT-17 [Caixa Preta] AuthService rejeita PIN contendo letra ("12a4") com DadoInvalido
+ok 160 - CT-17 [Caixa Preta] AuthService rejeita PIN contendo letra ("12a4") com DadoInvalido
+  ---
+  duration_ms: 0.244115
+  type: 'test'
+  ...
+# Subtest: CT-18 [Caixa Branca] Conexao ativa com MySQL executando SELECT 1
+not ok 161 - CT-18 [Caixa Branca] Conexao ativa com MySQL executando SELECT 1
+  ---
+  duration_ms: 16.110957
+  type: 'test'
+  location: '/home/claude/repo-novo/projetoa3qa/server/tests/suite-cts.test.js:255:1'
+  failureType: 'testCodeFailure'
+  error: 'connect ECONNREFUSED 127.0.0.1:3306'
+  code: 'ECONNREFUSED'
+  stack: |-
+    TestContext.<anonymous> (/home/claude/repo-novo/projetoa3qa/server/tests/suite-cts.test.js:256:29)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: CT-19 [Caixa Branca] Tabelas usuarios, sessoes e tentativas_login existem no MySQL
+not ok 162 - CT-19 [Caixa Branca] Tabelas usuarios, sessoes e tentativas_login existem no MySQL
+  ---
+  duration_ms: 4.18539
+  type: 'test'
+  location: '/home/claude/repo-novo/projetoa3qa/server/tests/suite-cts.test.js:260:1'
+  failureType: 'testCodeFailure'
+  error: 'connect ECONNREFUSED 127.0.0.1:3306'
+  code: 'ECONNREFUSED'
+  stack: |-
+    TestContext.<anonymous> (/home/claude/repo-novo/projetoa3qa/server/tests/suite-cts.test.js:261:29)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: CT-20 [Caixa Branca] Existe tecnico ativo na tabela usuarios com pin_hash no formato scrypt$
+not ok 163 - CT-20 [Caixa Branca] Existe tecnico ativo na tabela usuarios com pin_hash no formato scrypt$
+  ---
+  duration_ms: 1.98117
+  type: 'test'
+  location: '/home/claude/repo-novo/projetoa3qa/server/tests/suite-cts.test.js:268:1'
+  failureType: 'testCodeFailure'
+  error: 'connect ECONNREFUSED 127.0.0.1:3306'
+  code: 'ECONNREFUSED'
+  stack: |-
+    TestContext.<anonymous> (/home/claude/repo-novo/projetoa3qa/server/tests/suite-cts.test.js:269:29)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: CT-21 [Caixa Preta] Login real no MySQL com PIN "0123" gera sessao valida na tabela sessoes
+not ok 164 - CT-21 [Caixa Preta] Login real no MySQL com PIN "0123" gera sessao valida na tabela sessoes
+  ---
+  duration_ms: 0.43874
+  type: 'test'
+  location: '/home/claude/repo-novo/projetoa3qa/server/tests/suite-cts.test.js:276:1'
+  failureType: 'testCodeFailure'
+  error: 'Configure DB_USER, DB_NAME no .env da raiz antes de conectar ao MySQL.'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    criarPoolPadrao (/home/claude/repo-novo/projetoa3qa/server/src/infrastructure/database/pool.js:22:11)
+    getPool (/home/claude/repo-novo/projetoa3qa/server/src/infrastructure/database/pool.js:57:18)
+    Object.query (/home/claude/repo-novo/projetoa3qa/server/src/infrastructure/database/pool.js:72:23)
+    Object.contarFalhasRecentesPorIp (/home/claude/repo-novo/projetoa3qa/server/src/infrastructure/repositories/SessaoRepository.js:29:29)
+    Object.autenticarPorPin (/home/claude/repo-novo/projetoa3qa/server/src/application/services/AuthService.js:28:43)
+    chamarLogin (/home/claude/repo-novo/projetoa3qa/server/tests/suite-cts.test.js:76:22)
+    TestContext.<anonymous> (/home/claude/repo-novo/projetoa3qa/server/tests/suite-cts.test.js:278:21)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+  ...
+# Subtest: CT-22 [Caixa Preta] Login real no MySQL rejeita "123" comprovando preservacao do zero a esquerda em "0123"
+ok 165 - CT-22 [Caixa Preta] Login real no MySQL rejeita "123" comprovando preservacao do zero a esquerda em "0123"
+  ---
+  duration_ms: 0.260262
+  type: 'test'
+  ...
+# Subtest: CT-23 [Caixa Preta] 5 tentativas incorretas de PIN geram bloqueio (MuitasTentativas)
+not ok 166 - CT-23 [Caixa Preta] 5 tentativas incorretas de PIN geram bloqueio (MuitasTentativas)
+  ---
+  duration_ms: 2.925241
+  type: 'test'
+  location: '/home/claude/repo-novo/projetoa3qa/server/tests/suite-cts.test.js:335:1'
+  failureType: 'testCodeFailure'
+  error: 'connect ECONNREFUSED 127.0.0.1:3306'
+  code: 'ECONNREFUSED'
+  stack: |-
+    TestContext.<anonymous> (/home/claude/repo-novo/projetoa3qa/server/tests/suite-cts.test.js:339:14)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: CT-24 [Caixa Preta] Retroceder o tempo em 16 min no MySQL libera o login bloqueado pelo CT-23
+not ok 167 - CT-24 [Caixa Preta] Retroceder o tempo em 16 min no MySQL libera o login bloqueado pelo CT-23
+  ---
+  duration_ms: 4.068974
+  type: 'test'
+  location: '/home/claude/repo-novo/projetoa3qa/server/tests/suite-cts.test.js:353:1'
+  failureType: 'testCodeFailure'
+  error: 'connect ECONNREFUSED 127.0.0.1:3306'
+  code: 'ECONNREFUSED'
+  stack: |-
+    TestContext.<anonymous> (/home/claude/repo-novo/projetoa3qa/server/tests/suite-cts.test.js:358:14)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: CT-25 [Caixa Preta] 8 req/min consecutivas geram HTTP 429 no Rate Limiter (Middleware)
+ok 168 - CT-25 [Caixa Preta] 8 req/min consecutivas geram HTTP 429 no Rate Limiter (Middleware)
+  ---
+  duration_ms: 0.664959
+  type: 'test'
+  ...
+# Subtest: CT-26 [Caixa Preta] 7 req/min consecutivas nao bloqueiam a requisição HTTP
+ok 169 - CT-26 [Caixa Preta] 7 req/min consecutivas nao bloqueiam a requisição HTTP
+  ---
+  duration_ms: 0.180896
+  type: 'test'
+  ...
+# Subtest: CT-27 [Caixa Preta] Rate limiter HTTP expira após janela de 1 minuto e libera requisição
+ok 170 - CT-27 [Caixa Preta] Rate limiter HTTP expira após janela de 1 minuto e libera requisição
+  ---
+  duration_ms: 0.183101
+  type: 'test'
+  ...
+# Subtest: CT-28 [Caixa Branca] Bloqueio do banco e Rate Limiter HTTP atuam em camadas independentes
+not ok 171 - CT-28 [Caixa Branca] Bloqueio do banco e Rate Limiter HTTP atuam em camadas independentes
+  ---
+  duration_ms: 3.10688
+  type: 'test'
+  location: '/home/claude/repo-novo/projetoa3qa/server/tests/suite-cts.test.js:435:1'
+  failureType: 'testCodeFailure'
+  error: 'connect ECONNREFUSED 127.0.0.1:3306'
+  code: 'ECONNREFUSED'
+  stack: |-
+    TestContext.<anonymous> (/home/claude/repo-novo/projetoa3qa/server/tests/suite-cts.test.js:441:14)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: TN-01 [caixa-preta | partição] atende as ações das telas que faltavam e deixa as já migradas com a tela
+ok 172 - TN-01 [caixa-preta | partição] atende as ações das telas que faltavam e deixa as já migradas com a tela
+  ---
+  duration_ms: 6.038943
+  type: 'test'
+  ...
+# Subtest: TN-02 [caixa-preta | fluxo principal] almox_login vai para POST /api/auth/almoxarifado e devolve o token
+ok 173 - TN-02 [caixa-preta | fluxo principal] almox_login vai para POST /api/auth/almoxarifado e devolve o token
+  ---
+  duration_ms: 1.323906
+  type: 'test'
+  ...
+# Subtest: TN-03 [caixa-preta | fluxo alternativo] almox_login recusado devolve a mensagem da API (PIN errado ou bloqueio)
+ok 174 - TN-03 [caixa-preta | fluxo alternativo] almox_login recusado devolve a mensagem da API (PIN errado ou bloqueio)
+  ---
+  duration_ms: 0.332899
+  type: 'test'
+  ...
+# Subtest: TN-04 [caixa-preta | fluxo principal] estoque_list converte os itens da API para a lista da tela
+ok 175 - TN-04 [caixa-preta | fluxo principal] estoque_list converte os itens da API para a lista da tela
+  ---
+  duration_ms: 12.672386
+  type: 'test'
+  ...
+# Subtest: TN-05 [caixa-preta | fluxo principal] estoque_upsert e estoque_delete usam a rota do item, com o nome codificado
+ok 176 - TN-05 [caixa-preta | fluxo principal] estoque_upsert e estoque_delete usam a rota do item, com o nome codificado
+  ---
+  duration_ms: 1.704429
+  type: 'test'
+  ...
+# Subtest: TN-06 [caixa-preta | fluxo de exceção] estoque_upsert recusado devolve a mensagem de validação da API
+ok 177 - TN-06 [caixa-preta | fluxo de exceção] estoque_upsert recusado devolve a mensagem de validação da API
+  ---
+  duration_ms: 0.328841
+  type: 'test'
+  ...
+# Subtest: TN-07 [caixa-preta | valor limite] missao_create converte a data dd/mm/aaaa e os itens; sem data usa hoje
+ok 178 - TN-07 [caixa-preta | valor limite] missao_create converte a data dd/mm/aaaa e os itens; sem data usa hoje
+  ---
+  duration_ms: 0.584882
+  type: 'test'
+  ...
+# Subtest: TN-08 [caixa-preta | fluxo principal] missao_list mostra situação, saída, retorno e consumo de cada missão
+ok 179 - TN-08 [caixa-preta | fluxo principal] missao_list mostra situação, saída, retorno e consumo de cada missão
+  ---
+  duration_ms: 0.78082
+  type: 'test'
+  ...
+# Subtest: TN-09 [caixa-preta | fluxo principal] missao_return envia o retorno de cada item para a missão
+ok 180 - TN-09 [caixa-preta | fluxo principal] missao_return envia o retorno de cada item para a missão
+  ---
+  duration_ms: 0.339727
+  type: 'test'
+  ...
+# Subtest: TN-10 [caixa-preta | fluxo principal] material_report junta estoque e missões e marca o que precisa repor
+ok 181 - TN-10 [caixa-preta | fluxo principal] material_report junta estoque e missões e marca o que precisa repor
+  ---
+  duration_ms: 0.513361
+  type: 'test'
+  ...
+# Subtest: TN-11 [caixa-preta | fluxo principal] get_poste_history converte o poste e separa chamados abertos e atendidos
+ok 182 - TN-11 [caixa-preta | fluxo principal] get_poste_history converte o poste e separa chamados abertos e atendidos
+  ---
+  duration_ms: 1.107315
+  type: 'test'
+  ...
+# Subtest: TN-12 [caixa-preta | fluxo alternativo] get_poste_history de poste não cadastrado mostra "Poste não cadastrado" (404 vira poste nulo)
+ok 183 - TN-12 [caixa-preta | fluxo alternativo] get_poste_history de poste não cadastrado mostra "Poste não cadastrado" (404 vira poste nulo)
+  ---
+  duration_ms: 0.218105
+  type: 'test'
+  ...
+# Subtest: TN-13 [caixa-preta | fluxo principal] list_postes converte coordenadas, foto e contagem de atendimentos
+ok 184 - TN-13 [caixa-preta | fluxo principal] list_postes converte coordenadas, foto e contagem de atendimentos
+  ---
+  duration_ms: 0.621834
+  type: 'test'
+  ...
+# Subtest: TN-14 [caixa-preta | fluxo principal] search busca o protocolo e devolve o registro no formato da lista
+ok 185 - TN-14 [caixa-preta | fluxo principal] search busca o protocolo e devolve o registro no formato da lista
+  ---
+  duration_ms: 0.63506
+  type: 'test'
+  ...
+# Subtest: TN-15 [caixa-preta | fluxo alternativo] search: protocolo inexistente dá registro nulo; sessão vencida avisa a tela
+ok 186 - TN-15 [caixa-preta | fluxo alternativo] search: protocolo inexistente dá registro nulo; sessão vencida avisa a tela
+  ---
+  duration_ms: 0.414849
+  type: 'test'
+  ...
+# Subtest: TN-16 [caixa-preta | risco: reenvio] attempt envia a tentativa com um operacao_id que se mantém no reenvio
+ok 187 - TN-16 [caixa-preta | risco: reenvio] attempt envia a tentativa com um operacao_id que se mantém no reenvio
+  ---
+  duration_ms: 2.447034
+  type: 'test'
+  ...
+# Subtest: TN-17 [caixa-preta | fluxo de exceção] attempt com sessão vencida avisa a tela; chamado fechado mostra o motivo
+ok 188 - TN-17 [caixa-preta | fluxo de exceção] attempt com sessão vencida avisa a tela; chamado fechado mostra o motivo
+  ---
+  duration_ms: 0.322053
+  type: 'test'
+  ...
+# Subtest: TN-18 [caixa-preta | risco: rede] sem conexão o erro chega à tela, que mostra "Sem conexão"
+ok 189 - TN-18 [caixa-preta | risco: rede] sem conexão o erro chega à tela, que mostra "Sem conexão"
+  ---
+  duration_ms: 0.615791
+  type: 'test'
+  ...
+# Subtest: TN-19 [caixa-preta | partição inválida] ação desconhecida não chama a rede e responde que não está disponível
+ok 190 - TN-19 [caixa-preta | partição inválida] ação desconhecida não chama a rede e responde que não está disponível
+  ---
+  duration_ms: 0.470703
+  type: 'test'
+  ...
+# Subtest: TN-20 [caixa-branca] o tempo limite pedido pela tela chega ao ApiClient
+ok 191 - TN-20 [caixa-branca] o tempo limite pedido pela tela chega ao ApiClient
+  ---
+  duration_ms: 1.097829
+  type: 'test'
+  ...
+# Subtest: TN-30 [integração | DEF-16] almoxarife entra com o próprio PIN; o PIN do técnico não abre o almoxarifado
+ok 192 - TN-30 [integração | DEF-16] almoxarife entra com o próprio PIN; o PIN do técnico não abre o almoxarifado
+  ---
+  duration_ms: 252.488488
+  type: 'test'
+  ...
+# Subtest: TN-31 [integração | DEF-16] estoque: cadastrar, listar, editar e excluir pela tela
+ok 193 - TN-31 [integração | DEF-16] estoque: cadastrar, listar, editar e excluir pela tela
+  ---
+  duration_ms: 79.318594
+  type: 'test'
+  ...
+# Subtest: TN-32 [integração | DEF-16] missão: a saída debita o estoque, o retorno devolve e o relatório mostra o consumo
+ok 194 - TN-32 [integração | DEF-16] missão: a saída debita o estoque, o retorno devolve e o relatório mostra o consumo
+  ---
+  duration_ms: 72.875107
+  type: 'test'
+  ...
+# Subtest: TN-33 [integração | perfis] o técnico não usa as rotas do almoxarifado
+ok 195 - TN-33 [integração | perfis] o técnico não usa as rotas do almoxarifado
+  ---
+  duration_ms: 42.810144
+  type: 'test'
+  ...
+# Subtest: TN-34 [integração | DEF-15] histórico do poste, poste não cadastrado e relatório de postes
+ok 196 - TN-34 [integração | DEF-15] histórico do poste, poste não cadastrado e relatório de postes
+  ---
+  duration_ms: 51.698438
+  type: 'test'
+  ...
+# Subtest: TN-35 [integração] busca por protocolo e tentativa sem resolução pela tela do técnico
+ok 197 - TN-35 [integração] busca por protocolo e tentativa sem resolução pela tela do técnico
+  ---
+  duration_ms: 51.133306
+  type: 'test'
+  ...
+# Subtest: TN-21 [caixa-preta | DEF-15 e DEF-16] com a API Node, as ações das telas que faltavam vão pelo adaptador, com o tempo limite da tela
+ok 198 - TN-21 [caixa-preta | DEF-15 e DEF-16] com a API Node, as ações das telas que faltavam vão pelo adaptador, com o tempo limite da tela
+  ---
+  duration_ms: 16.014726
+  type: 'test'
+  ...
+# Subtest: TN-22 [caixa-preta | regressão] com o Apps Script, as mesmas ações continuam no formato antigo (text/plain com action)
+ok 199 - TN-22 [caixa-preta | regressão] com o Apps Script, as mesmas ações continuam no formato antigo (text/plain com action)
+  ---
+  duration_ms: 10.460496
+  type: 'test'
+  ...
+# Subtest: TN-23 [caixa-preta | regressão] com a API Node, o fechamento continua indo direto para a rota REST da tela (UC05)
+ok 200 - TN-23 [caixa-preta | regressão] com a API Node, o fechamento continua indo direto para a rota REST da tela (UC05)
+  ---
+  duration_ms: 1.179107
+  type: 'test'
+  ...
+# Subtest: TN-24 [caixa-preta | DEF-16] login do almoxarifado recusado mostra o motivo da API, não sempre "PIN incorreto."
+ok 201 - TN-24 [caixa-preta | DEF-16] login do almoxarifado recusado mostra o motivo da API, não sempre "PIN incorreto."
+  ---
+  duration_ms: 3.552925
+  type: 'test'
+  ...
+# Subtest: TN-25 [caixa-preta | fluxo principal] login do almoxarifado aceito guarda o token e abre o estoque
+ok 202 - TN-25 [caixa-preta | fluxo principal] login do almoxarifado aceito guarda o token e abre o estoque
+  ---
+  duration_ms: 1.480138
+  type: 'test'
+  ...
+# Subtest: TN-26 [caixa-branca] o adaptador entra no cache do service worker do técnico (o painel abre sem internet)
+ok 203 - TN-26 [caixa-branca] o adaptador entra no cache do service worker do técnico (o painel abre sem internet)
+  ---
+  duration_ms: 0.241292
+  type: 'test'
+  ...
+# Subtest: TN-27 [caixa-preta | fluxo de exceção] almoxarifado mostra o motivo da recusa da API ao salvar, excluir, registrar saída e retorno
+ok 204 - TN-27 [caixa-preta | fluxo de exceção] almoxarifado mostra o motivo da recusa da API ao salvar, excluir, registrar saída e retorno
+  ---
+  duration_ms: 7.736305
+  type: 'test'
+  ...
+# Subtest: CBN-01 flushQueue (cidadão): sem internet não lê a fila nem envia
+ok 205 - CBN-01 flushQueue (cidadão): sem internet não lê a fila nem envia
+  ---
+  duration_ms: 3.325202
+  type: 'test'
+  ...
+# Subtest: CBN-02 flushQueue (cidadão): endereço do servidor não configurado ("__...") não envia
+ok 206 - CBN-02 flushQueue (cidadão): endereço do servidor não configurado ("__...") não envia
+  ---
+  duration_ms: 1.002633
+  type: 'test'
+  ...
+# Subtest: CBN-03 flushQueue (cidadão): erro ao ler o banco do aparelho encerra sem enviar e sem lançar erro
+ok 207 - CBN-03 flushQueue (cidadão): erro ao ler o banco do aparelho encerra sem enviar e sem lançar erro
+  ---
+  duration_ms: 1.366913
+  type: 'test'
+  ...
+# Subtest: CBN-04 flushQueue (cidadão): fila vazia encerra sem enviar
+ok 208 - CBN-04 flushQueue (cidadão): fila vazia encerra sem enviar
+  ---
+  duration_ms: 0.989078
+  type: 'test'
+  ...
+# Subtest: CBN-05 flushQueue (cidadão): envio aceito (API Node) apaga o item e atualiza o aviso
+ok 209 - CBN-05 flushQueue (cidadão): envio aceito (API Node) apaga o item e atualiza o aviso
+  ---
+  duration_ms: 1.798577
+  type: 'test'
+  ...
+# Subtest: CBN-06 flushQueue (cidadão): recusa do servidor (API Node) mantém o item e soma 1 tentativa com o motivo
+ok 210 - CBN-06 flushQueue (cidadão): recusa do servidor (API Node) mantém o item e soma 1 tentativa com o motivo
+  ---
+  duration_ms: 2.440064
+  type: 'test'
+  ...
+# Subtest: CBN-07 flushQueue (cidadão): resposta vazia conta como recusa ("server error")
+ok 211 - CBN-07 flushQueue (cidadão): resposta vazia conta como recusa ("server error")
+  ---
+  duration_ms: 1.002991
+  type: 'test'
+  ...
+# Subtest: CBN-08 flushQueue (cidadão): erro de rede mantém o item, soma 1 tentativa e guarda a mensagem do erro
+ok 212 - CBN-08 flushQueue (cidadão): erro de rede mantém o item, soma 1 tentativa e guarda a mensagem do erro
+  ---
+  duration_ms: 1.076622
+  type: 'test'
+  ...
+# Subtest: CBN-09 flushQueue (cidadão): erro de rede sem mensagem é guardado como "network error"
+ok 213 - CBN-09 flushQueue (cidadão): erro de rede sem mensagem é guardado como "network error"
+  ---
+  duration_ms: 1.033488
+  type: 'test'
+  ...
+# Subtest: CBN-10 flushQueue (cidadão): valor limite — com 4 tentativas ainda envia; com 5 descarta sem enviar
+ok 214 - CBN-10 flushQueue (cidadão): valor limite — com 4 tentativas ainda envia; com 5 descarta sem enviar
+  ---
+  duration_ms: 1.572219
+  type: 'test'
+  ...
+# Subtest: CBN-11 flushQueue (cidadão): falha ao apagar um item descartado não interrompe a fila
+ok 215 - CBN-11 flushQueue (cidadão): falha ao apagar um item descartado não interrompe a fila
+  ---
+  duration_ms: 0.987173
+  type: 'test'
+  ...
+# Subtest: CBN-12 flushQueue (cidadão): falha ao gravar a tentativa depois de um erro de rede não interrompe a fila
+ok 216 - CBN-12 flushQueue (cidadão): falha ao gravar a tentativa depois de um erro de rede não interrompe a fila
+  ---
+  duration_ms: 1.092715
+  type: 'test'
+  ...
+# Subtest: CBN-13 flushQueue (cidadão): falha no 1º item não impede o envio do 2º
+ok 217 - CBN-13 flushQueue (cidadão): falha no 1º item não impede o envio do 2º
+  ---
+  duration_ms: 0.9293
+  type: 'test'
+  ...
+# Subtest: CBN-14 flushQueue (cidadão): reporte descartado após 5 tentativas deve avisar o cidadão
+not ok 218 - CBN-14 flushQueue (cidadão): reporte descartado após 5 tentativas deve avisar o cidadão # TODO Defeito DEF-03 — descarte silencioso (UC03 regra de negócio)
+  ---
+  duration_ms: 1.466901
+  type: 'test'
+  location: '/home/claude/repo-novo/projetoa3qa/server/tests/testes-offline/apoio/casos-cliente.js:172:3'
+  failureType: 'testCodeFailure'
+  error: 'o reporte foi apagado e só houve console.warn, que o cidadão não vê'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (/home/claude/repo-novo/projetoa3qa/server/tests/testes-offline/apoio/casos-cliente.js:176:12)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: CBN-15 flushQueue (cidadão): três sincronizações ao mesmo tempo enviam o reporte uma única vez
+not ok 219 - CBN-15 flushQueue (cidadão): três sincronizações ao mesmo tempo enviam o reporte uma única vez # TODO Defeito DEF-04 — falta trava contra execução simultânea
+  ---
+  duration_ms: 1.448811
+  type: 'test'
+  location: '/home/claude/repo-novo/projetoa3qa/server/tests/testes-offline/apoio/casos-cliente.js:179:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    o mesmo protocolo foi enviado 3 vezes
+
+    3 !== 1
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 3
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/home/claude/repo-novo/projetoa3qa/server/tests/testes-offline/apoio/casos-cliente.js:182:12)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: CBN-16 updatePendingBanner: esconde com 0; singular com 1; plural com 3
+ok 220 - CBN-16 updatePendingBanner: esconde com 0; singular com 1; plural com 3
+  ---
+  duration_ms: 2.74445
+  type: 'test'
+  ...
+# Subtest: CBN-17 updatePendingBanner: erro no banco ou tela sem o aviso não quebram o app
+ok 221 - CBN-17 updatePendingBanner: erro no banco ou tela sem o aviso não quebram o app
+  ---
+  duration_ms: 1.624313
+  type: 'test'
+  ...
+# Subtest: CBN-18 submitReport: segundo toque durante o envio é ignorado
+ok 222 - CBN-18 submitReport: segundo toque durante o envio é ignorado
+  ---
+  duration_ms: 1.350026
+  type: 'test'
+  ...
+# Subtest: CBN-19 submitReport: com internet e envio aceito (API Node), mostra "enviado" sem gravar na fila
+ok 223 - CBN-19 submitReport: com internet e envio aceito (API Node), mostra "enviado" sem gravar na fila
+  ---
+  duration_ms: 1.116535
+  type: 'test'
+  ...
+# Subtest: CBN-20 submitReport: com internet e recusa (API Node), guarda na fila
+ok 224 - CBN-20 submitReport: com internet e recusa (API Node), guarda na fila
+  ---
+  duration_ms: 1.082271
+  type: 'test'
+  ...
+# Subtest: CBN-21 submitReport: com internet e erro de rede, guarda na fila
+ok 225 - CBN-21 submitReport: com internet e erro de rede, guarda na fila
+  ---
+  duration_ms: 1.102028
+  type: 'test'
+  ...
+# Subtest: CBN-22 submitReport: envio e gravação falham — mensagem de erro e botão liberado (UC01-E1)
+ok 226 - CBN-22 submitReport: envio e gravação falham — mensagem de erro e botão liberado (UC01-E1)
+  ---
+  duration_ms: 1.067271
+  type: 'test'
+  ...
+# Subtest: CBN-23 submitReport: sem internet grava direto na fila, sem tentar enviar
+ok 227 - CBN-23 submitReport: sem internet grava direto na fila, sem tentar enviar
+  ---
+  duration_ms: 0.893852
+  type: 'test'
+  ...
+# Subtest: CBN-24 submitReport: sem internet e sem conseguir gravar — mensagem de erro (UC01-E1)
+ok 228 - CBN-24 submitReport: sem internet e sem conseguir gravar — mensagem de erro (UC01-E1)
+  ---
+  duration_ms: 1.030607
+  type: 'test'
+  ...
+# Subtest: CBN-47 submitReport: durante o envio o botão fica travado e marcado "Enviando…"
+ok 229 - CBN-47 submitReport: durante o envio o botão fica travado e marcado "Enviando…"
+  ---
+  duration_ms: 1.038604
+  type: 'test'
+  ...
+# Subtest: CBN-25 submitReport: com internet e servidor não configurado ("__..."), guarda na fila
+ok 230 - CBN-25 submitReport: com internet e servidor não configurado ("__..."), guarda na fila
+  ---
+  duration_ms: 1.797541
+  type: 'test'
+  ...
+# Subtest: CBN-46 submitReport: recusa sem motivo é registrada como "server error" e guardada na fila
+ok 231 - CBN-46 submitReport: recusa sem motivo é registrada como "server error" e guardada na fila
+  ---
+  duration_ms: 0.942138
+  type: 'test'
+  ...
+# Subtest: CBN-26 postReport: envia ao endereço do API Node no formato que ele aceita
+ok 232 - CBN-26 postReport: envia ao endereço do API Node no formato que ele aceita
+  ---
+  duration_ms: 2.05438
+  type: 'test'
+  ...
+# Subtest: CBN-27 postReport: limite de 60 s, timer limpo e resposta lida
+ok 233 - CBN-27 postReport: limite de 60 s, timer limpo e resposta lida
+  ---
+  duration_ms: 1.226611
+  type: 'test'
+  ...
+# Subtest: CBN-28 postReport: resposta que não é JSON vira recusa ("resposta inválida do servidor")
+ok 234 - CBN-28 postReport: resposta que não é JSON vira recusa ("resposta inválida do servidor")
+  ---
+  duration_ms: 1.242584
+  type: 'test'
+  ...
+# Subtest: CBN-29 postReport: erro de rede é repassado e o timer é limpo
+ok 235 - CBN-29 postReport: erro de rede é repassado e o timer é limpo
+  ---
+  duration_ms: 1.520601
+  type: 'test'
+  ...
+# Subtest: CBN-30 postReport: depois de 60 s sem resposta a requisição é cancelada
+ok 236 - CBN-30 postReport: depois de 60 s sem resposta a requisição é cancelada
+  ---
+  duration_ms: 22.781237
+  type: 'test'
+  ...
+# Subtest: CBN-31 generateProtocol: formato IC-AAMMDD-XXXXX com zero à esquerda no mês e no dia
+ok 237 - CBN-31 generateProtocol: formato IC-AAMMDD-XXXXX com zero à esquerda no mês e no dia
+  ---
+  duration_ms: 1.431937
+  type: 'test'
+  ...
+# Subtest: CBN-32 buildPayload: a mensagem do reporte leva protocolo, tipo, GPS, foto e textos limpos
+ok 238 - CBN-32 buildPayload: a mensagem do reporte leva protocolo, tipo, GPS, foto e textos limpos
+  ---
+  duration_ms: 2.655148
+  type: 'test'
+  ...
+# Subtest: CBN-33 flushQueue (técnico): sem internet não envia e não atualiza o aviso
+ok 239 - CBN-33 flushQueue (técnico): sem internet não envia e não atualiza o aviso
+  ---
+  duration_ms: 2.599409
+  type: 'test'
+  ...
+# Subtest: CBN-34 flushQueue (técnico): sem sessão (sem PIN) não envia
+ok 240 - CBN-34 flushQueue (técnico): sem sessão (sem PIN) não envia
+  ---
+  duration_ms: 2.520411
+  type: 'test'
+  ...
+# Subtest: CBN-35 flushQueue (técnico): fila vazia libera a trava e atualiza o aviso
+ok 241 - CBN-35 flushQueue (técnico): fila vazia libera a trava e atualiza o aviso
+  ---
+  duration_ms: 2.526202
+  type: 'test'
+  ...
+# Subtest: CBN-36 flushQueue (técnico): todos aceitos (API Node) são apagados na ordem da fila
+ok 242 - CBN-36 flushQueue (técnico): todos aceitos (API Node) são apagados na ordem da fila
+  ---
+  duration_ms: 1.196117
+  type: 'test'
+  ...
+# Subtest: CBN-37 flushQueue (técnico): sessão expirada (API Node) interrompe e mantém a fila
+ok 243 - CBN-37 flushQueue (técnico): sessão expirada (API Node) interrompe e mantém a fila
+  ---
+  duration_ms: 1.194277
+  type: 'test'
+  ...
+# Subtest: CBN-38 flushQueue (técnico): erro de rede interrompe e mantém a fila
+ok 244 - CBN-38 flushQueue (técnico): erro de rede interrompe e mantém a fila
+  ---
+  duration_ms: 1.207416
+  type: 'test'
+  ...
+# Subtest: CBN-39 flushQueue (técnico): três sincronizações ao mesmo tempo enviam cada fechamento uma vez (trava)
+ok 245 - CBN-39 flushQueue (técnico): três sincronizações ao mesmo tempo enviam cada fechamento uma vez (trava)
+  ---
+  duration_ms: 1.183277
+  type: 'test'
+  ...
+# Subtest: CBN-40 flushQueue (técnico): erro ao ler a fila libera a trava, mas o erro escapa da função
+ok 246 - CBN-40 flushQueue (técnico): erro ao ler a fila libera a trava, mas o erro escapa da função
+  ---
+  duration_ms: 1.208432
+  type: 'test'
+  ...
+# Subtest: CBN-41 flushQueue (técnico): erro do servidor em um fechamento não trava os seguintes
+ok 247 - CBN-41 flushQueue (técnico): erro do servidor em um fechamento não trava os seguintes
+  ---
+  duration_ms: 1.251918
+  type: 'test'
+  ...
+# Subtest: CBN-42 apiFetchTO: fechamento vai ao endereço e formato do API Node
+ok 248 - CBN-42 apiFetchTO: fechamento vai ao endereço e formato do API Node
+  ---
+  duration_ms: 2.163879
+  type: 'test'
+  ...
+# Subtest: CBN-43 apiFetchTO: usa 15 s por padrão, limpa o timer e cancela ao fim do tempo
+ok 249 - CBN-43 apiFetchTO: usa 15 s por padrão, limpa o timer e cancela ao fim do tempo
+  ---
+  duration_ms: 1.779506
+  type: 'test'
+  ...
+# Subtest: CBN-44 renderPendingBanner: esconde com 0; singular/plural; "enviando…" e "sem sinal"; tela sem aviso
+ok 250 - CBN-44 renderPendingBanner: esconde com 0; singular/plural; "enviando…" e "sem sinal"; tela sem aviso
+  ---
+  duration_ms: 3.114157
+  type: 'test'
+  ...
+# Subtest: CBN-45 queueCount: conta a fila e devolve 0 se o banco falhar (o limite de 10 deixa de valer)
+ok 251 - CBN-45 queueCount: conta a fila e devolve 0 se o banco falhar (o limite de 10 deixa de valer)
+  ---
+  duration_ms: 1.208369
+  type: 'test'
+  ...
+# Subtest: CBN-50 integração (cidadão ↔ API Node): a fila deve esvaziar quando a API está no ar
+ok 252 - CBN-50 integração (cidadão ↔ API Node): a fila deve esvaziar quando a API está no ar
+  ---
+  duration_ms: 117.382745
+  type: 'test'
+  ...
+# Subtest: CBN-51 integração (cidadão ↔ API Node): a mensagem vai em JSON, com id, e a API grava o chamado
+ok 253 - CBN-51 integração (cidadão ↔ API Node): a mensagem vai em JSON, com id, e a API grava o chamado
+  ---
+  duration_ms: 8.430328
+  type: 'test'
+  ...
+# Subtest: CBN-52 integração (técnico ↔ API Node): o fechamento na fila deve ser registrado
+ok 254 - CBN-52 integração (técnico ↔ API Node): o fechamento na fila deve ser registrado
+  ---
+  duration_ms: 53.703154
+  type: 'test'
+  ...
+# Subtest: CBN-53 integração (técnico ↔ API Node): com sessão inválida a API responde 401 e a fila fica guardada
+ok 255 - CBN-53 integração (técnico ↔ API Node): com sessão inválida a API responde 401 e a fila fica guardada
+  ---
+  duration_ms: 7.16975
+  type: 'test'
+  ...
+# Subtest: CBN-55 buildPayload: a mensagem do reporte deve levar o id único exigido pela API Node
+ok 256 - CBN-55 buildPayload: a mensagem do reporte deve levar o id único exigido pela API Node
+  ---
+  duration_ms: 1.111007
+  type: 'test'
+  ...
+# Subtest: CBN-54 submitReport: o motivo de uma recusa da API deve ser legível
+not ok 257 - CBN-54 submitReport: o motivo de uma recusa da API deve ser legível # TODO Defeito DEF-12 — o objeto de erro da API vira "[object Object]"
+  ---
+  duration_ms: 1.021313
+  type: 'test'
+  location: '/home/claude/repo-novo/projetoa3qa/server/tests/testes-offline/api-node/caixa-branca/cliente.test.js:110:1'
+  failureType: 'testCodeFailure'
+  error: 'registro do app: Submit online falhou, enfileirando: Error: [object Object]'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: 'Submit online falhou, enfileirando: Error: [object Object]'
+  operator: 'doesNotMatch'
+  stack: |-
+    TestContext.<anonymous> (/home/claude/repo-novo/projetoa3qa/server/tests/testes-offline/api-node/caixa-branca/cliente.test.js:117:10)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: CBN-56 postReport: reporte antigo da fila, sem id, ganha um id que se mantém no reenvio
+ok 258 - CBN-56 postReport: reporte antigo da fila, sem id, ganha um id que se mantém no reenvio
+  ---
+  duration_ms: 1.137688
+  type: 'test'
+  ...
+# Subtest: CBN-60 coordenadasValidas: limites do globo (±90 e ±180) são aceitos; um passo além é recusado
+ok 259 - CBN-60 coordenadasValidas: limites do globo (±90 e ±180) são aceitos; um passo além é recusado
+  ---
+  duration_ms: 0.944832
+  type: 'test'
+  ...
+# Subtest: CBN-61 coordenadasValidas: o ponto (0,0) é recusado; 0,0001 já é aceito
+ok 260 - CBN-61 coordenadasValidas: o ponto (0,0) é recusado; 0,0001 já é aceito
+  ---
+  duration_ms: 0.129373
+  type: 'test'
+  ...
+# Subtest: CBN-62 coordenadasValidas: valores vazios, nulos ou não numéricos são recusados
+ok 261 - CBN-62 coordenadasValidas: valores vazios, nulos ou não numéricos são recusados
+  ---
+  duration_ms: 0.137831
+  type: 'test'
+  ...
+# Subtest: CBN-63 validarNovoChamado: reporte completo é válido
+ok 262 - CBN-63 validarNovoChamado: reporte completo é válido
+  ---
+  duration_ms: 1.273726
+  type: 'test'
+  ...
+# Subtest: CBN-64 validarNovoChamado: sem id (como o app envia hoje) é inválido
+ok 263 - CBN-64 validarNovoChamado: sem id (como o app envia hoje) é inválido
+  ---
+  duration_ms: 0.335424
+  type: 'test'
+  ...
+# Subtest: CBN-65 validarNovoChamado: id que não é texto, sem protocolo e tipo em branco geram um erro cada
+ok 264 - CBN-65 validarNovoChamado: id que não é texto, sem protocolo e tipo em branco geram um erro cada
+  ---
+  duration_ms: 0.09983
+  type: 'test'
+  ...
+# Subtest: CBN-66 validarNovoChamado: sem GPS válido só é aceito com o poste do QR
+ok 265 - CBN-66 validarNovoChamado: sem GPS válido só é aceito com o poste do QR
+  ---
+  duration_ms: 0.965666
+  type: 'test'
+  ...
+# Subtest: CBN-67 criarChamado: dados inválidos são recusados antes de salvar foto ou gravar
+ok 266 - CBN-67 criarChamado: dados inválidos são recusados antes de salvar foto ou gravar
+  ---
+  duration_ms: 0.847838
+  type: 'test'
+  ...
+# Subtest: CBN-68 criarChamado: o mesmo reporte enviado duas vezes (mesmo id) gera um único chamado
+ok 267 - CBN-68 criarChamado: o mesmo reporte enviado duas vezes (mesmo id) gera um único chamado
+  ---
+  duration_ms: 0.415163
+  type: 'test'
+  ...
+# Subtest: CBN-69 criarChamado: mesmo protocolo com outro id é conflito (409) e não duplica
+ok 268 - CBN-69 criarChamado: mesmo protocolo com outro id é conflito (409) e não duplica
+  ---
+  duration_ms: 0.405003
+  type: 'test'
+  ...
+# Subtest: CBN-70 criarChamado: pelo QR sem GPS, usa as coordenadas e o endereço do poste
+ok 269 - CBN-70 criarChamado: pelo QR sem GPS, usa as coordenadas e o endereço do poste
+  ---
+  duration_ms: 0.617451
+  type: 'test'
+  ...
+# Subtest: CBN-71 fecharChamado: reenvio com o mesmo operacao_id não fecha de novo nem baixa o estoque duas vezes (CA04)
+ok 270 - CBN-71 fecharChamado: reenvio com o mesmo operacao_id não fecha de novo nem baixa o estoque duas vezes (CA04)
+  ---
+  duration_ms: 1.098397
+  type: 'test'
+  ...
+# Subtest: CBN-72 fecharChamado: chamado já fechado por outra operação é conflito (409)
+ok 271 - CBN-72 fecharChamado: chamado já fechado por outra operação é conflito (409)
+  ---
+  duration_ms: 0.202975
+  type: 'test'
+  ...
+# Subtest: CBN-73 fecharChamado: chamado inexistente é 404
+ok 272 - CBN-73 fecharChamado: chamado inexistente é 404
+  ---
+  duration_ms: 0.148609
+  type: 'test'
+  ...
+# Subtest: CBN-74 fecharChamado: sem operacao_id (como o app envia hoje) é recusado
+ok 273 - CBN-74 fecharChamado: sem operacao_id (como o app envia hoje) é recusado
+  ---
+  duration_ms: 0.133084
+  type: 'test'
+  ...
+# Subtest: CBN-75 validarFechamentoCampo: valor limite da quantidade de material (0 recusa, 1 aceita)
+ok 274 - CBN-75 validarFechamentoCampo: valor limite da quantidade de material (0 recusa, 1 aceita)
+  ---
+  duration_ms: 0.130238
+  type: 'test'
+  ...
+# Subtest: CBN-76 API: corpo em formulário (como o app do cidadão envia) é recusado com 400 JSON_INVALIDO
+ok 275 - CBN-76 API: corpo em formulário (como o app do cidadão envia) é recusado com 400 JSON_INVALIDO
+  ---
+  duration_ms: 97.397398
+  type: 'test'
+  ...
+# Subtest: CBN-77 API: JSON sem id é recusado com 400 e o campo é apontado
+ok 276 - CBN-77 API: JSON sem id é recusado com 400 e o campo é apontado
+  ---
+  duration_ms: 6.822103
+  type: 'test'
+  ...
+# Subtest: CBN-78 API: JSON com id é aceito (201) e o reenvio devolve o mesmo chamado sem duplicar
+ok 277 - CBN-78 API: JSON com id é aceito (201) e o reenvio devolve o mesmo chamado sem duplicar
+  ---
+  duration_ms: 12.0137
+  type: 'test'
+  ...
+# Subtest: CBN-79 API: POST /api (para onde o técnico envia) não existe; a rota certa exige Bearer
+ok 278 - CBN-79 API: POST /api (para onde o técnico envia) não existe; a rota certa exige Bearer
+  ---
+  duration_ms: 66.498226
+  type: 'test'
+  ...
+# Subtest: CBN-80 API: corpo vazio vira {} e a validação aponta os campos que faltam
+ok 279 - CBN-80 API: corpo vazio vira {} e a validação aponta os campos que faltam
+  ---
+  duration_ms: 7.786104
+  type: 'test'
+  ...
+# Subtest: CBN-81 API: corpo acima de 8 MB (ex.: foto sem compressão) é recusado com 413
+ok 280 - CBN-81 API: corpo acima de 8 MB (ex.: foto sem compressão) é recusado com 413
+  ---
+  duration_ms: 85.014011
+  type: 'test'
+  ...
+# Subtest: CBN-82 middlewareValidacao: sem corpo nenhum (req.body ausente) aponta todos os campos
+ok 281 - CBN-82 middlewareValidacao: sem corpo nenhum (req.body ausente) aponta todos os campos
+  ---
+  duration_ms: 0.449082
+  type: 'test'
+  ...
+# Subtest: CBN-83 tratarErros: banco fora do ar vira 503; erro inesperado vira 500 sem expor detalhes
+ok 282 - CBN-83 tratarErros: banco fora do ar vira 503; erro inesperado vira 500 sem expor detalhes
+  ---
+  duration_ms: 0.180193
+  type: 'test'
+  ...
+# Subtest: CBN-84 criarChamado: pelo QR com GPS do aparelho, mantém o GPS e completa o endereço pelo poste
+ok 283 - CBN-84 criarChamado: pelo QR com GPS do aparelho, mantém o GPS e completa o endereço pelo poste
+  ---
+  duration_ms: 0.387098
+  type: 'test'
+  ...
+# Subtest: CBN-85 fecharChamado: com poste identificado, atualiza a ficha do poste na mesma transação
+ok 284 - CBN-85 fecharChamado: com poste identificado, atualiza a ficha do poste na mesma transação
+  ---
+  duration_ms: 0.469883
+  type: 'test'
+  ...
+# Subtest: CBN-86 validarFechamentoCampo: sem status e sem serviço gera um erro para cada
+ok 285 - CBN-86 validarFechamentoCampo: sem status e sem serviço gera um erro para cada
+  ---
+  duration_ms: 0.11707
+  type: 'test'
+  ...
+# Subtest: CBN-87 coordenadasValidas: valor limite dos dois lados de cada eixo e perto do zero
+ok 286 - CBN-87 coordenadasValidas: valor limite dos dois lados de cada eixo e perto do zero
+  ---
+  duration_ms: 0.063027
+  type: 'test'
+  ...
+# Subtest: CBN-88 validações recusam campos com tipo errado (número no lugar de texto)
+ok 287 - CBN-88 validações recusam campos com tipo errado (número no lugar de texto)
+  ---
+  duration_ms: 0.209865
+  type: 'test'
+  ...
+# Subtest: CBN-89 criarChamado: repassa foto, telefone, navegador e horário que o app envia
+ok 288 - CBN-89 criarChamado: repassa foto, telefone, navegador e horário que o app envia
+  ---
+  duration_ms: 0.143351
+  type: 'test'
+  ...
+# Subtest: CBN-90 criarChamado: pelo QR com só a latitude, completa as coordenadas pelo poste
+ok 289 - CBN-90 criarChamado: pelo QR com só a latitude, completa as coordenadas pelo poste
+  ---
+  duration_ms: 0.282015
+  type: 'test'
+  ...
+# Subtest: CBN-91 fecharChamado: grava foto, data e materiais informados e marca o poste no chamado
+ok 290 - CBN-91 fecharChamado: grava foto, data e materiais informados e marca o poste no chamado
+  ---
+  duration_ms: 0.366582
+  type: 'test'
+  ...
+# Subtest: CBN-92 API: um único campo faltando (ou vazio, ou nulo) já é recusado
+ok 291 - CBN-92 API: um único campo faltando (ou vazio, ou nulo) já é recusado
+  ---
+  duration_ms: 12.821623
+  type: 'test'
+  ...
+# Subtest: CBN-93 API: valor limite do corpo — exatamente 8 MB é aceito
+ok 292 - CBN-93 API: valor limite do corpo — exatamente 8 MB é aceito
+  ---
+  duration_ms: 74.972821
+  type: 'test'
+  ...
+# Subtest: CBA-01 flushQueue (cidadão): sem internet não lê a fila nem envia
+ok 293 - CBA-01 flushQueue (cidadão): sem internet não lê a fila nem envia
+  ---
+  duration_ms: 2.709351
+  type: 'test'
+  ...
+# Subtest: CBA-02 flushQueue (cidadão): endereço do servidor não configurado ("__...") não envia
+ok 294 - CBA-02 flushQueue (cidadão): endereço do servidor não configurado ("__...") não envia
+  ---
+  duration_ms: 0.727177
+  type: 'test'
+  ...
+# Subtest: CBA-03 flushQueue (cidadão): erro ao ler o banco do aparelho encerra sem enviar e sem lançar erro
+ok 295 - CBA-03 flushQueue (cidadão): erro ao ler o banco do aparelho encerra sem enviar e sem lançar erro
+  ---
+  duration_ms: 1.129505
+  type: 'test'
+  ...
+# Subtest: CBA-04 flushQueue (cidadão): fila vazia encerra sem enviar
+ok 296 - CBA-04 flushQueue (cidadão): fila vazia encerra sem enviar
+  ---
+  duration_ms: 0.672013
+  type: 'test'
+  ...
+# Subtest: CBA-05 flushQueue (cidadão): envio aceito (Apps Script) apaga o item e atualiza o aviso
+ok 297 - CBA-05 flushQueue (cidadão): envio aceito (Apps Script) apaga o item e atualiza o aviso
+  ---
+  duration_ms: 1.477153
+  type: 'test'
+  ...
+# Subtest: CBA-06 flushQueue (cidadão): recusa do servidor (Apps Script) mantém o item e soma 1 tentativa com o motivo
+ok 298 - CBA-06 flushQueue (cidadão): recusa do servidor (Apps Script) mantém o item e soma 1 tentativa com o motivo
+  ---
+  duration_ms: 2.006881
+  type: 'test'
+  ...
+# Subtest: CBA-07 flushQueue (cidadão): resposta vazia conta como recusa ("server error")
+ok 299 - CBA-07 flushQueue (cidadão): resposta vazia conta como recusa ("server error")
+  ---
+  duration_ms: 1.613719
+  type: 'test'
+  ...
+# Subtest: CBA-08 flushQueue (cidadão): erro de rede mantém o item, soma 1 tentativa e guarda a mensagem do erro
+ok 300 - CBA-08 flushQueue (cidadão): erro de rede mantém o item, soma 1 tentativa e guarda a mensagem do erro
+  ---
+  duration_ms: 0.857695
+  type: 'test'
+  ...
+# Subtest: CBA-09 flushQueue (cidadão): erro de rede sem mensagem é guardado como "network error"
+ok 301 - CBA-09 flushQueue (cidadão): erro de rede sem mensagem é guardado como "network error"
+  ---
+  duration_ms: 0.839721
+  type: 'test'
+  ...
+# Subtest: CBA-10 flushQueue (cidadão): valor limite — com 4 tentativas ainda envia; com 5 descarta sem enviar
+ok 302 - CBA-10 flushQueue (cidadão): valor limite — com 4 tentativas ainda envia; com 5 descarta sem enviar
+  ---
+  duration_ms: 0.831967
+  type: 'test'
+  ...
+# Subtest: CBA-11 flushQueue (cidadão): falha ao apagar um item descartado não interrompe a fila
+ok 303 - CBA-11 flushQueue (cidadão): falha ao apagar um item descartado não interrompe a fila
+  ---
+  duration_ms: 0.785931
+  type: 'test'
+  ...
+# Subtest: CBA-12 flushQueue (cidadão): falha ao gravar a tentativa depois de um erro de rede não interrompe a fila
+ok 304 - CBA-12 flushQueue (cidadão): falha ao gravar a tentativa depois de um erro de rede não interrompe a fila
+  ---
+  duration_ms: 1.07048
+  type: 'test'
+  ...
+# Subtest: CBA-13 flushQueue (cidadão): falha no 1º item não impede o envio do 2º
+ok 305 - CBA-13 flushQueue (cidadão): falha no 1º item não impede o envio do 2º
+  ---
+  duration_ms: 0.764037
+  type: 'test'
+  ...
+# Subtest: CBA-14 flushQueue (cidadão): reporte descartado após 5 tentativas deve avisar o cidadão
+not ok 306 - CBA-14 flushQueue (cidadão): reporte descartado após 5 tentativas deve avisar o cidadão # TODO Defeito DEF-03 — descarte silencioso (UC03 regra de negócio)
+  ---
+  duration_ms: 1.17427
+  type: 'test'
+  location: '/home/claude/repo-novo/projetoa3qa/server/tests/testes-offline/apoio/casos-cliente.js:172:3'
+  failureType: 'testCodeFailure'
+  error: 'o reporte foi apagado e só houve console.warn, que o cidadão não vê'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (/home/claude/repo-novo/projetoa3qa/server/tests/testes-offline/apoio/casos-cliente.js:176:12)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: CBA-15 flushQueue (cidadão): três sincronizações ao mesmo tempo enviam o reporte uma única vez
+not ok 307 - CBA-15 flushQueue (cidadão): três sincronizações ao mesmo tempo enviam o reporte uma única vez # TODO Defeito DEF-04 — falta trava contra execução simultânea
+  ---
+  duration_ms: 1.259224
+  type: 'test'
+  location: '/home/claude/repo-novo/projetoa3qa/server/tests/testes-offline/apoio/casos-cliente.js:179:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    o mesmo protocolo foi enviado 3 vezes
+
+    3 !== 1
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 3
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/home/claude/repo-novo/projetoa3qa/server/tests/testes-offline/apoio/casos-cliente.js:182:12)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: CBA-16 updatePendingBanner: esconde com 0; singular com 1; plural com 3
+ok 308 - CBA-16 updatePendingBanner: esconde com 0; singular com 1; plural com 3
+  ---
+  duration_ms: 2.254875
+  type: 'test'
+  ...
+# Subtest: CBA-17 updatePendingBanner: erro no banco ou tela sem o aviso não quebram o app
+ok 309 - CBA-17 updatePendingBanner: erro no banco ou tela sem o aviso não quebram o app
+  ---
+  duration_ms: 1.353477
+  type: 'test'
+  ...
+# Subtest: CBA-18 submitReport: segundo toque durante o envio é ignorado
+ok 310 - CBA-18 submitReport: segundo toque durante o envio é ignorado
+  ---
+  duration_ms: 1.079528
+  type: 'test'
+  ...
+# Subtest: CBA-19 submitReport: com internet e envio aceito (Apps Script), mostra "enviado" sem gravar na fila
+ok 311 - CBA-19 submitReport: com internet e envio aceito (Apps Script), mostra "enviado" sem gravar na fila
+  ---
+  duration_ms: 0.913535
+  type: 'test'
+  ...
+# Subtest: CBA-20 submitReport: com internet e recusa (Apps Script), guarda na fila
+ok 312 - CBA-20 submitReport: com internet e recusa (Apps Script), guarda na fila
+  ---
+  duration_ms: 0.887088
+  type: 'test'
+  ...
+# Subtest: CBA-21 submitReport: com internet e erro de rede, guarda na fila
+ok 313 - CBA-21 submitReport: com internet e erro de rede, guarda na fila
+  ---
+  duration_ms: 0.838664
+  type: 'test'
+  ...
+# Subtest: CBA-22 submitReport: envio e gravação falham — mensagem de erro e botão liberado (UC01-E1)
+ok 314 - CBA-22 submitReport: envio e gravação falham — mensagem de erro e botão liberado (UC01-E1)
+  ---
+  duration_ms: 0.961625
+  type: 'test'
+  ...
+# Subtest: CBA-23 submitReport: sem internet grava direto na fila, sem tentar enviar
+ok 315 - CBA-23 submitReport: sem internet grava direto na fila, sem tentar enviar
+  ---
+  duration_ms: 0.732805
+  type: 'test'
+  ...
+# Subtest: CBA-24 submitReport: sem internet e sem conseguir gravar — mensagem de erro (UC01-E1)
+ok 316 - CBA-24 submitReport: sem internet e sem conseguir gravar — mensagem de erro (UC01-E1)
+  ---
+  duration_ms: 0.859594
+  type: 'test'
+  ...
+# Subtest: CBA-47 submitReport: durante o envio o botão fica travado e marcado "Enviando…"
+ok 317 - CBA-47 submitReport: durante o envio o botão fica travado e marcado "Enviando…"
+  ---
+  duration_ms: 0.890403
+  type: 'test'
+  ...
+# Subtest: CBA-25 submitReport: com internet e servidor não configurado ("__..."), guarda na fila
+ok 318 - CBA-25 submitReport: com internet e servidor não configurado ("__..."), guarda na fila
+  ---
+  duration_ms: 0.766157
+  type: 'test'
+  ...
+# Subtest: CBA-46 submitReport: recusa sem motivo é registrada como "server error" e guardada na fila
+ok 319 - CBA-46 submitReport: recusa sem motivo é registrada como "server error" e guardada na fila
+  ---
+  duration_ms: 1.868114
+  type: 'test'
+  ...
+# Subtest: CBA-26 postReport: envia ao endereço do Apps Script no formato que ele aceita
+ok 320 - CBA-26 postReport: envia ao endereço do Apps Script no formato que ele aceita
+  ---
+  duration_ms: 1.511081
+  type: 'test'
+  ...
+# Subtest: CBA-27 postReport: limite de 60 s, timer limpo e resposta lida
+ok 321 - CBA-27 postReport: limite de 60 s, timer limpo e resposta lida
+  ---
+  duration_ms: 1.077458
+  type: 'test'
+  ...
+# Subtest: CBA-28 postReport: resposta que não é JSON vira recusa ("resposta inválida do servidor")
+ok 322 - CBA-28 postReport: resposta que não é JSON vira recusa ("resposta inválida do servidor")
+  ---
+  duration_ms: 0.986094
+  type: 'test'
+  ...
+# Subtest: CBA-29 postReport: erro de rede é repassado e o timer é limpo
+ok 323 - CBA-29 postReport: erro de rede é repassado e o timer é limpo
+  ---
+  duration_ms: 1.289987
+  type: 'test'
+  ...
+# Subtest: CBA-30 postReport: depois de 60 s sem resposta a requisição é cancelada
+ok 324 - CBA-30 postReport: depois de 60 s sem resposta a requisição é cancelada
+  ---
+  duration_ms: 24.386312
+  type: 'test'
+  ...
+# Subtest: CBA-31 generateProtocol: formato IC-AAMMDD-XXXXX com zero à esquerda no mês e no dia
+ok 325 - CBA-31 generateProtocol: formato IC-AAMMDD-XXXXX com zero à esquerda no mês e no dia
+  ---
+  duration_ms: 1.216683
+  type: 'test'
+  ...
+# Subtest: CBA-32 buildPayload: a mensagem do reporte leva protocolo, tipo, GPS, foto e textos limpos
+ok 326 - CBA-32 buildPayload: a mensagem do reporte leva protocolo, tipo, GPS, foto e textos limpos
+  ---
+  duration_ms: 2.0012
+  type: 'test'
+  ...
+# Subtest: CBA-33 flushQueue (técnico): sem internet não envia e não atualiza o aviso
+ok 327 - CBA-33 flushQueue (técnico): sem internet não envia e não atualiza o aviso
+  ---
+  duration_ms: 2.211801
+  type: 'test'
+  ...
+# Subtest: CBA-34 flushQueue (técnico): sem sessão (sem PIN) não envia
+ok 328 - CBA-34 flushQueue (técnico): sem sessão (sem PIN) não envia
+  ---
+  duration_ms: 0.954332
+  type: 'test'
+  ...
+# Subtest: CBA-35 flushQueue (técnico): fila vazia libera a trava e atualiza o aviso
+ok 329 - CBA-35 flushQueue (técnico): fila vazia libera a trava e atualiza o aviso
+  ---
+  duration_ms: 1.144567
+  type: 'test'
+  ...
+# Subtest: CBA-36 flushQueue (técnico): todos aceitos (Apps Script) são apagados na ordem da fila
+ok 330 - CBA-36 flushQueue (técnico): todos aceitos (Apps Script) são apagados na ordem da fila
+  ---
+  duration_ms: 2.072402
+  type: 'test'
+  ...
+# Subtest: CBA-37 flushQueue (técnico): sessão expirada (Apps Script) interrompe e mantém a fila
+ok 331 - CBA-37 flushQueue (técnico): sessão expirada (Apps Script) interrompe e mantém a fila
+  ---
+  duration_ms: 1.059481
+  type: 'test'
+  ...
+# Subtest: CBA-38 flushQueue (técnico): erro de rede interrompe e mantém a fila
+ok 332 - CBA-38 flushQueue (técnico): erro de rede interrompe e mantém a fila
+  ---
+  duration_ms: 1.052754
+  type: 'test'
+  ...
+# Subtest: CBA-39 flushQueue (técnico): três sincronizações ao mesmo tempo enviam cada fechamento uma vez (trava)
+ok 333 - CBA-39 flushQueue (técnico): três sincronizações ao mesmo tempo enviam cada fechamento uma vez (trava)
+  ---
+  duration_ms: 1.243284
+  type: 'test'
+  ...
+# Subtest: CBA-40 flushQueue (técnico): erro ao ler a fila libera a trava, mas o erro escapa da função
+ok 334 - CBA-40 flushQueue (técnico): erro ao ler a fila libera a trava, mas o erro escapa da função
+  ---
+  duration_ms: 1.096782
+  type: 'test'
+  ...
+# Subtest: CBA-41 flushQueue (técnico): erro do servidor em um fechamento não trava os seguintes
+ok 335 - CBA-41 flushQueue (técnico): erro do servidor em um fechamento não trava os seguintes
+  ---
+  duration_ms: 1.090259
+  type: 'test'
+  ...
+# Subtest: CBA-42 apiFetchTO: fechamento vai ao endereço e formato do Apps Script
+ok 336 - CBA-42 apiFetchTO: fechamento vai ao endereço e formato do Apps Script
+  ---
+  duration_ms: 1.799099
+  type: 'test'
+  ...
+# Subtest: CBA-43 apiFetchTO: usa 15 s por padrão, limpa o timer e cancela ao fim do tempo
+ok 337 - CBA-43 apiFetchTO: usa 15 s por padrão, limpa o timer e cancela ao fim do tempo
+  ---
+  duration_ms: 1.200983
+  type: 'test'
+  ...
+# Subtest: CBA-44 renderPendingBanner: esconde com 0; singular/plural; "enviando…" e "sem sinal"; tela sem aviso
+ok 338 - CBA-44 renderPendingBanner: esconde com 0; singular/plural; "enviando…" e "sem sinal"; tela sem aviso
+  ---
+  duration_ms: 2.778081
+  type: 'test'
+  ...
+# Subtest: CBA-45 queueCount: conta a fila e devolve 0 se o banco falhar (o limite de 10 deixa de valer)
+ok 339 - CBA-45 queueCount: conta a fila e devolve 0 se o banco falhar (o limite de 10 deixa de valer)
+  ---
+  duration_ms: 0.900999
+  type: 'test'
+  ...
+# Subtest: CBA-50 flushQueue (técnico): reenvio que o script responde "ja_fechado" deve sair da fila
+ok 340 - CBA-50 flushQueue (técnico): reenvio que o script responde "ja_fechado" deve sair da fila
+  ---
+  duration_ms: 1.059822
+  type: 'test'
+  ...
+# Subtest: CBA-51 integração (cidadão ↔ dublê do Apps Script): flushQueue e postReport reais esvaziam a fila
+ok 341 - CBA-51 integração (cidadão ↔ dublê do Apps Script): flushQueue e postReport reais esvaziam a fila
+  ---
+  duration_ms: 56.5479
+  type: 'test'
+  ...
+# Subtest: CBA-52 integração (cidadão ↔ dublê): resposta perdida e reenvio geram um único registro
+not ok 342 - CBA-52 integração (cidadão ↔ dublê): resposta perdida e reenvio geram um único registro # TODO Defeito DEF-11 — sem identificador único, a duplicidade depende de o script descartar protocolo repetido
+  ---
+  duration_ms: 16.044764
+  type: 'test'
+  location: '/home/claude/repo-novo/projetoa3qa/server/tests/testes-offline/apps-script/caixa-branca/cliente.test.js:46:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    linhas na planilha com o mesmo protocolo: 2
+
+    2 !== 1
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/home/claude/repo-novo/projetoa3qa/server/tests/testes-offline/apps-script/caixa-branca/cliente.test.js:60:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: CBA-53 integração (técnico ↔ dublê): fechamento na fila é registrado e sai da fila
+ok 343 - CBA-53 integração (técnico ↔ dublê): fechamento na fila é registrado e sai da fila
+  ---
+  duration_ms: 16.694959
+  type: 'test'
+  ...
+# Subtest: CU-01 [caixa-preta | fluxo principal] cadastra um gestor com o PIN guardado só como hash, que o login reconhece
+ok 344 - CU-01 [caixa-preta | fluxo principal] cadastra um gestor com o PIN guardado só como hash, que o login reconhece
+  ---
+  duration_ms: 84.44361
+  type: 'test'
+  ...
+# Subtest: CU-02 [caixa-preta | fluxo alternativo] mesmo nome e perfil troca o PIN e reativa, sem duplicar
+ok 345 - CU-02 [caixa-preta | fluxo alternativo] mesmo nome e perfil troca o PIN e reativa, sem duplicar
+  ---
+  duration_ms: 127.478257
+  type: 'test'
+  ...
+# Subtest: CU-03 [caixa-preta | partição inválida e valor limite] perfil, PIN e nome inválidos são recusados antes de tocar no banco
+ok 346 - CU-03 [caixa-preta | partição inválida e valor limite] perfil, PIN e nome inválidos são recusados antes de tocar no banco
+  ---
+  duration_ms: 38.837284
+  type: 'test'
+  ...
+# Subtest: CU-04 [caixa-preta | risco: login com o usuário errado] PIN já usado por outro usuário ativo é recusado
+ok 347 - CU-04 [caixa-preta | risco: login com o usuário errado] PIN já usado por outro usuário ativo é recusado
+  ---
+  duration_ms: 114.938209
+  type: 'test'
+  ...
+# Subtest: CU-05 [caixa-preta | fluxo principal e exceção] desativar tira o acesso; usuário inexistente é avisado
+ok 348 - CU-05 [caixa-preta | fluxo principal e exceção] desativar tira o acesso; usuário inexistente é avisado
+  ---
+  duration_ms: 48.362848
+  type: 'test'
+  ...
+# Subtest: CU-06 [caixa-preta | partição] argumentos da linha de comando; o PIN mantém o zero à esquerda
+ok 349 - CU-06 [caixa-preta | partição] argumentos da linha de comando; o PIN mantém o zero à esquerda
+  ---
+  duration_ms: 1.233188
+  type: 'test'
+  ...
+1..349
+# tests 372
+# suites 4
+# pass 343
+# fail 8
+# cancelled 14
+# skipped 0
+# todo 7
+# duration_ms 5207.994187
+# start of coverage report
+# ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# file                              | line % | branch % | funcs % | uncovered lines
+# ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# public                            |        |          |         |
+#  js                               |        |          |         |
+#   cidadao                         |        |          |         |
+#    application                    |        |          |         |
+#     EnviarReporte.js              | 100.00 |   100.00 |  100.00 |
+#     SincronizarFila.js            |  67.69 |    37.50 |  100.00 | 25 27-46
+#    domain                         |        |          |         |
+#     Report.js                     |  90.76 |    83.33 |   85.71 | 22-26 37-40 91-92
+#    infrastructure                 |        |          |         |
+#     GeolocationService.js         |  42.86 |   100.00 |   20.00 | 18-20 23-24 27-48 51-55
+#  shared                           |        |          |         |
+#   infrastructure                  |        |          |         |
+#    ApiClient.js                   | 100.00 |   100.00 |  100.00 |
+#  tecnico                          |        |          |         |
+#   js                              |        |          |         |
+#    application                    |        |          |         |
+#     CarregarPainel.js             |  94.29 |    39.13 |   54.55 | 12-13 16-17
+#     CarregarRota.js               | 100.00 |   100.00 |  100.00 |
+#     FecharAdministrativamente.js  | 100.00 |    90.91 |  100.00 |
+#    domain                         |        |          |         |
+#     AdminClose.js                 | 100.00 |    50.00 |  100.00 |
+#     Close.js                      |  25.00 |    66.67 |   25.00 | 10-14 18-48 51-56
+#     Ticket.js                     |  98.80 |    89.74 |  100.00 | 71
+#    infrastructure                 |        |          |         |
+#     AcoesApiNode.js               | 100.00 |    73.44 |  100.00 |
+#    presentation                   |        |          |         |
+#     ListView.js                   |  77.78 |    60.00 |   50.00 | 14-15 23-26
+#     MapView.js                    |  61.22 |    77.78 |   75.00 | 30-48
+# server                            |        |          |         |
+#  scripts                          |        |          |         |
+#   cadastrar-usuario.js            |  84.78 |    91.18 |   83.33 | 75-88
+#  src                              |        |          |         |
+#   app.js                          |  94.42 |    85.71 |   95.00 | 88-91 140-141 191-195
+#   application                     |        |          |         |
+#    errors                         |        |          |         |
+#     Conflito.js                   | 100.00 |   100.00 |  100.00 |
+#     index.js                      | 100.00 |   100.00 |  100.00 |
+#     NaoEncontrado.js              | 100.00 |   100.00 |  100.00 |
+#     SemPermissao.js               | 100.00 |   100.00 |  100.00 |
+#    services                       |        |          |         |
+#     AuthService.js                |  98.04 |    84.62 |  100.00 | 82-83
+#     ChamadoService.js             |  88.41 |    90.70 |   80.00 | 98-108 125-126 134-135 153-156
+#     EstoqueService.js             |  98.44 |    91.67 |  100.00 | 43-44
+#     FechamentoService.js          | 100.00 |    95.45 |  100.00 |
+#     PosteService.js               |  48.78 |    80.00 |   66.67 | 10-49 55-56
+#   domain                          |        |          |         |
+#    Chamado.js                     | 100.00 |   100.00 |  100.00 |
+#    Fechamento.js                  | 100.00 |   100.00 |  100.00 |
+#    ItemEstoque.js                 |  88.00 |    33.33 |  100.00 | 24-25 33-34 36-37
+#    Missao.js                      |  84.48 |    56.25 |  100.00 | 9-10 12-13 15 19-20 22-23
+#    Poste.js                       |  72.55 |   100.00 |   50.00 | 32-45
+#    Tentativa.js                   |  83.33 |    50.00 |  100.00 | 10-11 13-14
+#   infrastructure                  |        |          |         |
+#    config                         |        |          |         |
+#     env.js                        | 100.00 |   100.00 |  100.00 |
+#    database                       |        |          |         |
+#     pool.js                       |  77.78 |    73.68 |   70.00 | 10-17 29-31 45-49 78-79
+#     transacao.js                  |  94.59 |    71.43 |  100.00 | 27-28
+#    repositories                   |        |          |         |
+#     ChamadoRepository.js          |  87.97 |    72.73 |   83.33 | 59-65 69-75 96-97
+#     EstoqueRepository.js          |  99.04 |    84.44 |  100.00 | 123-124
+#     FechamentoRepository.js       | 100.00 |    80.00 |  100.00 |
+#     PosteRepository.js            | 100.00 |    93.94 |  100.00 |
+#     SessaoRepository.js           | 100.00 |    62.50 |  100.00 |
+#     TentativaRepository.js        |  85.29 |   100.00 |   66.67 | 35-44
+#     UsuarioRepository.js          | 100.00 |   100.00 |  100.00 |
+#    security                       |        |          |         |
+#     gerarToken.js                 | 100.00 |   100.00 |  100.00 |
+#     hashPin.js                    |  96.67 |    46.67 |  100.00 | 53-54
+#    storage                        |        |          |         |
+#     FotoStorage.js                |  91.18 |    66.67 |  100.00 | 45-46 54-58 93-94
+#   presentation                    |        |          |         |
+#    controllers                    |        |          |         |
+#     AuthController.js             |  94.74 |    62.50 |  100.00 | 18-19
+#     ChamadoController.js          |  66.67 |    85.71 |   60.00 | 20-33 53-54 57-64
+#     EstoqueController.js          |  89.04 |    62.50 |  100.00 | 13-14 35-36 44-45 53-54
+#     FechamentoController.js       | 100.00 |   100.00 |  100.00 |
+#     FotoController.js             | 100.00 |   100.00 |  100.00 |
+#     PosteController.js            |  75.00 |    80.00 |   66.67 | 8-15 32-33
+#    middlewares                    |        |          |         |
+#     autenticar.js                 | 100.00 |   100.00 |  100.00 |
+#     limitarTentativas.js          | 100.00 |    81.82 |  100.00 |
+#     tratarErros.js                | 100.00 |   100.00 |  100.00 |
+#     validar.js                    | 100.00 |   100.00 |  100.00 |
+#    routes                         |        |          |         |
+#     auth.routes.js                | 100.00 |   100.00 |  100.00 |
+#     chamados.routes.js            | 100.00 |   100.00 |  100.00 |
+#     estoque.routes.js             | 100.00 |   100.00 |  100.00 |
+#     fotos.routes.js               | 100.00 |   100.00 |  100.00 |
+#     postes.routes.js              | 100.00 |   100.00 |  100.00 |
+#    views                          |        |          |         |
+#     chamado.view.js               | 100.00 |    61.54 |  100.00 |
+#     resposta.js                   | 100.00 |   100.00 |  100.00 |
+#     tentativa.view.js             | 100.00 |    25.00 |  100.00 |
+#  tests                            |        |          |         |
+#   almoxarifado                    |        |          |         |
+#    estoque-mysql.test.js          | 100.00 |   100.00 |  100.00 |
+#    retorno-missao.test.js         | 100.00 |   100.00 |  100.00 |
+#   busca-poste.test.js             | 100.00 |   100.00 |  100.00 |
+#   database.test.js                |  97.22 |    91.67 |  100.00 | 13
+#   domain.test.js                  | 100.00 |   100.00 |  100.00 |
+#   fechamento-administrativo       |        |          |         |
+#    cliente.test.js                | 100.00 |   100.00 |   83.33 |
+#    servidor.test.js               | 100.00 |   100.00 |   90.00 |
+#   fechamento-cobertura.test.js    | 100.00 |    97.50 |   86.05 |
+#   fechar-os                       |        |          |         |
+#    api.test.js                    | 100.00 |    93.75 |  100.00 |
+#    banco-simulado.js              |  95.62 |    86.44 |   90.70 | 57-59 61-62 108
+#    cliente.test.js                | 100.00 |    96.77 |  100.00 |
+#    dominio.test.js                | 100.00 |   100.00 |  100.00 |
+#    fixture.js                     | 100.00 |   100.00 |  100.00 |
+#    servico.test.js                | 100.00 |    94.12 |   93.75 |
+#   fotos                           |        |          |         |
+#    fotos.test.js                  |  99.33 |    93.55 |  100.00 | 41
+#   helpers                         |        |          |         |
+#    administrative-fixture.js      | 100.00 |    96.15 |  100.00 |
+#   integracao-sistema.test.js      |  24.48 |    29.41 |   18.18 | 45-71 111 123-126 128-131 161-282 288-289 295-319 323-336 340-366 370-397 401-419 423-426 430-452 456-492 496-541 545-581 585-619 623-641 645-672 676-710 714-725
+#   logout-tecnico.test.js          | 100.00 |   100.00 |  100.00 |
+#   mysql-repositories.test.js      | 100.00 |   100.00 |  100.00 |
+#   painel-client.test.js           | 100.00 |   100.00 |  100.00 |
+#   postes                          |        |          |         |
+#    listar-postes.test.js          | 100.00 |   100.00 |  100.00 |
+#    poste-mysql.test.js            | 100.00 |    91.67 |  100.00 |
+#   relatorio-atendimentos          |        |          |         |
+#    relatorio.test.js              | 100.00 |   100.00 |  100.00 |
+#   relatorio-tentativas            |        |          |         |
+#    tentativas.test.js             | 100.00 |   100.00 |  100.00 |
+#   reportar-defeito                |        |          |         |
+#    api.test.js                    | 100.00 |   100.00 |  100.00 |
+#    banco-simulado.js              |  98.41 |    95.24 |  100.00 | 37
+#    cliente.test.js                | 100.00 |   100.00 |   91.67 |
+#    dominio.test.js                | 100.00 |   100.00 |  100.00 |
+#    fixture.js                     | 100.00 |   100.00 |  100.00 |
+#    servico.test.js                | 100.00 |   100.00 |   94.44 |
+#   rota-do-dia                     |        |          |         |
+#    rota.test.js                   | 100.00 |   100.00 |  100.00 |
+#   services.test.js                | 100.00 |   100.00 |  100.00 |
+#   suite-cts.test.js               |  83.33 |    65.43 |   83.33 | 18 31-45 54-67 69 74-75 82-83 257 262-265 272-273 283 316-317 340-350 362-364 387-389 442-455
+#   telas-api-node                  |        |          |         |
+#    acoes-api-node.test.js         | 100.00 |    95.12 |  100.00 |
+#    apoio                          |        |          |         |
+#     api-em-memoria.js             |  86.79 |    85.71 |   90.74 | 35-44 124-125 128-129 133-139
+#    integracao.test.js             | 100.00 |   100.00 |  100.00 |
+#    tela-tecnico.test.js           | 100.00 |    94.59 |   88.57 |
+#   testes-offline                  |        |          |         |
+#    api-node                       |        |          |         |
+#     caixa-branca                  |        |          |         |
+#      cliente.test.js              | 100.00 |    90.48 |  100.00 |
+#      servidor.test.js             | 100.00 |    98.85 |   98.70 |
+#    apoio                          |        |          |         |
+#     casos-cliente.js              | 100.00 |    96.26 |  100.00 |
+#     dubles-cliente.js             | 100.00 |    95.77 |   91.38 |
+#     extrair-funcao.js             |  78.29 |    84.09 |   70.00 | 65 115 117-120 124-150
+#     servidor-teste.js             |  86.15 |    63.31 |   69.12 | 53-66 111-113 124 155-158 161-163 263-265 312-314 324-327 367-373 386-387 393-397 425-429 431-433 436-438 440 444-446
+#    apps-script                    |        |          |         |
+#     caixa-branca                  |        |          |         |
+#      cliente.test.js              | 100.00 |   100.00 |  100.00 |
+#   usuarios                        |        |          |         |
+#    cadastrar-usuario.test.js      |  99.05 |    96.15 |  100.00 | 36
+# ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# all files                         |  89.64 |    86.88 |   91.36 |
+# ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# end of coverage report
