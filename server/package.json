@@ -15,5 +15,8 @@
   },
   "engines": {
     "node": ">=18"
+  },
+  "devDependencies": {
+    "selenium-webdriver": "^4.51.0"
   }
 }

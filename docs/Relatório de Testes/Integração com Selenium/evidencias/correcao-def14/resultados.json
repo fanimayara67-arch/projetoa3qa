@@ -1,0 +1,99 @@
+{
+  "ferramenta": "Selenium WebDriver 4.51.0 (Node.js v24.16.0) + Google Chrome sem janela",
+  "executadoEm": "2026-11-27T03:41:48.640Z",
+  "ambiente": {
+    "chamadosSemeados": [
+      "IC-261127-SEL01",
+      "IC-261127-SEL02",
+      "IC-261127-SEL03",
+      "IC-261127-SEL04"
+    ],
+    "inicio": "2026-11-27T03:41:48.640Z",
+    "servidor": "http://localhost:54076",
+    "banco": "db_iluminacao_selenium em 127.0.0.1:3307"
+  },
+  "total": 1,
+  "aprovados": 1,
+  "reprovados": 0,
+  "casos": [
+    {
+      "id": "SEL-03",
+      "titulo": "Link com parâmetros (ex.: compartilhado no WhatsApp) abre o app sem internet",
+      "requisito": "RNF01 (DEF-14)",
+      "dado": "o app já foi aberto uma vez",
+      "quando": "o cidadão, sem internet, abre /?utm_source=whatsapp",
+      "entao": "o formulário de reporte aparece",
+      "obtido": {
+        "abriuOApp": true,
+        "erroDoNavegador": null
+      },
+      "banco": {},
+      "capturas": [
+        "SEL-03-link-sem-internet.png"
+      ],
+      "resultado": "Aprovado",
+      "erro": null,
+      "duracaoMs": 16848
+    }
+  ],
+  "bancoAoFinal": {
+    "chamados": [
+      {
+        "protocolo": "IC-261127-SEL01",
+        "tipo": "apagado",
+        "status": "aberto",
+        "poste_id": null
+      },
+      {
+        "protocolo": "IC-261127-SEL02",
+        "tipo": "piscando",
+        "status": "aberto",
+        "poste_id": null
+      },
+      {
+        "protocolo": "IC-261127-SEL03",
+        "tipo": "queimada",
+        "status": "aberto",
+        "poste_id": null
+      },
+      {
+        "protocolo": "IC-261127-SEL04",
+        "tipo": "apagado",
+        "status": "aberto",
+        "poste_id": null
+      }
+    ],
+    "fechamentos": [],
+    "sessoes": 0,
+    "tentativas_login": [],
+    "itens_estoque": [
+      {
+        "nome": "Lâmpada LED 100W (teste)",
+        "saldo": "50.00",
+        "minimo": "5.00"
+      }
+    ]
+  },
+  "pedidosApi": [
+    {
+      "metodo": "POST",
+      "caminho": "/api/chamados",
+      "tipo": "application/json"
+    },
+    {
+      "metodo": "POST",
+      "caminho": "/api/chamados",
+      "tipo": "application/json"
+    },
+    {
+      "metodo": "POST",
+      "caminho": "/api/chamados",
+      "tipo": "application/json"
+    },
+    {
+      "metodo": "POST",
+      "caminho": "/api/chamados",
+      "tipo": "application/json"
+    }
+  ]
+}
