@@ -11,6 +11,7 @@ const registrarRotasChamados = require('./presentation/routes/chamados.routes');
 const registrarRotasPostes = require('./presentation/routes/postes.routes');
 const registrarRotasAuth = require('./presentation/routes/auth.routes');
 const registrarRotasEstoque = require('./presentation/routes/estoque.routes');
+const registrarRotasFotos = require('./presentation/routes/fotos.routes');
 const tratarErros = require('./presentation/middlewares/tratarErros');
 
 /**
@@ -47,6 +48,7 @@ function criarApp() {
   registrarRotasPostes(router);
   registrarRotasAuth(router);
   registrarRotasEstoque(router);
+  registrarRotasFotos(router);
 
   /**
    * Despacha uma requisição (seja de `http.Server` real ou simulada em testes)
